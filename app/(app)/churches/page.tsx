@@ -1,10 +1,12 @@
 'use client'
 
 import { useUser } from '@/components/user-provider'
+import { useEvent } from '@/lib/contexts/event-context'
 import { ChurchesClient } from '@/components/churches-client'
 
 export default function ChurchesPage() {
   const { user } = useUser()
+  const { eventId } = useEvent()
 
   if (!user) {
     return <div className="text-center py-12 text-muted-foreground">Cargando...</div>
@@ -12,7 +14,7 @@ export default function ChurchesPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <ChurchesClient userId={user.id} />
+      <ChurchesClient userId={user.id} eventId={eventId} />
     </div>
   )
 }

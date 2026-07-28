@@ -18,9 +18,10 @@ import { PageHeader } from '@/components/page-header'
 
 interface Props {
   userId: string
+  eventId: number | null
 }
 
-export function ChurchesClient({ userId }: Props) {
+export function ChurchesClient({ userId, eventId }: Props) {
   const [churches, setChurches] = useState<Church[]>([])
   const [isPending, startTransition] = useTransition()
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -35,7 +36,7 @@ export function ChurchesClient({ userId }: Props) {
 
   useEffect(() => {
     loadChurches()
-  }, [userId])
+  }, [userId, eventId])
 
   // Abre el modal de agregar cuando el FAB del dock navega con ?new=1
   useEffect(() => {
@@ -53,7 +54,7 @@ export function ChurchesClient({ userId }: Props) {
   }
 
   async function loadChurches() {
-    const data = await getChurches(userId)
+    const data = await getChurches(userId, eventId)
     setChurches(data)
   }
 
@@ -66,10 +67,10 @@ export function ChurchesClient({ userId }: Props) {
     startTransition(async () => {
       try {
         if (editingId) {
-          await updateChurch(userId, editingId, churchName)
+          await updateChurch(userId, editingId, churchName, eventId)
           toast.success('Iglesia actualizada')
         } else {
-          await createChurch(userId, churchName)
+          await createChurch(userId, churchName, eventId)
           toast.success('Iglesia agregada')
         }
         setDialogOpen(false)
@@ -86,7 +87,7 @@ export function ChurchesClient({ userId }: Props) {
   async function handleDelete(id: number) {
     startTransition(async () => {
       try {
-        await deleteChurch(userId, id)
+        await deleteChurch(userId, id, eventId)
         toast.success('Iglesia eliminada')
         setDeleteDialogOpen(false)
         await loadChurches()

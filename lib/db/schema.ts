@@ -95,6 +95,7 @@ export const attendeePayments = pgTable('attendee_payments', {
 export const churches = pgTable('churches', {
   id: serial('id').primaryKey(),
   userId: text('userId').notNull(),
+  eventId: integer('eventId'), // nullable - Fase B
   name: text('name').notNull(),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
   updatedAt: timestamp('updatedAt').notNull().defaultNow(),
