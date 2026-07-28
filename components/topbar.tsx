@@ -8,6 +8,7 @@ import { Square, Users, DollarSign, MapPin, Trophy, LogOut, User } from 'lucide-
 import { cn } from '@/lib/utils'
 import { useUser } from '@/components/user-provider'
 import { Button } from '@/components/ui/button'
+import { EventSelector } from '@/components/event-selector'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -113,6 +114,11 @@ export function Topbar() {
               )
             })}
           </nav>
+
+          {/* Event Selector */}
+          <div className="flex items-center gap-2 ml-auto lg:ml-2">
+            <EventSelector />
+          </div>
 
           {/* User area */}
           {user ? (
