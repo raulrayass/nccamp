@@ -1,0 +1,415 @@
+'use client'
+
+import { useState, useEffect, useTransition } from 'react'
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
+import { GroupTabs, PERSONAS_TABS } from '@/components/group-tabs'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Card, CardContent } from '@/components/ui/card'
+
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
+import { Plus, Edit2, Trash2, ChevronDown, Users } from 'lucide-react'
+import { toast } from 'sonner'
+import { createTeam, updateTeam, deleteTeam, getTeams, getTeamMembers, getTeamMemberCounts } from '@/app/actions/teams'
+import { Team, Attendee } from '@/lib/db/schema'
+import { StatsBar } from '@/components/stats-bar'
+import { PageHeader } from '@/components/page-header'
+import { COUNTRIES } from '@/lib/countries'
+import { CountryFlagSvg } from '@/lib/country-flags-svg'
+import { TeamFlag } from '@/components/team-flag'
+import { useTeams, useGameScores } from '@/lib/hooks'
+import { MobileSheet } from '@/components/mobile'
+import { ListSkeleton } from '@/components/list-skeleton'
+
+interface Props {
+  userId: string
+}
+
+export function TeamsClient({ userId }: Props) {
+  // Hooks centralizados para sincronización
+  const { teams: teamList, isLoading: teamsLoading } = useTeams()
+  const { scores: allGameScores } = useGameScores()
+
+  // Local UI state
+  const [memberCounts, setMemberCounts] = useState<Record<number, number>>({})
+  const [expandedTeamId, setExpandedTeamId] = useState<number | null>(null)
+  const [expandedMembers, setExpandedMembers] = useState<Record<number, Attendee[]>>({})
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [editingId, setEditingId] = useState<number | null>(null)
+  const [deletingId, setDeletingId] = useState<number | null>(null)
+  const [form, setForm] = useState({ name: '', color: '#4a9d67', country: null as string | null, useCountry: false })
+  const [isPending, startTransition] = useTransition()
+
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  const emptyForm = { name: '', color: '#4a9d67', country: null as string | null, useCountry: false }
+  const loading = teamsLoading
+
+  const PRESET_COLORS = [
+    { name: 'Verde', value: '#4a9d67' },
+    { name: 'Azul', value: '#3b82f6' },
+    { name: 'Rojo', value: '#dc2626' },
+    { name: 'Amarillo', value: '#eab308' },
+    { name: 'Púrpura', value: '#9333ea' },
+    { name: 'Rosa', value: '#ec4899' },
+    { name: 'Naranja', value: '#ea580c' },
+    { name: 'Cian', value: '#06b6d4' },
+  ]
+
+  // Cargar conteos de miembros al montar
+  useEffect(() => {
+    async function loadMemberCounts() {
+      try {
+        const counts = await getTeamMemberCounts(userId)
+        setMemberCounts(counts)
+      } catch (error) {
+        console.error('Error loading member counts:', error)
+      }
+    }
+    loadMemberCounts()
+  }, [userId, teamList.length]) // Refetch si cambia cantidad de equipos
+
+  // Abre el modal de agregar cuando el FAB del dock navega con ?new=1
+  useEffect(() => {
+    if (searchParams.get('new') === '1') {
+      setEditingId(null)
+      setForm({ ...emptyForm })
+      setDialogOpen(true)
+    }
+  }, [searchParams])
+
+  function clearNewParam() {
+    if (searchParams.get('new') === '1') {
+      router.replace(pathname, { scroll: false })
+    }
+  }
+
+  async function toggleTeamMembers(teamId: number) {
+    if (expandedTeamId === teamId) {
+      setExpandedTeamId(null)
+    } else {
+      setExpandedTeamId(teamId)
+      if (!expandedMembers[teamId]) {
+        try {
+          const members = await getTeamMembers(userId, teamId)
+          setExpandedMembers({ ...expandedMembers, [teamId]: members })
+        } catch (error) {
+          toast.error('Error al cargar integrantes del equipo')
+          console.error(error)
+        }
+      }
+    }
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (!form.name.trim()) {
+      toast.error('El nombre del equipo es obligatorio')
+      return
+    }
+    startTransition(async () => {
+      try {
+        if (editingId) {
+          await updateTeam(userId, editingId, form)
+          toast.success('Equipo actualizado')
+        } else {
+          await createTeam(userId, form)
+          toast.success('Equipo creado')
+        }
+        setDialogOpen(false)
+        setForm({ ...emptyForm })
+        setEditingId(null)
+        clearNewParam()
+        // Los hooks SWR se actualizan automáticamente
+      } catch (error) {
+        toast.error('Error al guardar el equipo')
+        console.error(error)
+      }
+    })
+  }
+
+  async function handleDelete(id: number) {
+    startTransition(async () => {
+      try {
+        await deleteTeam(userId, id)
+        toast.success('Equipo eliminado')
+        setDeleteDialogOpen(false)
+        // Los hooks SWR se actualizan automáticamente
+      } catch (error) {
+        toast.error('Error al eliminar el equipo')
+        console.error(error)
+      }
+    })
+  }
+
+  return (
+    <div className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 flex flex-col gap-2 sm:gap-3 max-w-7xl mx-auto w-full">
+      {/* Header */}
+      <PageHeader title="Personas">
+        <Button onClick={() => setDialogOpen(true)} size="sm" className="gap-1.5 text-xs sm:text-sm h-9 sm:h-10 px-2 sm:px-3 bg-green-600 hover:bg-green-700 text-white">
+          <Plus className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
+          <span>Agregar equipo</span>
+        </Button>
+      </PageHeader>
+
+      {/* Tabs del grupo Personas */}
+      <GroupTabs tabs={PERSONAS_TABS} />
+
+      {/* Stats Bar */}
+      {!loading && teamList.length > 0 && (
+        <StatsBar
+          items={[
+            { label: 'Equipos Totales', value: teamList.length, icon: <Users className="w-5 h-5" />, color: 'primary' },
+          ]}
+        />
+      )}
+
+      {loading ? (
+        <ListSkeleton count={4} variant="row" />
+      ) : teamList.length === 0 ? (
+        <Card className="p-12 text-center">
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-10 h-10 bg-muted rounded-full" />
+            <p className="text-sm text-muted-foreground">No hay equipos registrados</p>
+            <Button onClick={() => setDialogOpen(true)} className="mt-2 gap-2">
+              <Plus className="w-4 h-4" />
+              Crear primer equipo
+            </Button>
+          </div>
+        </Card>
+      ) : (
+        <div className="space-y-2">
+          {teamList.map((team) => (
+            <div key={team.id}>
+              <Card className="overflow-hidden hover:shadow-md transition-shadow">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <button
+                      onClick={() => toggleTeamMembers(team.id)}
+                      className="flex items-center gap-3 min-w-0 flex-1 text-left hover:opacity-80 transition-opacity"
+                    >
+                      <TeamFlag
+                        country={team.country}
+                        color={team.color || '#4a9d67'}
+                        shape="rect"
+                        className="w-9 h-7"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <h3 className="font-semibold text-sm truncate">{team.name}</h3>
+                        <p className="text-xs text-muted-foreground flex items-center gap-1">
+                          <Users className="w-3 h-3" />
+                          {memberCounts[team.id] || 0} integrante{(memberCounts[team.id] || 0) !== 1 ? 's' : ''}
+                        </p>
+                      </div>
+                    </button>
+                    <div className="flex gap-1 shrink-0">
+                      <Button
+                        onClick={() => toggleTeamMembers(team.id)}
+                        size="sm"
+                        variant="ghost"
+                        className="h-8 w-8 p-0"
+                        title={expandedTeamId === team.id ? 'Contraer' : 'Expandir'}
+                      >
+                        <ChevronDown
+                          className="w-4 h-4 transition-transform"
+                          style={{
+                            transform: expandedTeamId === team.id ? 'rotate(180deg)' : 'rotate(0deg)',
+                          }}
+                        />
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          setEditingId(team.id)
+                          setForm({
+                            name: team.name,
+                            color: team.color,
+                            country: team.country || null,
+                            useCountry: !!team.country
+                          })
+                          setDialogOpen(true)
+                        }}
+                        size="sm"
+                        variant="ghost"
+                        className="h-8 w-8 p-0 hover:bg-blue-100"
+                        title="Editar equipo"
+                      >
+                        <Edit2 className="w-4 h-4 text-blue-600" />
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          setDeletingId(team.id)
+                          setDeleteDialogOpen(true)
+                        }}
+                        size="sm"
+                        variant="ghost"
+                        className="h-8 w-8 p-0 hover:bg-red-100"
+                        title="Eliminar equipo"
+                      >
+                        <Trash2 className="w-4 h-4 text-red-600" />
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Expanded Members List */}
+              {expandedTeamId === team.id && expandedMembers[team.id] && (
+                <div className="mt-1 ml-4 border-l-2 border-muted pl-4 space-y-1">
+                  {expandedMembers[team.id]?.length === 0 ? (
+                    <p className="text-xs text-muted-foreground py-2">Sin integrantes</p>
+                  ) : (
+                    expandedMembers[team.id]?.map((member) => (
+                      <div key={member.id} className="text-xs py-1">
+                        <p className="font-medium text-foreground">{member.name}</p>
+                        {member.phone && <p className="text-muted-foreground">{member.phone}</p>}
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Team Modal - MobileSheet (adaptive: Dialog on desktop, Drawer on mobile) */}
+      <MobileSheet 
+        open={dialogOpen} 
+        onOpenChange={(open) => {
+          setDialogOpen(open)
+          if (!open) {
+            setForm({ ...emptyForm })
+            setEditingId(null)
+            clearNewParam()
+          }
+        }}
+        title={editingId ? 'Editar equipo' : 'Agregar equipo'}
+        size="md"
+      >
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <Label htmlFor="name">Nombre *</Label>
+            <Input
+              id="name"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              placeholder="Ej: Nombre del equipo"
+            />
+          </div>
+
+          <div>
+            <Label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={form.useCountry}
+                onChange={(e) => setForm({ ...form, useCountry: e.target.checked, country: e.target.checked ? form.country || 'MX' : null })}
+                className="w-4 h-4 rounded"
+              />
+              Usar bandera de país en lugar de color
+            </Label>
+          </div>
+
+          {form.useCountry ? (
+            <div>
+              <Label>País *</Label>
+              <div className="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto p-2 border rounded-lg bg-muted/20">
+                {COUNTRIES.map((country) => (
+                  <button
+                    key={country.code}
+                    type="button"
+                    onClick={() => setForm({ ...form, country: country.code })}
+                    className={`flex flex-col items-center justify-center gap-1 p-2 rounded-lg border-2 transition-all ${
+                      form.country === country.code
+                        ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/20'
+                        : 'border-muted hover:border-emerald-300'
+                    }`}
+                  >
+                    <div className="w-8 h-6">
+                      <CountryFlagSvg code={country.code} className="w-full h-full" />
+                    </div>
+                    <span className="truncate text-xs font-medium">{country.code}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div>
+              <Label>Color *</Label>
+              <div className="grid grid-cols-4 gap-2">
+                {PRESET_COLORS.map((preset) => (
+                  <button
+                    key={preset.value}
+                    type="button"
+                    onClick={() => setForm({ ...form, color: preset.value })}
+                    className="relative flex items-center justify-center h-10 rounded-lg border-2 transition-all hover:scale-105"
+                    style={{
+                      backgroundColor: preset.value,
+                      borderColor: form.color === preset.value ? '#000' : 'transparent',
+                    }}
+                    title={preset.name}
+                  >
+                    {form.color === preset.value && (
+                      <span className="text-white font-bold text-lg">✓</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+              <div className="mt-2 flex items-center gap-2">
+                <input
+                  type="color"
+                  value={form.color}
+                  onChange={(e) => setForm({ ...form, color: e.target.value })}
+                  className="w-10 h-10 rounded cursor-pointer"
+                />
+                <Input
+                  value={form.color}
+                  onChange={(e) => setForm({ ...form, color: e.target.value })}
+                  placeholder="Código hex"
+                  className="text-xs"
+                />
+              </div>
+            </div>
+          )}
+
+          <div className="flex gap-2 justify-end pt-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => { setDialogOpen(false); clearNewParam() }}
+            >
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={isPending}>
+              {editingId ? 'Guardar cambios' : 'Crear equipo'}
+            </Button>
+          </div>
+        </form>
+      </MobileSheet>
+
+      {/* Delete Confirmation */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Eliminar equipo?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta acción no se puede deshacer. Se eliminará el equipo pero los camperos asignados a este equipo no serán eliminados.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="flex gap-2 justify-end">
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deletingId && handleDelete(deletingId)}
+              disabled={isPending}
+            >
+              Eliminar
+            </AlertDialogAction>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  )
+}
