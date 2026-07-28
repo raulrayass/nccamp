@@ -15,9 +15,10 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import {
-  getTransactions, createTransaction, updateTransaction, deleteTransaction,
+  getTransactions, createTransaction, updateTransaction, deleteTransaction, getDashboardData,
 } from '@/app/actions/transactions'
 import { getCategories } from '@/app/actions/categories'
+import { useEvent } from '@/lib/contexts/event-context'
 import { Plus, Pencil, Trash2, ArrowUpRight, ArrowDownRight, FileDown, TrendingUp, TrendingDown, Wallet, Search, X, Filter, ChevronDown as ChevronDownIcon, Download } from 'lucide-react'
 import type { Category } from '@/lib/db/schema'
 import * as XLSX from 'xlsx'
@@ -156,7 +157,9 @@ const defaultForm = {
   paymentMethod: 'cash',
 }
 
-export function TransactionsClient({ userId }: { userId: string }) {
+export function TransactionsClient({ userId, eventId }: { userId: string; eventId: number | null }) {
+  const eventIdFromContext = useEvent().eventId
+  const finalEventId = eventId ?? eventIdFromContext
   const [isPending, startTransition] = useTransition()
   const [transactions, setTransactions] = useState<TransactionRow[]>([])
   const [categories, setCategories] = useState<Category[]>([])
@@ -181,7 +184,7 @@ export function TransactionsClient({ userId }: { userId: string }) {
 
   async function reload() {
     const [txs, cats] = await Promise.all([
-      getTransactions(userId),
+      getTransactions(userId, { eventId: finalEventId }),
       getCategories(userId),
     ])
     setTransactions(txs)
@@ -293,25 +296,20 @@ export function TransactionsClient({ userId }: { userId: string }) {
     }
     startTransition(async () => {
       try {
+        const data = {
+          categoryId: parseInt(form.categoryId),
+          type: form.type,
+          amount: form.amount,
+          description: form.description,
+          date: form.date,
+          paymentMethod: form.paymentMethod,
+          eventId: finalEventId,
+        }
         if (editingId) {
-          await updateTransaction(userId, editingId, {
-            categoryId: parseInt(form.categoryId),
-            type: form.type,
-            amount: form.amount,
-            description: form.description,
-            date: form.date,
-            paymentMethod: form.paymentMethod,
-          })
+          await updateTransaction(userId, editingId, data)
           toast.success('Transacción actualizada')
         } else {
-          await createTransaction(userId, {
-            categoryId: parseInt(form.categoryId),
-            type: form.type,
-            amount: form.amount,
-            description: form.description,
-            date: form.date,
-            paymentMethod: form.paymentMethod,
-          })
+          await createTransaction(userId, data)
           toast.success('Transacción registrada')
         }
         setDialogOpen(false)
@@ -328,7 +326,7 @@ export function TransactionsClient({ userId }: { userId: string }) {
     if (!deletingId) return
     startTransition(async () => {
       try {
-        await deleteTransaction(userId, deletingId)
+        await deleteTransaction(userId, deletingId, finalEventId)
         toast.success('Transacción eliminada')
         setDeleteDialogOpen(false)
         await reload()

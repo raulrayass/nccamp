@@ -44,6 +44,7 @@ export const categories = pgTable('categories', {
 export const transactions = pgTable('transactions', {
   id: serial('id').primaryKey(),
   userId: text('userId').notNull(),
+  eventId: integer('eventId'), // nullable - Fase B
   categoryId: integer('categoryId').notNull(),
   type: text('type').notNull(), // 'income' | 'expense'
   amount: numeric('amount', { precision: 12, scale: 2 }).notNull(),

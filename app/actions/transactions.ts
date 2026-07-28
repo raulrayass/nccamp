@@ -2,14 +2,17 @@
 
 import { db } from '@/lib/db'
 import { transactions, categories, staff, attendees, staffPayments, attendeePayments } from '@/lib/db/schema'
-import { and, eq, desc, gte, lte } from 'drizzle-orm'
+import { and, eq, desc, gte, lte, count } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 
 export async function getTransactions(
   userId: string,
-  filters?: { type?: string; categoryId?: number; from?: string; to?: string }
+  filters?: { type?: string; categoryId?: number; from?: string; to?: string; eventId?: number | null }
 ) {
   const conditions = [eq(transactions.userId, userId)]
+  if (filters?.eventId !== undefined && filters.eventId !== null) {
+    conditions.push(eq(transactions.eventId, filters.eventId))
+  }
 
   if (filters?.type && filters.type !== 'all') {
     conditions.push(eq(transactions.type, filters.type))
@@ -46,7 +49,11 @@ export async function getTransactions(
     .orderBy(desc(transactions.date), desc(transactions.createdAt))
 }
 
-export async function getDashboardData(userId: string) {
+export async function getDashboardData(userId: string, eventId?: number | null) {
+  const conditions = [eq(transactions.userId, userId)]
+  if (eventId !== undefined && eventId !== null) {
+    conditions.push(eq(transactions.eventId, eventId))
+  }
   const allTransactions = await db
     .select({
       id: transactions.id,
@@ -61,7 +68,7 @@ export async function getDashboardData(userId: string) {
     })
     .from(transactions)
     .leftJoin(categories, eq(transactions.categoryId, categories.id))
-    .where(eq(transactions.userId, userId))
+    .where(and(...(conditions as any)))
     .orderBy(desc(transactions.date))
 
   // Payment method breakdown - correctly track available balance per method
@@ -169,9 +176,9 @@ export async function getDashboardData(userId: string) {
 
 export async function createTransaction(
   userId: string,
-  data: { categoryId: number; type: string; amount: string; description: string; date: string; paymentMethod?: string }
+  data: { categoryId: number; type: string; amount: string; description: string; date: string; paymentMethod?: string; eventId?: number | null }
 ) {
-  await db.insert(transactions).values({ userId, ...data, paymentMethod: data.paymentMethod || 'cash' })
+  await db.insert(transactions).values({ userId, eventId: data.eventId ?? null, ...data, paymentMethod: data.paymentMethod || 'cash' })
   revalidatePath('/')
   revalidatePath('/transactions')
 }
@@ -179,7 +186,7 @@ export async function createTransaction(
 export async function updateTransaction(
   userId: string,
   id: number,
-  data: { categoryId: number; type: string; amount: string; description: string; date: string; paymentMethod?: string }
+  data: { categoryId: number; type: string; amount: string; description: string; date: string; paymentMethod?: string; eventId?: number | null }
 ) {
   // Get the old transaction to see if we need to sync payments
   const [oldTransaction] = await db
@@ -291,7 +298,7 @@ export async function updateTransaction(
   revalidatePath('/transactions')
 }
 
-export async function deleteTransaction(userId: string, id: number) {
+export async function deleteTransaction(userId: string, id: number, eventId?: number | null) {
   // Get the transaction to see if it's a payment
   const [transaction] = await db
     .select()
@@ -384,15 +391,19 @@ export async function deleteTransaction(userId: string, id: number) {
   revalidatePath('/transactions')
 }
 
-export async function getPaymentMethodBreakdown(userId: string) {
+export async function getPaymentMethodBreakdown(userId: string, eventId?: number | null) {
   try {
+    const conditions = [eq(transactions.userId, userId)]
+    if (eventId !== undefined && eventId !== null) {
+      conditions.push(eq(transactions.eventId, eventId))
+    }
     const allTransactions = await db
       .select({
         paymentMethod: transactions.paymentMethod,
         amount: transactions.amount,
       })
       .from(transactions)
-      .where(eq(transactions.userId, userId))
+      .where(and(...(conditions as any)))
 
     // Group by payment method
     const breakdown = {

@@ -65,6 +65,10 @@ ADD COLUMN IF NOT EXISTS eventId integer;
 ALTER TABLE staff
 ADD COLUMN IF NOT EXISTS eventId integer;
 
+-- Fase B: Add eventId column to transactions table (nullable for multi-event support)
+ALTER TABLE transactions
+ADD COLUMN IF NOT EXISTS eventId integer;
+
 -- Verify the changes
 SELECT table_name, column_name FROM information_schema.columns 
 WHERE table_name IN ('transactions', 'attendee_payments', 'teams', 'attendees', 'events', 'event_members', 'games', 'game_scores', 'categories', 'churches', 'staff') 
