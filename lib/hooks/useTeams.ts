@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { getTeams } from '@/app/actions/teams'
+import { getAllTeams } from '@/app/actions/teams'
 import { useSession } from '@/lib/auth-client'
 
 export interface Team {
@@ -11,6 +11,7 @@ export interface Team {
   country?: string | null
   useCountry?: boolean
   userId: string
+  eventId?: number | null
   createdAt?: Date
 }
 
@@ -21,7 +22,7 @@ interface UseTeamsState {
   refetch: () => Promise<void>
 }
 
-export function useTeams(): UseTeamsState {
+export function useTeams(eventId?: number | null): UseTeamsState {
   const session = useSession()
   const [teams, setTeams] = useState<Team[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -38,7 +39,7 @@ export function useTeams(): UseTeamsState {
 
     try {
       setIsLoading(true)
-      const data = await getTeams(userId)
+      const data = await getAllTeams(userId, eventId)
       setTeams(data || [])
       setError(null)
     } catch (err) {
@@ -47,7 +48,7 @@ export function useTeams(): UseTeamsState {
     } finally {
       setIsLoading(false)
     }
-  }, [userId])
+  }, [userId, eventId])
 
   useEffect(() => {
     loadTeams()

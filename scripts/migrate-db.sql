@@ -41,6 +41,10 @@ CREATE TABLE IF NOT EXISTS event_members (
 ALTER TABLE attendees
 ADD COLUMN IF NOT EXISTS eventId integer;
 
+-- Fase B: Add eventId column to teams table (nullable for multi-event support)
+ALTER TABLE teams
+ADD COLUMN IF NOT EXISTS eventId integer;
+
 -- Verify the changes
 SELECT table_name, column_name FROM information_schema.columns 
 WHERE table_name IN ('transactions', 'attendee_payments', 'teams', 'attendees', 'events', 'event_members') 

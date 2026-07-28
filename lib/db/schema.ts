@@ -102,6 +102,7 @@ export const churches = pgTable('churches', {
 export const teams = pgTable('teams', {
   id: serial('id').primaryKey(),
   userId: text('userId').notNull(),
+  eventId: integer('eventId'), // nullable - Fase B
   name: text('name').notNull(),
   color: text('color').notNull().default('#4a9d67'),
   country: text('country'), // Country code (e.g., 'MX', 'BR', 'AR') - optional

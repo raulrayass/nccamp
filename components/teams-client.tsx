@@ -24,11 +24,12 @@ import { ListSkeleton } from '@/components/list-skeleton'
 
 interface Props {
   userId: string
+  eventId: number | null
 }
 
-export function TeamsClient({ userId }: Props) {
+export function TeamsClient({ userId, eventId }: Props) {
   // Hooks centralizados para sincronización
-  const { teams: teamList, isLoading: teamsLoading } = useTeams()
+  const { teams: teamList, isLoading: teamsLoading } = useTeams(eventId)
   const { scores: allGameScores } = useGameScores()
 
   // Local UI state
@@ -64,14 +65,14 @@ export function TeamsClient({ userId }: Props) {
   useEffect(() => {
     async function loadMemberCounts() {
       try {
-        const counts = await getTeamMemberCounts(userId)
+        const counts = await getTeamMemberCounts(userId, eventId)
         setMemberCounts(counts)
       } catch (error) {
         console.error('Error loading member counts:', error)
       }
     }
     loadMemberCounts()
-  }, [userId, teamList.length]) // Refetch si cambia cantidad de equipos
+  }, [userId, eventId, teamList.length]) // Refetch si cambia cantidad de equipos
 
   // Abre el modal de agregar cuando el FAB del dock navega con ?new=1
   useEffect(() => {
@@ -95,7 +96,7 @@ export function TeamsClient({ userId }: Props) {
       setExpandedTeamId(teamId)
       if (!expandedMembers[teamId]) {
         try {
-          const members = await getTeamMembers(userId, teamId)
+          const members = await getTeamMembers(userId, teamId, eventId)
           setExpandedMembers({ ...expandedMembers, [teamId]: members })
         } catch (error) {
           toast.error('Error al cargar integrantes del equipo')
@@ -114,10 +115,10 @@ export function TeamsClient({ userId }: Props) {
     startTransition(async () => {
       try {
         if (editingId) {
-          await updateTeam(userId, editingId, form)
+          await updateTeam(userId, editingId, { ...form, eventId })
           toast.success('Equipo actualizado')
         } else {
-          await createTeam(userId, form)
+          await createTeam(userId, { ...form, eventId })
           toast.success('Equipo creado')
         }
         setDialogOpen(false)
