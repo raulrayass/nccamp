@@ -1,62 +1,61 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { getAllGameScores } from '@/app/actions/games'
+import { getAllChurches } from '@/app/actions/churches'
 import { useSession } from '@/lib/auth-client'
 
-export interface GameScore {
+export interface Church {
   id: number
-  gameId: number
-  teamId: number
-  points: number
+  name: string
   userId: string
   eventId?: number | null
   createdAt?: Date
+  updatedAt?: Date
 }
 
-interface GameScoresState {
-  scores: GameScore[]
+interface UseChurchesState {
+  churches: Church[]
   isLoading: boolean
   error: Error | null
   refetch: () => Promise<void>
 }
 
-export function useGameScores(eventId?: number | null): GameScoresState {
+export function useChurches(eventId?: number | null): UseChurchesState {
   const session = useSession()
-  const [scores, setScores] = useState<GameScore[]>([])
+  const [churches, setChurches] = useState<Church[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
 
   const userId = session?.data?.user?.id
 
-  const loadScores = useCallback(async () => {
+  const loadChurches = useCallback(async () => {
     if (!userId) {
-      setScores([])
+      setChurches([])
       setIsLoading(false)
       return
     }
 
     try {
       setIsLoading(true)
-      const data = await getAllGameScores(userId, eventId)
-      setScores(data || [])
+      const data = await getAllChurches(userId, eventId)
+      setChurches(data || [])
       setError(null)
     } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to fetch game scores'))
-      setScores([])
+      setError(err instanceof Error ? err : new Error('Failed to fetch churches'))
+      setChurches([])
     } finally {
       setIsLoading(false)
     }
   }, [userId, eventId])
 
   useEffect(() => {
-    loadScores()
-  }, [loadScores])
+    loadChurches()
+  }, [loadChurches])
 
   return {
-    scores,
+    churches,
     isLoading,
     error,
-    refetch: loadScores,
+    refetch: loadChurches,
   }
 }

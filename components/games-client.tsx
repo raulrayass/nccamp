@@ -10,8 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import { Plus, Edit2, Trash2, Gamepad2, Trophy, Minus, Users2, Maximize2 } from 'lucide-react'
 import { toast } from 'sonner'
-import { createGame, updateGame, deleteGame, getGames, addGameScore, deleteGameScore, getGameScores, getAllGameScores } from '@/app/actions/games'
-import { getTeams } from '@/app/actions/teams'
+import { createGame, updateGame, deleteGame, addGameScore, deleteGameScore, getGameScores } from '@/app/actions/games'
 import { Game, GameScore, Team } from '@/lib/db/schema'
 import { cn } from '@/lib/utils'
 import { StatsBar } from '@/components/stats-bar'
@@ -25,13 +24,14 @@ import { ListSkeleton } from '@/components/list-skeleton'
 
 interface Props {
   userId: string
+  eventId: number | null
 }
 
-export function GamesClient({ userId }: Props) {
+export function GamesClient({ userId, eventId }: Props) {
   // Hooks centralizados para sincronización cross-module
-  const { games: gameList, isLoading: gamesLoading, error: gamesError } = useGames()
-  const { teams, isLoading: teamsLoading, error: teamsError } = useTeams()
-  const { scores: allGameScores, isLoading: scoresLoading } = useGameScores()
+  const { games: gameList, isLoading: gamesLoading, error: gamesError, refetch: refetchGames } = useGames(eventId)
+  const { teams, isLoading: teamsLoading, error: teamsError } = useTeams(eventId)
+  const { scores: allGameScores, isLoading: scoresLoading, refetch: refetchScores } = useGameScores(eventId)
 
   // Local UI state
   const [gameScores, setGameScores] = useState<GameScore[]>([])
@@ -78,12 +78,9 @@ export function GamesClient({ userId }: Props) {
 
   async function loadScoresForGame(gameId: number) {
     try {
-      const [gameScoresData, allScoresData] = await Promise.all([
-        getGameScores(userId, gameId),
-        getAllGameScores(userId),
-      ])
+      const gameScoresData = await getGameScores(userId, gameId, eventId)
       setGameScores(gameScoresData)
-      setAllGameScores(allScoresData)
+      await refetchScores()
     } catch (error) {
       toast.error('Error al cargar puntuaciones')
       console.error(error)
@@ -99,17 +96,17 @@ export function GamesClient({ userId }: Props) {
     startTransition(async () => {
       try {
         if (editingId) {
-          await updateGame(userId, editingId, form)
+          await updateGame(userId, editingId, { ...form, eventId })
           toast.success('Juego actualizado')
         } else {
-          await createGame(userId, form)
+          await createGame(userId, { ...form, eventId })
           toast.success('Juego creado')
         }
         setDialogOpen(false)
         setForm({ ...emptyForm })
         setEditingId(null)
         clearNewParam()
-        // Los hooks SWR se actualizan automáticamente via mutate()
+        await refetchGames()
       } catch (error) {
         toast.error('Error al guardar el juego')
         console.error(error)
@@ -120,10 +117,10 @@ export function GamesClient({ userId }: Props) {
   async function handleDelete(id: number) {
     startTransition(async () => {
       try {
-        await deleteGame(userId, id)
+        await deleteGame(userId, id, eventId)
         toast.success('Juego eliminado')
         setDeleteDialogOpen(false)
-        await loadGames()
+        await refetchGames()
       } catch (error) {
         toast.error('Error al eliminar el juego')
         console.error(error)
@@ -145,10 +142,11 @@ export function GamesClient({ userId }: Props) {
 
     startTransition(async () => {
       try {
-        await addGameScore(userId, selectedGameId, parseInt(scoringForm.teamId, 10), parseInt(scoringForm.points, 10))
+        await addGameScore(userId, selectedGameId, parseInt(scoringForm.teamId, 10), parseInt(scoringForm.points, 10), eventId)
         toast.success('Puntos registrados')
         setScoringForm({ teamId: '', points: '' })
         await loadScoresForGame(selectedGameId)
+        await refetchScores()
       } catch (error) {
         toast.error('Error al registrar puntos')
         console.error(error)
@@ -159,9 +157,10 @@ export function GamesClient({ userId }: Props) {
   async function handleDeleteScore(scoreId: number, gameId: number) {
     startTransition(async () => {
       try {
-        await deleteGameScore(userId, scoreId)
+        await deleteGameScore(userId, scoreId, eventId)
         toast.success('Puntos eliminados')
         await loadScoresForGame(gameId)
+        await refetchScores()
       } catch (error) {
         toast.error('Error al eliminar los puntos')
         console.error(error)

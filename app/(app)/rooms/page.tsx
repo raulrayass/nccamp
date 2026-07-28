@@ -1,20 +1,20 @@
+'use client'
+
 import { RoomsClient } from '@/components/rooms-client'
-import { auth } from '@/lib/auth'
-import { headers } from 'next/headers'
-import { redirect } from 'next/navigation'
+import { useUser } from '@/components/user-provider'
+import { useEvent } from '@/lib/contexts/event-context'
 
-export const metadata = {
-  title: 'Habitaciones | Campamento',
-  description: 'Gestiona las habitaciones del campamento',
-}
+export default function RoomsPage() {
+  const { user } = useUser()
+  const { eventId } = useEvent()
 
-export default async function RoomsPage() {
-  const session = await auth.api.getSession({ headers: await headers() })
-  if (!session?.user) redirect('/sign-in')
+  if (!user) {
+    return <div className="text-center py-12 text-muted-foreground">Cargando...</div>
+  }
 
   return (
     <main className="flex-1 p-4 sm:p-6">
-      <RoomsClient userId={session.user.id} />
+      <RoomsClient userId={user.id} eventId={eventId} />
     </main>
   )
 }

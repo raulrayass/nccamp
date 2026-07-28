@@ -18,9 +18,10 @@ import { PageHeader } from '@/components/page-header'
 
 interface Props {
   userId: string
+  eventId: number | null
 }
 
-export function RoomsClient({ userId }: Props) {
+export function RoomsClient({ userId, eventId }: Props) {
   const [roomList, setRoomList] = useState<Room[]>([])
   const [occupancy, setOccupancy] = useState<Record<number, number>>({})
   const [expandedRoomId, setExpandedRoomId] = useState<number | null>(null)
@@ -41,7 +42,7 @@ export function RoomsClient({ userId }: Props) {
 
   useEffect(() => {
     loadRooms()
-  }, [userId])
+  }, [userId, eventId])
 
   // Abre el modal de agregar cuando el FAB del dock navega con ?new=1
   useEffect(() => {
@@ -61,8 +62,8 @@ export function RoomsClient({ userId }: Props) {
   async function loadRooms() {
     setLoading(true)
     try {
-      const data = await getRooms(userId)
-      const occ = await getRoomOccupancy(userId)
+      const data = await getRooms(userId, eventId)
+      const occ = await getRoomOccupancy(userId, eventId)
       setRoomList(data)
       setOccupancy(occ)
     } catch (error) {
@@ -80,7 +81,7 @@ export function RoomsClient({ userId }: Props) {
       setExpandedRoomId(roomId)
       if (!expandedOccupants[roomId]) {
         try {
-          const occupants = await getRoomOccupants(userId, roomId)
+          const occupants = await getRoomOccupants(userId, roomId, eventId)
           setExpandedOccupants({ ...expandedOccupants, [roomId]: occupants })
         } catch (error) {
           toast.error('Error al cargar integrantes de la habitación')
@@ -100,10 +101,10 @@ export function RoomsClient({ userId }: Props) {
     startTransition(async () => {
       try {
         if (editingId) {
-          await updateRoom(userId, editingId, { name: form.name, capacity })
+          await updateRoom(userId, editingId, { name: form.name, capacity, eventId })
           toast.success('Habitación actualizada')
         } else {
-          await createRoom(userId, { name: form.name, capacity })
+          await createRoom(userId, { name: form.name, capacity, eventId })
           toast.success('Habitación creada')
         }
         setDialogOpen(false)
@@ -121,7 +122,7 @@ export function RoomsClient({ userId }: Props) {
   async function handleDelete(id: number) {
     startTransition(async () => {
       try {
-        await deleteRoom(userId, id)
+        await deleteRoom(userId, id, eventId)
         toast.success('Habitación eliminada')
         setDeleteDialogOpen(false)
         await loadRooms()

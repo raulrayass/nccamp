@@ -33,6 +33,7 @@ export const eventMembers = pgTable('event_members', {
 export const categories = pgTable('categories', {
   id: serial('id').primaryKey(),
   userId: text('userId').notNull(),
+  eventId: integer('eventId'), // nullable - Fase B
   name: text('name').notNull(),
   type: text('type').notNull(), // 'income' | 'expense' | 'both'
   color: text('color').notNull().default('#6366f1'),
@@ -43,6 +44,7 @@ export const categories = pgTable('categories', {
 export const transactions = pgTable('transactions', {
   id: serial('id').primaryKey(),
   userId: text('userId').notNull(),
+  eventId: integer('eventId'), // nullable - Fase B
   categoryId: integer('categoryId').notNull(),
   type: text('type').notNull(), // 'income' | 'expense'
   amount: numeric('amount', { precision: 12, scale: 2 }).notNull(),
@@ -94,6 +96,7 @@ export const attendeePayments = pgTable('attendee_payments', {
 export const churches = pgTable('churches', {
   id: serial('id').primaryKey(),
   userId: text('userId').notNull(),
+  eventId: integer('eventId'), // nullable - Fase B
   name: text('name').notNull(),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
   updatedAt: timestamp('updatedAt').notNull().defaultNow(),
@@ -102,6 +105,7 @@ export const churches = pgTable('churches', {
 export const teams = pgTable('teams', {
   id: serial('id').primaryKey(),
   userId: text('userId').notNull(),
+  eventId: integer('eventId'), // nullable - Fase B
   name: text('name').notNull(),
   color: text('color').notNull().default('#4a9d67'),
   country: text('country'), // Country code (e.g., 'MX', 'BR', 'AR') - optional
@@ -112,6 +116,7 @@ export const teams = pgTable('teams', {
 export const rooms = pgTable('rooms', {
   id: serial('id').primaryKey(),
   userId: text('userId').notNull(),
+  eventId: integer('eventId'), // nullable - Fase B
   name: text('name').notNull(),
   capacity: integer('capacity'),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
@@ -121,6 +126,7 @@ export const rooms = pgTable('rooms', {
 export const games = pgTable('games', {
   id: serial('id').primaryKey(),
   userId: text('userId').notNull(),
+  eventId: integer('eventId'), // nullable - Fase B
   name: text('name').notNull(),
   description: text('description'),
   gameDate: date('gameDate'),
@@ -131,6 +137,7 @@ export const games = pgTable('games', {
 export const gameScores = pgTable('game_scores', {
   id: serial('id').primaryKey(),
   userId: text('userId').notNull(),
+  eventId: integer('eventId'), // nullable - Fase B
   gameId: integer('gameId').notNull(),
   teamId: integer('teamId').notNull(),
   points: integer('points').notNull().default(0),
@@ -140,6 +147,7 @@ export const gameScores = pgTable('game_scores', {
 export const staff = pgTable('staff', {
   id: serial('id').primaryKey(),
   userId: text('userId').notNull(),
+  eventId: integer('eventId'), // nullable - Fase B
   name: text('name').notNull(),
   age: integer('age'),
   shirtSize: text('shirtSize'), // 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL'

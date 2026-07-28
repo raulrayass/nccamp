@@ -41,7 +41,39 @@ CREATE TABLE IF NOT EXISTS event_members (
 ALTER TABLE attendees
 ADD COLUMN IF NOT EXISTS eventId integer;
 
+-- Fase B: Add eventId column to teams table (nullable for multi-event support)
+ALTER TABLE teams
+ADD COLUMN IF NOT EXISTS eventId integer;
+
+-- Fase B: Add eventId column to games table (nullable for multi-event support)
+ALTER TABLE games
+ADD COLUMN IF NOT EXISTS eventId integer;
+
+-- Fase B: Add eventId column to game_scores table (nullable for multi-event support)
+ALTER TABLE game_scores
+ADD COLUMN IF NOT EXISTS eventId integer;
+
+-- Fase B: Add eventId column to categories table (nullable for multi-event support)
+ALTER TABLE categories
+ADD COLUMN IF NOT EXISTS eventId integer;
+
+-- Fase B: Add eventId column to churches table (nullable for multi-event support)
+ALTER TABLE churches
+ADD COLUMN IF NOT EXISTS eventId integer;
+
+-- Fase B: Add eventId column to staff table (nullable for multi-event support)
+ALTER TABLE staff
+ADD COLUMN IF NOT EXISTS eventId integer;
+
+-- Fase B: Add eventId column to transactions table (nullable for multi-event support)
+ALTER TABLE transactions
+ADD COLUMN IF NOT EXISTS eventId integer;
+
+-- Fase B: Add eventId column to rooms table (nullable for multi-event support)
+ALTER TABLE rooms
+ADD COLUMN IF NOT EXISTS eventId integer;
+
 -- Verify the changes
 SELECT table_name, column_name FROM information_schema.columns 
-WHERE table_name IN ('transactions', 'attendee_payments', 'teams', 'attendees', 'events', 'event_members') 
+WHERE table_name IN ('transactions', 'attendee_payments', 'teams', 'attendees', 'events', 'event_members', 'games', 'game_scores', 'categories', 'churches', 'staff', 'rooms') 
 AND column_name IN ('paymentMethod', 'country', 'eventId', 'isDefault', 'role');

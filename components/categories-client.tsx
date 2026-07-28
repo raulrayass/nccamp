@@ -51,9 +51,10 @@ const defaultForm = {
 
 interface Props {
   userId: string
+  eventId: number | null
 }
 
-export function CategoriesClient({ userId }: Props) {
+export function CategoriesClient({ userId, eventId }: Props) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -66,8 +67,8 @@ export function CategoriesClient({ userId }: Props) {
   const [form, setForm] = useState(defaultForm)
 
   useEffect(() => {
-    getCategories(userId).then(setCategories)
-  }, [userId])
+    getCategories(userId, 1, eventId).then(setCategories)
+  }, [userId, eventId])
 
   // Abre el modal de nueva categoría cuando el FAB del dock navega con ?new=1
   useEffect(() => {
@@ -108,15 +109,15 @@ export function CategoriesClient({ userId }: Props) {
     startTransition(async () => {
       try {
         if (editingId) {
-          await updateCategory(userId, editingId, form)
+          await updateCategory(userId, editingId, { ...form, eventId })
           toast.success('Categoría actualizada')
         } else {
-          await createCategory(userId, form)
+          await createCategory(userId, { ...form, eventId })
           toast.success('Categoría creada')
         }
         setDialogOpen(false)
         clearNewParam()
-        const updated = await getCategories(userId)
+        const updated = await getCategories(userId, 1, eventId)
         setCategories(updated)
       } catch (error) {
         toast.error('Error al guardar la categoría')
@@ -129,10 +130,10 @@ export function CategoriesClient({ userId }: Props) {
     if (!deletingId) return
     startTransition(async () => {
       try {
-        await deleteCategory(userId, deletingId)
+        await deleteCategory(userId, deletingId, eventId)
         toast.success('Categoría eliminada')
         setDeleteDialogOpen(false)
-        const updated = await getCategories(userId)
+        const updated = await getCategories(userId, 1, eventId)
         setCategories(updated)
       } catch (error) {
         toast.error('Error al eliminar la categoría')

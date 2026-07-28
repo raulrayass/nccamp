@@ -1,62 +1,61 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { getAllGameScores } from '@/app/actions/games'
+import { getAllRooms } from '@/app/actions/rooms'
 import { useSession } from '@/lib/auth-client'
 
-export interface GameScore {
+export interface Room {
   id: number
-  gameId: number
-  teamId: number
-  points: number
+  name: string
+  capacity?: number | null
   userId: string
   eventId?: number | null
   createdAt?: Date
 }
 
-interface GameScoresState {
-  scores: GameScore[]
+interface UseRoomsState {
+  rooms: Room[]
   isLoading: boolean
   error: Error | null
   refetch: () => Promise<void>
 }
 
-export function useGameScores(eventId?: number | null): GameScoresState {
+export function useRooms(eventId?: number | null): UseRoomsState {
   const session = useSession()
-  const [scores, setScores] = useState<GameScore[]>([])
+  const [rooms, setRooms] = useState<Room[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
 
   const userId = session?.data?.user?.id
 
-  const loadScores = useCallback(async () => {
+  const loadRooms = useCallback(async () => {
     if (!userId) {
-      setScores([])
+      setRooms([])
       setIsLoading(false)
       return
     }
 
     try {
       setIsLoading(true)
-      const data = await getAllGameScores(userId, eventId)
-      setScores(data || [])
+      const data = await getAllRooms(userId, eventId)
+      setRooms(data || [])
       setError(null)
     } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to fetch game scores'))
-      setScores([])
+      setError(err instanceof Error ? err : new Error('Failed to fetch rooms'))
+      setRooms([])
     } finally {
       setIsLoading(false)
     }
   }, [userId, eventId])
 
   useEffect(() => {
-    loadScores()
-  }, [loadScores])
+    loadRooms()
+  }, [loadRooms])
 
   return {
-    scores,
+    rooms,
     isLoading,
     error,
-    refetch: loadScores,
+    refetch: loadRooms,
   }
 }

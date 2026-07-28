@@ -1,20 +1,20 @@
+'use client'
+
 import { TeamsClient } from '@/components/teams-client'
-import { auth } from '@/lib/auth'
-import { headers } from 'next/headers'
-import { redirect } from 'next/navigation'
+import { useUser } from '@/components/user-provider'
+import { useEvent } from '@/lib/contexts/event-context'
 
-export const metadata = {
-  title: 'Equipos | Campamento',
-  description: 'Gestiona los equipos del campamento',
-}
+export default function TeamsPage() {
+  const { user } = useUser()
+  const { eventId } = useEvent()
 
-export default async function TeamsPage() {
-  const session = await auth.api.getSession({ headers: await headers() })
-  if (!session?.user) redirect('/sign-in')
+  if (!user) {
+    return <div className="text-center py-12 text-muted-foreground">Cargando...</div>
+  }
 
   return (
     <main className="flex-1 p-4 sm:p-6">
-      <TeamsClient userId={session.user.id} />
+      <TeamsClient userId={user.id} eventId={eventId} />
     </main>
   )
 }

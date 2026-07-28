@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { getGames } from '@/app/actions/games'
+import { getAllGames } from '@/app/actions/games'
 import { useSession } from '@/lib/auth-client'
 
 export interface Game {
@@ -10,6 +10,7 @@ export interface Game {
   description?: string | null
   gameDate?: string | null
   userId: string
+  eventId?: number | null
   createdAt?: Date
 }
 
@@ -20,7 +21,7 @@ interface UseGamesState {
   refetch: () => Promise<void>
 }
 
-export function useGames(): UseGamesState {
+export function useGames(eventId?: number | null): UseGamesState {
   const session = useSession()
   const [games, setGames] = useState<Game[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -37,7 +38,7 @@ export function useGames(): UseGamesState {
 
     try {
       setIsLoading(true)
-      const data = await getGames(userId)
+      const data = await getAllGames(userId, eventId)
       setGames(data || [])
       setError(null)
     } catch (err) {
@@ -46,7 +47,7 @@ export function useGames(): UseGamesState {
     } finally {
       setIsLoading(false)
     }
-  }, [userId])
+  }, [userId, eventId])
 
   useEffect(() => {
     loadGames()
