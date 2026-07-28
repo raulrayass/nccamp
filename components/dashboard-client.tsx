@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { getDashboardData } from '@/app/actions/transactions'
+import { getDashboardData, getGameActivityData } from '@/app/actions/dashboard'
 import { getChurchDistribution } from '@/app/actions/attendees'
 import { Card } from '@/components/ui/card'
 import {
@@ -26,14 +26,14 @@ function formatCompact(value: number) {
 const INCOME_COLOR = '#22c55e'
 const EXPENSE_COLOR = '#f97316'
 
-export function DashboardClient({ userId }: { userId: string }) {
+export function DashboardClient({ userId, eventId }: { userId: string; eventId: number | null }) {
   const [data, setData] = useState<DashboardData | null>(null)
   const [churchData, setChurchData] = useState<any[]>([])
 
   useEffect(() => {
-    getDashboardData(userId).then(setData)
-    getChurchDistribution(userId).then(setChurchData)
-  }, [userId])
+    getDashboardData(userId, eventId).then(setData)
+    getChurchDistribution(userId, eventId).then(setChurchData)
+  }, [userId, eventId])
 
   if (!data) {
     return <DashboardSkeleton />
