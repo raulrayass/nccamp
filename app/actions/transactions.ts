@@ -178,7 +178,13 @@ export async function createTransaction(
   userId: string,
   data: { categoryId: number; type: string; amount: string; description: string; date: string; paymentMethod?: string; eventId?: number | null }
 ) {
-  await db.insert(transactions).values({ userId, eventId: data.eventId ?? null, ...data, paymentMethod: data.paymentMethod || 'cash' })
+  const { eventId, paymentMethod, ...rest } = data
+  await db.insert(transactions).values({
+    userId,
+    eventId: eventId ?? null,
+    paymentMethod: paymentMethod || 'cash',
+    ...rest,
+  })
   revalidatePath('/')
   revalidatePath('/transactions')
 }
@@ -289,9 +295,15 @@ export async function updateTransaction(
   }
 
   // Update the transaction
+  const { eventId: dataEventId, paymentMethod, ...rest } = data
   await db
     .update(transactions)
-    .set({ ...data, paymentMethod: data.paymentMethod || 'cash', updatedAt: new Date() })
+    .set({
+      eventId: dataEventId ?? null,
+      paymentMethod: paymentMethod || 'cash',
+      updatedAt: new Date(),
+      ...rest,
+    })
     .where(and(eq(transactions.id, id), eq(transactions.userId, userId)))
 
   revalidatePath('/')
