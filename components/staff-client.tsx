@@ -40,6 +40,7 @@ import { StatsBar } from '@/components/stats-bar'
 
 interface Props {
   userId: string
+  eventId: number | null
 }
 
 const MINISTRIES = [
@@ -67,7 +68,7 @@ const emptyForm = {
 
 const SHIRT_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
 
-export function StaffClient({ userId }: Props) {
+export function StaffClient({ userId, eventId }: Props) {
   const [staffList, setStaffList] = useState<Staff[]>([])
   const [churches, setChurches] = useState<Church[]>([])
   const [teams, setTeams] = useState<Team[]>([])
@@ -103,7 +104,7 @@ export function StaffClient({ userId }: Props) {
 
   useEffect(() => {
     initializeDefaults()
-  }, [userId])
+  }, [userId, eventId])
 
   // Abre el modal de agregar cuando el FAB del dock navega con ?new=1
   useEffect(() => {
@@ -134,7 +135,7 @@ export function StaffClient({ userId }: Props) {
   }
 
   async function loadStaff() {
-    const allData = await getAllStaff(userId)
+    const allData = await getAllStaff(userId, eventId)
     setStaffList(allData)
   }
 
@@ -185,11 +186,11 @@ export function StaffClient({ userId }: Props) {
     startTransition(async () => {
       try {
         if (editingId) {
-          await updateStaff(userId, editingId, payload)
-          toast.success('Staff actualizado correctamente')
+          await updateStaff(userId, editingId, { ...payload, eventId })
+          toast.success('Staff actualizado')
         } else {
-          await createStaff(userId, payload)
-          toast.success('Staff agregado correctamente')
+          await createStaff(userId, { ...payload, eventId })
+          toast.success('Staff agregado')
         }
         setDialogOpen(false)
         setForm({ ...emptyForm })
@@ -229,7 +230,7 @@ export function StaffClient({ userId }: Props) {
 
     startTransition(async () => {
       try {
-        await addStaffPayment(userId, selectedStaffId, amount, paymentForm.date, paymentForm.paymentMethod, paymentForm.notes)
+        await addStaffPayment(userId, selectedStaffId, amount, paymentForm.date, paymentForm.paymentMethod, paymentForm.notes, eventId)
         toast.success(`Pago de $${amount.toFixed(2)} registrado para ${member.name}`)
         setPaymentDialogOpen(false)
         setPaymentForm({
@@ -250,7 +251,7 @@ export function StaffClient({ userId }: Props) {
   async function handleDelete(id: number) {
     startTransition(async () => {
       try {
-        await deleteStaff(userId, id)
+        await deleteStaff(userId, id, eventId)
         toast.success('Staff eliminado')
         await loadStaff()
       } catch (error) {
@@ -376,7 +377,7 @@ export function StaffClient({ userId }: Props) {
               a.totalAmount > 0
           )
         ) {
-          await bulkCreateStaff(userId, staffToImport)
+          await bulkCreateStaff(userId, staffToImport, eventId)
           toast.success(`${staffToImport.length} staff importados correctamente`)
           await loadStaff()
         } else {

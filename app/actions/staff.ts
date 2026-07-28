@@ -2,38 +2,49 @@
 
 import { db } from '@/lib/db'
 import { staff, staffPayments, transactions, categories } from '@/lib/db/schema'
-import { eq, and } from 'drizzle-orm'
-import { desc } from 'drizzle-orm'
+import { eq, and, desc, count } from 'drizzle-orm'
 
 const STAFF_PER_PAGE = 20
 
 // Get ALL staff for reports and metrics (no pagination)
-export async function getAllStaff(userId: string) {
+export async function getAllStaff(userId: string, eventId?: number | null) {
+  const conditions = [eq(staff.userId, userId)]
+  if (eventId !== undefined && eventId !== null) {
+    conditions.push(eq(staff.eventId, eventId))
+  }
   return db
     .select()
     .from(staff)
-    .where(eq(staff.userId, userId))
+    .where(and(...(conditions as any)))
     .orderBy(desc(staff.createdAt))
 }
 
 // Get paginated staff for UI display
-export async function getStaff(userId: string, page: number = 1) {
+export async function getStaff(userId: string, page: number = 1, eventId?: number | null) {
   const offset = (page - 1) * STAFF_PER_PAGE
+  const conditions = [eq(staff.userId, userId)]
+  if (eventId !== undefined && eventId !== null) {
+    conditions.push(eq(staff.eventId, eventId))
+  }
   return db
     .select()
     .from(staff)
-    .where(eq(staff.userId, userId))
+    .where(and(...(conditions as any)))
     .orderBy(desc(staff.createdAt))
     .limit(STAFF_PER_PAGE)
     .offset(offset)
 }
 
-export async function getStaffCount(userId: string) {
+export async function getStaffCount(userId: string, eventId?: number | null) {
+  const conditions = [eq(staff.userId, userId)]
+  if (eventId !== undefined && eventId !== null) {
+    conditions.push(eq(staff.eventId, eventId))
+  }
   const result = await db
-    .select({ count: db.sql`count(*)` })
+    .select({ count: count() })
     .from(staff)
-    .where(eq(staff.userId, userId))
-  return parseInt(result[0].count as string, 10)
+    .where(and(...(conditions as any)))
+  return Number(result[0]?.count ?? 0)
 }
 
 export async function getStaffPayments(userId: string, staffId: number) {
@@ -56,10 +67,12 @@ export async function createStaff(
     category?: string
     totalAmount: number
     notes?: string
+    eventId?: number | null
   }
 ) {
   await db.insert(staff).values({
     userId,
+    eventId: data.eventId ?? null,
     name: data.name,
     age: data.age ?? null,
     shirtSize: data.shirtSize || null,
@@ -87,6 +100,7 @@ export async function updateStaff(
     category: string
     totalAmount: number
     notes: string
+    eventId: number | null
   }>
 ) {
   const updateData: any = {
@@ -96,6 +110,7 @@ export async function updateStaff(
   if (data.totalAmount !== undefined) {
     updateData.totalAmount = parseFloat(data.totalAmount.toString())
   }
+  delete (updateData as any).eventId // No actualizar eventId
   await db
     .update(staff)
     .set(updateData)
@@ -109,12 +124,16 @@ export async function toggleCheckIn(userId: string, staffId: number, checkedIn: 
     .where(and(eq(staff.userId, userId), eq(staff.id, staffId)))
 }
 
-export async function deleteStaff(userId: string, staffId: number) {
+export async function deleteStaff(userId: string, staffId: number, eventId?: number | null) {
   // Obtener el staff para conocer su nombre (necesario para borrar transacciones)
+  const delConditions = [eq(staff.userId, userId), eq(staff.id, staffId)]
+  if (eventId !== undefined && eventId !== null) {
+    delConditions.push(eq(staff.eventId, eventId))
+  }
   const [staffMember] = await db
     .select()
     .from(staff)
-    .where(and(eq(staff.userId, userId), eq(staff.id, staffId)))
+    .where(and(...(delConditions as any)))
 
   if (!staffMember) throw new Error('Staff no encontrado')
 
@@ -139,7 +158,7 @@ export async function deleteStaff(userId: string, staffId: number) {
   }
 
   await db.delete(staffPayments).where(eq(staffPayments.staffId, staffId))
-  await db.delete(staff).where(and(eq(staff.userId, userId), eq(staff.id, staffId)))
+  await db.delete(staff).where(and(...(delConditions as any)))
 }
 
 export async function addStaffPayment(
@@ -148,12 +167,17 @@ export async function addStaffPayment(
   amount: number,
   paymentDate: string,
   paymentMethod: string = 'cash',
-  notes?: string
+  notes?: string,
+  eventId?: number | null
 ) {
+  const payConditions = [eq(staff.userId, userId), eq(staff.id, staffId)]
+  if (eventId !== undefined && eventId !== null) {
+    payConditions.push(eq(staff.eventId, eventId))
+  }
   const [staffMember] = await db
     .select()
     .from(staff)
-    .where(and(eq(staff.userId, userId), eq(staff.id, staffId)))
+    .where(and(...(payConditions as any)))
 
   if (!staffMember) throw new Error('Staff no encontrado')
 
@@ -298,7 +322,8 @@ export async function bulkCreateStaff(
     totalAmount: number
     initialPayment?: number
     notes?: string
-  }>
+  }>,
+  eventId?: number | null
 ) {
   if (staffList.length === 0) return
 
@@ -308,6 +333,7 @@ export async function bulkCreateStaff(
     .values(
       staffList.map((s) => ({
         userId,
+        eventId: eventId ?? null,
         name: s.name.trim(),
         age: s.age ?? null,
         sex: s.sex || null,
@@ -331,12 +357,13 @@ export async function bulkCreateStaff(
     .returning()
 
   // Get or create category for payments
-  let staffPaymentCat = await db.query.categories.findFirst({
-    where: (c) => and(eq(c.userId, userId), eq(c.name, 'Pago de Staff')),
-  })
+  let [staffPaymentCat] = await db
+    .select()
+    .from(categories)
+    .where(and(eq(categories.userId, userId), eq(categories.name, 'Pago de Staff')))
 
   if (!staffPaymentCat) {
-    const created = await db
+    const [created] = await db
       .insert(categories)
       .values({
         userId,
@@ -346,7 +373,7 @@ export async function bulkCreateStaff(
         icon: 'users',
       })
       .returning()
-    staffPaymentCat = created[0]
+    staffPaymentCat = created
   }
 
   // Create staff_payments records AND transactions for initial payments
@@ -357,7 +384,7 @@ export async function bulkCreateStaff(
   for (let i = 0; i < createdStaff.length; i++) {
     const initialPayment = parseFloat((staffList[i].initialPayment || 0).toString())
     if (initialPayment > 0) {
-      // Registro en staff_payments (esto es lo que faltaba y causaba transacciones huérfanas)
+      // Registro en staff_payments
       paymentsToInsert.push({
         staffId: createdStaff[i].id,
         userId,
@@ -366,7 +393,7 @@ export async function bulkCreateStaff(
         paymentDate: today,
         notes: 'Pago inicial (importación)',
       })
-      // Transacción correspondiente (misma descripción que usa deleteStaff)
+      // Transacción correspondiente
       transactionsToInsert.push({
         userId,
         categoryId: staffPaymentCat.id,
@@ -387,15 +414,17 @@ export async function bulkCreateStaff(
   }
 }
 
-export async function getCategoryDistribution(userId: string) {
+export async function getCategoryDistribution(userId: string, eventId?: number | null) {
   try {
     // Get all staff with categories/ministries
-    const allStaff = await db.query.staff.findMany({
-      where: eq(staff.userId, userId),
-      columns: {
-        category: true,
-      },
-    })
+    const conditions = [eq(staff.userId, userId)]
+    if (eventId !== undefined && eventId !== null) {
+      conditions.push(eq(staff.eventId, eventId))
+    }
+    const allStaff = await db
+      .select({ category: staff.category })
+      .from(staff)
+      .where(and(...(conditions as any)))
 
     // Group and count by category
     const categoryMap = new Map<string | null, number>()
