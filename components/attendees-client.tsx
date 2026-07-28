@@ -245,7 +245,7 @@ export function AttendeesClient({ userId, eventId }: Props) {
 
     startTransition(async () => {
       try {
-        await addAttendeePayment(userId, selectedAttendeeId, amount, paymentForm.date, paymentForm.paymentMethod, paymentForm.notes)
+        await addAttendeePayment(userId, selectedAttendeeId, amount, paymentForm.date, paymentForm.paymentMethod, paymentForm.notes, eventId)
         toast.success(`Pago de $${amount.toFixed(2)} registrado para ${attendee.name}`)
         setPaymentDialogOpen(false)
         setPaymentForm({

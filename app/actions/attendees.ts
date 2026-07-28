@@ -182,7 +182,8 @@ export async function addAttendeePayment(
   amount: number,
   paymentDate: string,
   paymentMethod: string = 'cash',
-  notes?: string
+  notes?: string,
+  eventId?: number | null
 ) {
   const [attendee] = await db
     .select()
@@ -237,10 +238,14 @@ export async function addAttendeePayment(
   const categoryName = categoryNameMap[paymentMethod] || 'Pago de Camperos - Efectivo'
 
   // Find or create category based on payment method
+  const catConditions = [eq(categories.userId, userId), eq(categories.name, categoryName)]
+  if (eventId !== undefined && eventId !== null) {
+    catConditions.push(eq(categories.eventId, eventId))
+  }
   let [campPaymentCat] = await db
     .select()
     .from(categories)
-    .where(and(eq(categories.userId, userId), eq(categories.name, categoryName)))
+    .where(and(...(catConditions as any)))
 
   if (!campPaymentCat) {
     const colorMap: Record<string, string> = {
@@ -251,6 +256,7 @@ export async function addAttendeePayment(
       .insert(categories)
       .values({
         userId,
+        eventId: eventId ?? null,
         name: categoryName,
         type: 'income',
         color: colorMap[categoryName] || '#22c55e',
@@ -263,6 +269,7 @@ export async function addAttendeePayment(
   // Create transaction for this payment with payment method
   await db.insert(transactions).values({
     userId,
+    eventId: eventId ?? null,
     categoryId: campPaymentCat!.id,
     type: 'income',
     amount,
@@ -375,15 +382,18 @@ export async function bulkCreateAttendees(
 
   // Get or create category for payments (nombre correcto y consistente con addAttendeePayment)
   const categoryName = 'Pago de Camperos - Efectivo'
-  let campPaymentCat = await db.query.categories.findFirst({
-    where: (c) => and(eq(c.userId, userId), eq(c.name, categoryName)),
-  })
+  const [campPaymentCatResult] = await db
+    .select()
+    .from(categories)
+    .where(and(eq(categories.userId, userId), eq(categories.name, categoryName)))
+  let campPaymentCat = campPaymentCatResult
 
   if (!campPaymentCat) {
     const created = await db
       .insert(categories)
       .values({
         userId,
+        eventId: eventId ?? null,
         name: categoryName,
         type: 'income',
         color: '#22c55e',
@@ -413,6 +423,7 @@ export async function bulkCreateAttendees(
       // Transacción correspondiente (misma descripción que usa deleteAttendee)
       transactionsToInsert.push({
         userId,
+        eventId: eventId ?? null,
         categoryId: campPaymentCat.id,
         type: 'income',
         amount: initialPayment,

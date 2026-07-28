@@ -185,7 +185,7 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
   async function reload() {
     const [txs, cats] = await Promise.all([
       getTransactions(userId, { eventId: finalEventId }),
-      getCategories(userId),
+      getCategories(userId, 1, finalEventId),
     ])
     setTransactions(txs)
     setCategories(cats)
@@ -194,7 +194,7 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
   useEffect(() => {
     setLoading(true)
     reload().finally(() => setLoading(false))
-  }, [userId])
+  }, [userId, finalEventId])
 
   // Abre el modal de nueva transacción cuando el FAB del dock navega con ?new=1
   useEffect(() => {

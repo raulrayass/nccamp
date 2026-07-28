@@ -227,10 +227,14 @@ export async function addStaffPayment(
   const categoryName = categoryNameMap[paymentMethod] || 'Pago de Staff - Efectivo'
 
   // Find or create category based on payment method
+  const catConditions = [eq(categories.userId, userId), eq(categories.name, categoryName)]
+  if (eventId !== undefined && eventId !== null) {
+    catConditions.push(eq(categories.eventId, eventId))
+  }
   let [staffPaymentCat] = await db
     .select()
     .from(categories)
-    .where(and(eq(categories.userId, userId), eq(categories.name, categoryName)))
+    .where(and(...(catConditions as any)))
 
   if (!staffPaymentCat) {
     const colorMap: Record<string, string> = {
@@ -241,6 +245,7 @@ export async function addStaffPayment(
       .insert(categories)
       .values({
         userId,
+        eventId: eventId ?? null,
         name: categoryName,
         type: 'income',
         color: colorMap[categoryName] || '#22c55e',
@@ -253,6 +258,7 @@ export async function addStaffPayment(
   // Create transaction for this payment with payment method
   await db.insert(transactions).values({
     userId,
+    eventId: eventId ?? null,
     categoryId: staffPaymentCat!.id,
     type: 'income',
     amount,
