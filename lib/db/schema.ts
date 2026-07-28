@@ -33,6 +33,7 @@ export const eventMembers = pgTable('event_members', {
 export const categories = pgTable('categories', {
   id: serial('id').primaryKey(),
   userId: text('userId').notNull(),
+  eventId: integer('eventId'), // nullable - Fase B
   name: text('name').notNull(),
   type: text('type').notNull(), // 'income' | 'expense' | 'both'
   color: text('color').notNull().default('#6366f1'),
