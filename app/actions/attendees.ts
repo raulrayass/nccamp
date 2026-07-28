@@ -2,7 +2,7 @@
 
 import { db } from '@/lib/db'
 import { attendees, attendeePayments, transactions, categories } from '@/lib/db/schema'
-import { eq, and, desc } from 'drizzle-orm'
+import { eq, and, desc, count } from 'drizzle-orm'
 
 const ATTENDEES_PER_PAGE = 20
 
@@ -42,10 +42,10 @@ export async function getAttendeesCount(userId: string, eventId?: number | null)
     conditions.push(eq(attendees.eventId, eventId))
   }
   const result = await db
-    .select({ count: db.fn.count() })
+    .select({ count: count() })
     .from(attendees)
     .where(and(...(conditions as any)))
-  return result[0]?.count ?? 0
+  return Number(result[0]?.count ?? 0)
 }
 
 export async function getAttendeePayments(userId: string, attendeeId: number) {
