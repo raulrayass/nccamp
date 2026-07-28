@@ -8,11 +8,12 @@ import { eq, and, desc, inArray } from 'drizzle-orm'
 // En Fase A, este es el único evento. En Fase B+, los módulos usarán este eventId
 export async function getOrCreateDefaultEvent(userId: string): Promise<Event> {
   try {
-    // Buscar evento por defecto existente
+    // Buscar evento existente del usuario (adminId)
     const existing = await db
       .select()
       .from(events)
-      .where(and(eq(events.userId, userId), eq(events.isDefault, true)))
+      .where(eq(events.adminId, userId))
+      .orderBy(desc(events.createdAt))
       .limit(1)
 
     if (existing.length > 0) {
@@ -23,11 +24,21 @@ export async function getOrCreateDefaultEvent(userId: string): Promise<Event> {
     const [newEvent] = await db
       .insert(events)
       .values({
-        userId,
+        adminId: userId,
         name: 'Evento Campestre',
-        isDefault: true,
+        country: 'Colombia',
+        startDate: new Date(),
+        endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        status: 'active',
       })
       .returning()
+
+    // Insertar al usuario como admin en event_members
+    await db.insert(eventMembers).values({
+      eventId: newEvent.id,
+      userId,
+      role: 'admin',
+    })
 
     return newEvent
   } catch (error) {
@@ -71,17 +82,32 @@ export async function getUserEvents(userId: string): Promise<Event[]> {
 }
 
 // Crear un nuevo evento
-export async function createEvent(userId: string, name: string, description?: string): Promise<Event> {
+export async function createEvent(
+  userId: string,
+  name: string,
+  country: string,
+  startDate: string,
+  endDate: string
+): Promise<Event> {
   try {
     const [event] = await db
       .insert(events)
       .values({
-        userId,
+        adminId: userId,
         name,
-        description: description || null,
-        isDefault: false,
+        country,
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
+        status: 'active',
       })
       .returning()
+
+    // Insertar al usuario como admin en event_members
+    await db.insert(eventMembers).values({
+      eventId: event.id,
+      userId,
+      role: 'admin',
+    })
 
     return event
   } catch (error) {
