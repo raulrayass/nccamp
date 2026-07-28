@@ -1,20 +1,20 @@
+'use client'
+
 import { GamesClient } from '@/components/games-client'
-import { auth } from '@/lib/auth'
-import { headers } from 'next/headers'
-import { redirect } from 'next/navigation'
+import { useUser } from '@/components/user-provider'
+import { useEvent } from '@/lib/contexts/event-context'
 
-export const metadata = {
-  title: 'Juegos & Marcador | Campamento',
-  description: 'Gestiona juegos y registra puntos por equipo',
-}
+export default function GamesPage() {
+  const { user } = useUser()
+  const { eventId } = useEvent()
 
-export default async function GamesPage() {
-  const session = await auth.api.getSession({ headers: await headers() })
-  if (!session?.user) redirect('/sign-in')
+  if (!user) {
+    return <div className="text-center py-12 text-muted-foreground">Cargando...</div>
+  }
 
   return (
     <main className="flex-1 p-4 sm:p-6">
-      <GamesClient userId={session.user.id} />
+      <GamesClient userId={user.id} eventId={eventId} />
     </main>
   )
 }

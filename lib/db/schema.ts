@@ -122,6 +122,7 @@ export const rooms = pgTable('rooms', {
 export const games = pgTable('games', {
   id: serial('id').primaryKey(),
   userId: text('userId').notNull(),
+  eventId: integer('eventId'), // nullable - Fase B
   name: text('name').notNull(),
   description: text('description'),
   gameDate: date('gameDate'),
@@ -132,6 +133,7 @@ export const games = pgTable('games', {
 export const gameScores = pgTable('game_scores', {
   id: serial('id').primaryKey(),
   userId: text('userId').notNull(),
+  eventId: integer('eventId'), // nullable - Fase B
   gameId: integer('gameId').notNull(),
   teamId: integer('teamId').notNull(),
   points: integer('points').notNull().default(0),

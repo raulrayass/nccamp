@@ -10,6 +10,7 @@ export interface GameScore {
   teamId: number
   points: number
   userId: string
+  eventId?: number | null
   createdAt?: Date
 }
 
@@ -20,7 +21,7 @@ interface GameScoresState {
   refetch: () => Promise<void>
 }
 
-export function useGameScores(): GameScoresState {
+export function useGameScores(eventId?: number | null): GameScoresState {
   const session = useSession()
   const [scores, setScores] = useState<GameScore[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -37,7 +38,7 @@ export function useGameScores(): GameScoresState {
 
     try {
       setIsLoading(true)
-      const data = await getAllGameScores(userId)
+      const data = await getAllGameScores(userId, eventId)
       setScores(data || [])
       setError(null)
     } catch (err) {
@@ -46,7 +47,7 @@ export function useGameScores(): GameScoresState {
     } finally {
       setIsLoading(false)
     }
-  }, [userId])
+  }, [userId, eventId])
 
   useEffect(() => {
     loadScores()

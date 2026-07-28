@@ -10,8 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import { Plus, Edit2, Trash2, Gamepad2, Trophy, Minus, Users2, Maximize2 } from 'lucide-react'
 import { toast } from 'sonner'
-import { createGame, updateGame, deleteGame, getGames, addGameScore, deleteGameScore, getGameScores, getAllGameScores } from '@/app/actions/games'
-import { getTeams } from '@/app/actions/teams'
+import { createGame, updateGame, deleteGame, addGameScore, deleteGameScore, getGameScores } from '@/app/actions/games'
 import { Game, GameScore, Team } from '@/lib/db/schema'
 import { cn } from '@/lib/utils'
 import { StatsBar } from '@/components/stats-bar'
@@ -25,13 +24,14 @@ import { ListSkeleton } from '@/components/list-skeleton'
 
 interface Props {
   userId: string
+  eventId: number | null
 }
 
-export function GamesClient({ userId }: Props) {
+export function GamesClient({ userId, eventId }: Props) {
   // Hooks centralizados para sincronización cross-module
-  const { games: gameList, isLoading: gamesLoading, error: gamesError } = useGames()
-  const { teams, isLoading: teamsLoading, error: teamsError } = useTeams()
-  const { scores: allGameScores, isLoading: scoresLoading } = useGameScores()
+  const { games: gameList, isLoading: gamesLoading, error: gamesError, refetch: refetchGames } = useGames(eventId)
+  const { teams, isLoading: teamsLoading, error: teamsError } = useTeams(eventId)
+  const { scores: allGameScores, isLoading: scoresLoading, refetch: refetchScores } = useGameScores(eventId)
 
   // Local UI state
   const [gameScores, setGameScores] = useState<GameScore[]>([])
