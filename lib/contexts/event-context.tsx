@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
-import { getOrCreateDefaultEvent, getUserEvents } from '@/app/actions/events'
+import { getUserEvents } from '@/app/actions/events'
 import { useUser } from '@/components/user-provider'
 
 interface EventOption {
@@ -57,38 +57,23 @@ export function EventProvider({ children }: { children: ReactNode }) {
       setLoading(true)
       setError(null)
 
-      // Try to get user events
-      let userEvents: any[] = []
-      try {
-        userEvents = await getUserEvents(user.id)
-      } catch (fetchErr) {
-        console.warn('[v0] Could not fetch user events, trying default event:', fetchErr)
-        // If fetch fails, create/get default event instead
-        try {
-          const defaultEvent = await getOrCreateDefaultEvent(user.id)
-          userEvents = [defaultEvent]
-        } catch (defaultErr) {
-          console.error('[v0] Could not create default event:', defaultErr)
-          setError('No se pudo cargar los eventos')
-          setLoading(false)
-          return
-        }
+      const userEvents = await getUserEvents(user.id)
+      
+      if (!userEvents || userEvents.length === 0) {
+        setEvents([])
+        setEventId(null)
+        setLoading(false)
+        return
       }
 
       setEvents(userEvents.map((e: any) => ({ id: e.id, name: e.name })))
 
-      const savedId = readFromStorage(STORAGE_KEY)
-      const savedIdNum = savedId ? parseInt(savedId, 10) : null
-
-      if (savedIdNum && userEvents.some((e: any) => e.id === savedIdNum)) {
-        setEventId(savedIdNum)
-      } else if (userEvents.length > 0) {
-        setEventId(userEvents[0].id)
-        writeToStorage(STORAGE_KEY, String(userEvents[0].id))
-      }
+      // Usar el primer evento del usuario
+      setEventId(userEvents[0].id)
+      writeToStorage(STORAGE_KEY, String(userEvents[0].id))
     } catch (err) {
-      console.error('[v0] Error initializing event:', err)
-      setError(err instanceof Error ? err.message : 'Error al inicializar evento')
+      console.error('[v0] Error loading events:', err)
+      setError('Error al cargar eventos')
     } finally {
       setLoading(false)
     }
