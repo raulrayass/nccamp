@@ -14,7 +14,11 @@ UPDATE attendee_payments SET paymentMethod = 'cash' WHERE paymentMethod IS NULL;
 ALTER TABLE teams
 ADD COLUMN IF NOT EXISTS country text;
 
+-- Fase B: Add eventId column to attendees table (nullable for multi-event support)
+ALTER TABLE attendees
+ADD COLUMN IF NOT EXISTS eventId integer;
+
 -- Verify the changes
 SELECT table_name, column_name FROM information_schema.columns 
-WHERE table_name IN ('transactions', 'attendee_payments', 'teams') 
-AND column_name IN ('paymentMethod', 'country');
+WHERE table_name IN ('transactions', 'attendee_payments', 'teams', 'attendees') 
+AND column_name IN ('paymentMethod', 'country', 'eventId');

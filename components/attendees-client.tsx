@@ -43,6 +43,7 @@ import { ListSkeleton } from '@/components/list-skeleton'
 
 interface Props {
   userId: string
+  eventId: number | null
 }
 
 const emptyForm = {
@@ -66,7 +67,7 @@ const emptyForm = {
 
 const SHIRT_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
 
-export function AttendeesClient({ userId }: Props) {
+export function AttendeesClient({ userId, eventId }: Props) {
   const [attendeeList, setAttendeeList] = useState<Attendee[]>([])
   const [churches, setChurches] = useState<Church[]>([])
   const [teams, setTeams] = useState<Team[]>([])
@@ -138,7 +139,7 @@ export function AttendeesClient({ userId }: Props) {
 
   async function loadAttendees() {
     // Load all attendees for calculations and metrics (not paginated)
-    const allData = await getAllAttendees(userId)
+    const allData = await getAllAttendees(userId, eventId)
     setAttendeeList(allData)
   }
 
@@ -194,6 +195,7 @@ export function AttendeesClient({ userId }: Props) {
       totalAmount: amount,
       discount: form.discount,
       notes: form.notes,
+      eventId: eventId,
     }
 
     startTransition(async () => {
@@ -411,7 +413,7 @@ export function AttendeesClient({ userId }: Props) {
               a.totalAmount > 0 // Monto total es requerido y debe ser > 0
           )
         ) {
-          await bulkCreateAttendees(userId, attendeesToImport)
+          await bulkCreateAttendees(userId, attendeesToImport, eventId)
           toast.success(`${attendeesToImport.length} camperos importados correctamente`)
           await loadAttendees()
         } else {

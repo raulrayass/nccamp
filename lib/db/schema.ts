@@ -34,6 +34,7 @@ export const transactions = pgTable('transactions', {
 export const attendees = pgTable('attendees', {
   id: serial('id').primaryKey(),
   userId: text('userId').notNull(),
+  eventId: integer('eventId'), // nullable - Fase B
   name: text('name').notNull(),
   age: integer('age'),
   shirtSize: text('shirtSize'), // 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL'

@@ -2,38 +2,50 @@
 
 import { db } from '@/lib/db'
 import { attendees, attendeePayments, transactions, categories } from '@/lib/db/schema'
-import { eq, and } from 'drizzle-orm'
-import { desc } from 'drizzle-orm'
+import { eq, and, desc } from 'drizzle-orm'
 
 const ATTENDEES_PER_PAGE = 20
 
 // Get ALL attendees for reports and metrics (no pagination)
-export async function getAllAttendees(userId: string) {
+// eventId: nullable para filtrar por evento específico o traer todos
+export async function getAllAttendees(userId: string, eventId?: number | null) {
+  const conditions = [eq(attendees.userId, userId)]
+  if (eventId !== undefined && eventId !== null) {
+    conditions.push(eq(attendees.eventId, eventId))
+  }
   return db
     .select()
     .from(attendees)
-    .where(eq(attendees.userId, userId))
+    .where(and(...(conditions as any)))
     .orderBy(desc(attendees.createdAt))
 }
 
 // Get paginated attendees for UI display
-export async function getAttendees(userId: string, page: number = 1) {
+export async function getAttendees(userId: string, page: number = 1, eventId?: number | null) {
   const offset = (page - 1) * ATTENDEES_PER_PAGE
+  const conditions = [eq(attendees.userId, userId)]
+  if (eventId !== undefined && eventId !== null) {
+    conditions.push(eq(attendees.eventId, eventId))
+  }
   return db
     .select()
     .from(attendees)
-    .where(eq(attendees.userId, userId))
+    .where(and(...(conditions as any)))
     .orderBy(desc(attendees.createdAt))
     .limit(ATTENDEES_PER_PAGE)
     .offset(offset)
 }
 
-export async function getAttendeesCount(userId: string) {
+export async function getAttendeesCount(userId: string, eventId?: number | null) {
+  const conditions = [eq(attendees.userId, userId)]
+  if (eventId !== undefined && eventId !== null) {
+    conditions.push(eq(attendees.eventId, eventId))
+  }
   const result = await db
-    .select({ count: db.sql`count(*)` })
+    .select({ count: db.fn.count() })
     .from(attendees)
-    .where(eq(attendees.userId, userId))
-  return parseInt(result[0].count as string, 10)
+    .where(and(...(conditions as any)))
+  return result[0]?.count ?? 0
 }
 
 export async function getAttendeePayments(userId: string, attendeeId: number) {
@@ -63,10 +75,12 @@ export async function createAttendee(
     totalAmount: number
     discount?: number // 0, 10, 20, 30
     notes?: string
+    eventId?: number | null
   }
 ) {
   await db.insert(attendees).values({
     userId,
+    eventId: data.eventId ?? null,
     name: data.name,
     age: data.age ?? null,
     shirtSize: data.shirtSize || null,
@@ -322,7 +336,9 @@ export async function bulkCreateAttendees(
     totalAmount: number
     initialPayment?: number
     notes?: string
-  }>
+    eventId?: number | null
+  }>,
+  eventId?: number | null
 ) {
   if (attendeesList.length === 0) return
 
@@ -332,6 +348,7 @@ export async function bulkCreateAttendees(
     .values(
       attendeesList.map((a) => ({
         userId,
+        eventId: a.eventId ?? eventId ?? null,
         name: a.name.trim(),
         age: a.age ?? null,
         sex: a.sex || null,
@@ -414,15 +431,17 @@ export async function bulkCreateAttendees(
   }
 }
 
-export async function getChurchDistribution(userId: string) {
+export async function getChurchDistribution(userId: string, eventId?: number | null) {
   try {
     // Get all attendees with churches
-    const allAttendees = await db.query.attendees.findMany({
-      where: eq(attendees.userId, userId),
-      columns: {
-        church: true,
-      },
-    })
+    const conditions = [eq(attendees.userId, userId)]
+    if (eventId !== undefined && eventId !== null) {
+      conditions.push(eq(attendees.eventId, eventId))
+    }
+    const allAttendees = await db
+      .select({ church: attendees.church })
+      .from(attendees)
+      .where(and(...(conditions as any)))
 
     // Group and count by church
     const churchMap = new Map<string | null, number>()

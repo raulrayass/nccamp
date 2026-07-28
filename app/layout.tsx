@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono, Poppins } from 'next/font/google'
 import { Toaster } from 'sonner'
 import { UserProvider } from '@/components/user-provider'
+import { EventProvider } from '@/lib/contexts/event-context'
 import { LoadingScreen, LoadingProvider } from '@/components/loading-screen'
 import './globals.css'
 
@@ -70,7 +71,9 @@ export default function RootLayout({
         <LoadingProvider>
           <LoadingScreen />
           <UserProvider>
-            {children}
+            <EventProvider>
+              {children}
+            </EventProvider>
           </UserProvider>
         </LoadingProvider>
         <Toaster position="top-center" richColors closeButton />
