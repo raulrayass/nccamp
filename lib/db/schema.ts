@@ -116,6 +116,7 @@ export const teams = pgTable('teams', {
 export const rooms = pgTable('rooms', {
   id: serial('id').primaryKey(),
   userId: text('userId').notNull(),
+  eventId: integer('eventId'), // nullable - Fase B
   name: text('name').notNull(),
   capacity: integer('capacity'),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
