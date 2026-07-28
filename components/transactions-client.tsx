@@ -158,8 +158,8 @@ const defaultForm = {
 }
 
 export function TransactionsClient({ userId, eventId }: { userId: string; eventId: number | null }) {
-  const eventIdFromContext = useEvent().eventId
-  const finalEventId = eventId ?? eventIdFromContext
+  const { eventId: contextEventId, loading: eventLoading } = useEvent()
+  const finalEventId = eventId ?? contextEventId
   const [isPending, startTransition] = useTransition()
   const [transactions, setTransactions] = useState<TransactionRow[]>([])
   const [categories, setCategories] = useState<Category[]>([])
@@ -296,10 +296,6 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
     }
     startTransition(async () => {
       try {
-        if (!finalEventId) {
-          toast.error('Debe haber un evento activo para crear transacciones')
-          return
-        }
         const data = {
           categoryId: parseInt(form.categoryId),
           type: form.type,
@@ -752,8 +748,8 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
             </div>
             <div className="flex justify-end gap-1.5 sm:gap-2 mt-1 sm:mt-2">
               <Button type="button" variant="outline" onClick={() => { setDialogOpen(false); clearNewParam() }} className="h-8 text-xs sm:text-sm hover:bg-slate-100">Cancelar</Button>
-              <Button type="submit" disabled={isPending || !form.categoryId} className="h-8 text-xs sm:text-sm bg-green-600 hover:bg-green-700 text-white disabled:bg-slate-400">
-                {isPending ? 'Guardando...' : editingId ? 'Actualizar' : 'Crear'}
+              <Button type="submit" disabled={isPending || !form.categoryId || eventLoading} className="h-8 text-xs sm:text-sm bg-green-600 hover:bg-green-700 text-white disabled:bg-slate-400">
+                {isPending ? 'Guardando...' : eventLoading ? 'Cargando evento...' : editingId ? 'Actualizar' : 'Crear'}
               </Button>
             </div>
           </form>
