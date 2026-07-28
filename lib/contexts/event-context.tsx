@@ -20,17 +20,24 @@ interface EventContextType {
 
 const EventContext = createContext<EventContextType | undefined>(undefined)
 
-const COOKIE_NAME = 'selectedEventId'
+const STORAGE_KEY = 'selectedEventId'
 
-function readCookie(name: string): string | null {
-  if (typeof document === 'undefined') return null
-  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'))
-  return match ? match[2] : null
+function readFromStorage(key: string): string | null {
+  if (typeof window === 'undefined') return null
+  try {
+    return sessionStorage.getItem(key)
+  } catch {
+    return null
+  }
 }
 
-function writeCookie(name: string, value: string) {
-  if (typeof document === 'undefined') return
-  document.cookie = `${name}=${value}; path=/; max-age=31536000`
+function writeToStorage(key: string, value: string) {
+  if (typeof window === 'undefined') return
+  try {
+    sessionStorage.setItem(key, value)
+  } catch {
+    // Silently fail if storage is not available
+  }
 }
 
 export function EventProvider({ children }: { children: ReactNode }) {
@@ -50,22 +57,34 @@ export function EventProvider({ children }: { children: ReactNode }) {
       setLoading(true)
       setError(null)
 
-      const userEvents = await getUserEvents(user.id)
+      // Try to get user events
+      let userEvents: any[] = []
+      try {
+        userEvents = await getUserEvents(user.id)
+      } catch (fetchErr) {
+        console.warn('[v0] Could not fetch user events, trying default event:', fetchErr)
+        // If fetch fails, create/get default event instead
+        try {
+          const defaultEvent = await getOrCreateDefaultEvent(user.id)
+          userEvents = [defaultEvent]
+        } catch (defaultErr) {
+          console.error('[v0] Could not create default event:', defaultErr)
+          setError('No se pudo cargar los eventos')
+          setLoading(false)
+          return
+        }
+      }
+
       setEvents(userEvents.map((e: any) => ({ id: e.id, name: e.name })))
 
-      const savedId = readCookie(COOKIE_NAME)
+      const savedId = readFromStorage(STORAGE_KEY)
       const savedIdNum = savedId ? parseInt(savedId, 10) : null
 
       if (savedIdNum && userEvents.some((e: any) => e.id === savedIdNum)) {
         setEventId(savedIdNum)
       } else if (userEvents.length > 0) {
         setEventId(userEvents[0].id)
-        writeCookie(COOKIE_NAME, String(userEvents[0].id))
-      } else {
-        const event = await getOrCreateDefaultEvent(user.id)
-        setEventId(event.id)
-        setEvents([{ id: event.id, name: event.name }])
-        writeCookie(COOKIE_NAME, String(event.id))
+        writeToStorage(STORAGE_KEY, String(userEvents[0].id))
       }
     } catch (err) {
       console.error('[v0] Error initializing event:', err)
@@ -77,7 +96,7 @@ export function EventProvider({ children }: { children: ReactNode }) {
 
   const setEvent = (id: number) => {
     setEventId(id)
-    writeCookie(COOKIE_NAME, String(id))
+    writeToStorage(STORAGE_KEY, String(id))
   }
 
   useEffect(() => {
