@@ -296,6 +296,10 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
     }
     startTransition(async () => {
       try {
+        if (!finalEventId) {
+          toast.error('Debe haber un evento activo para crear transacciones')
+          return
+        }
         const data = {
           categoryId: parseInt(form.categoryId),
           type: form.type,
