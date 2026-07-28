@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { getAttendees } from '@/app/actions/attendees'
+import { getAllAttendees, getAttendeesCount } from '@/app/actions/attendees'
 import { useSession } from '@/lib/auth-client'
 
 export interface Attendee {
@@ -26,20 +26,23 @@ export interface Attendee {
   checkedIn: boolean
   notes: string
   userId: string
+  eventId?: number | null
   createdAt?: Date
   updatedAt?: Date
 }
 
 interface UseAttendeesState {
   attendees: Attendee[]
+  count: number
   isLoading: boolean
   error: Error | null
   refetch: () => Promise<void>
 }
 
-export function useAttendees(): UseAttendeesState {
+export function useAttendees(eventId?: number | null): UseAttendeesState {
   const session = useSession()
   const [attendees, setAttendees] = useState<Attendee[]>([])
+  const [count, setCount] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
 
@@ -48,22 +51,26 @@ export function useAttendees(): UseAttendeesState {
   const loadAttendees = useCallback(async () => {
     if (!userId) {
       setAttendees([])
+      setCount(0)
       setIsLoading(false)
       return
     }
 
     try {
       setIsLoading(true)
-      const data = await getAttendees(userId)
+      const data = await getAllAttendees(userId, eventId)
+      const countData = await getAttendeesCount(userId, eventId)
       setAttendees(data || [])
+      setCount(countData)
       setError(null)
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to fetch attendees'))
       setAttendees([])
+      setCount(0)
     } finally {
       setIsLoading(false)
     }
-  }, [userId])
+  }, [userId, eventId])
 
   useEffect(() => {
     loadAttendees()
@@ -71,6 +78,7 @@ export function useAttendees(): UseAttendeesState {
 
   return {
     attendees,
+    count,
     isLoading,
     error,
     refetch: loadAttendees,

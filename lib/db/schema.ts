@@ -8,6 +8,28 @@ export const appUsers = pgTable('app_users', {
   createdAt: timestamp('createdAt').notNull().defaultNow(),
 })
 
+// Fase A: Multi-event support tables
+export const events = pgTable('events', {
+  id: serial('id').primaryKey(),
+  userId: text('userId').notNull(),
+  name: text('name').notNull(),
+  description: text('description'),
+  startDate: timestamp('startDate'),
+  endDate: timestamp('endDate'),
+  location: text('location'),
+  isDefault: boolean('isDefault').notNull().default(false),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+  updatedAt: timestamp('updatedAt').notNull().defaultNow(),
+})
+
+export const eventMembers = pgTable('event_members', {
+  id: serial('id').primaryKey(),
+  eventId: integer('eventId').notNull(),
+  userId: text('userId').notNull(),
+  role: text('role').notNull().default('member'), // 'owner' | 'admin' | 'member'
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+})
+
 export const categories = pgTable('categories', {
   id: serial('id').primaryKey(),
   userId: text('userId').notNull(),
@@ -34,6 +56,7 @@ export const transactions = pgTable('transactions', {
 export const attendees = pgTable('attendees', {
   id: serial('id').primaryKey(),
   userId: text('userId').notNull(),
+  eventId: integer('eventId'), // nullable - Fase B
   name: text('name').notNull(),
   age: integer('age'),
   shirtSize: text('shirtSize'), // 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL'
@@ -147,6 +170,10 @@ export const staffPayments = pgTable('staff_payments', {
 })
 
 export type AppUser = typeof appUsers.$inferSelect
+export type Event = typeof events.$inferSelect
+export type NewEvent = typeof events.$inferInsert
+export type EventMember = typeof eventMembers.$inferSelect
+export type NewEventMember = typeof eventMembers.$inferInsert
 export type Category = typeof categories.$inferSelect
 export type NewCategory = typeof categories.$inferInsert
 export type Transaction = typeof transactions.$inferSelect
