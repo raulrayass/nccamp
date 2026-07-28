@@ -36,7 +36,17 @@ export function EventSelector() {
 
     startTransition(async () => {
       try {
-        const event = await createEvent(user.id, formData.name.trim(), formData.country || undefined)
+        // Si no hay fechas, usar hoy y hoy + 7 días
+        const startDate = formData.startDate || new Date().toISOString().split('T')[0]
+        const endDate = formData.endDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+
+        const event = await createEvent(
+          user.id,
+          formData.name.trim(),
+          formData.country || 'Colombia',
+          startDate,
+          endDate
+        )
         setEvent(event.id)
         setFormData({ name: '', country: '', startDate: '', endDate: '' })
         setDialogOpen(false)
