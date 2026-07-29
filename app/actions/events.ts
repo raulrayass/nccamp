@@ -112,14 +112,23 @@ export async function createEvent(
 // Obtener evento predeterminado del usuario
 export async function getDefaultEvent(userId: string): Promise<{ id: number; name: string } | null> {
   try {
-    const defaultEvent = await db
-      .select({ id: events.id, name: events.name })
-      .from(events)
-      .innerJoin(eventMembers, eq(events.id, eventMembers.eventId))
+    // Primero obtenemos el eventId del default
+    const defaultMember = await db
+      .select({ eventId: eventMembers.eventId })
+      .from(eventMembers)
       .where(and(eq(eventMembers.userId, userId), eq(eventMembers.isDefault, true)))
       .limit(1)
 
-    return defaultEvent.length > 0 ? defaultEvent[0] : null
+    if (defaultMember.length === 0) return null
+
+    // Luego obtenemos el evento
+    const eventData = await db
+      .select({ id: events.id, name: events.name })
+      .from(events)
+      .where(eq(events.id, defaultMember[0].eventId))
+      .limit(1)
+
+    return eventData.length > 0 ? eventData[0] : null
   } catch (error) {
     console.error('[v0] Error getting default event:', error)
     return null
