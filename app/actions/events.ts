@@ -43,7 +43,7 @@ export async function getOrCreateDefaultEvent(userId: string): Promise<Event> {
     return newEvent
   } catch (error) {
     console.error('[v0] Error in getOrCreateDefaultEvent:', error)
-    throw error
+    throw new Error('DEFAULT_EVENT_REAL: ' + (error instanceof Error ? error.message : String(error)))
   }
 }
 
@@ -77,7 +77,7 @@ export async function getUserEvents(userId: string): Promise<Event[]> {
     return Array.from(new Map(all.map(e => [e.id, e])).values())
   } catch (error) {
     console.error('[v0] Error fetching events:', error)
-    throw error
+    throw new Error('GET_EVENTS_REAL: ' + (error instanceof Error ? error.message : String(error)))
   }
 }
 
