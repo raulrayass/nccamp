@@ -1,7 +1,17 @@
+'use client'
+
+import { useEventSession } from '@/lib/contexts/event-session-context'
+import { redirect } from 'next/navigation'
 import { Topbar } from '@/components/topbar'
 import { FloatingDock } from '@/components/floating-dock'
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
+  const { eventId } = useEventSession()
+
+  if (!eventId) {
+    redirect('/select-event')
+  }
+
   return (
     <div className="min-h-svh bg-background flex flex-col">
       <Topbar />
