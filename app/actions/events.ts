@@ -47,12 +47,12 @@ export async function getOrCreateDefaultEvent(userId: string): Promise<Event> {
   }
 }
 
-// Obtener todos los eventos del usuario (como admin o como miembro)
-export async function getUserEvents(userId: string): Promise<Event[]> {
+// Obtener todos los eventos del usuario (como admin o como miembro) - solo id y name
+export async function getUserEvents(userId: string): Promise<{ id: number; name: string }[]> {
   try {
     // Eventos donde el usuario es admin
     const adminEvents = await db
-      .select()
+      .select({ id: events.id, name: events.name })
       .from(events)
       .where(eq(events.adminId, userId))
       .orderBy(desc(events.createdAt))
@@ -66,7 +66,7 @@ export async function getUserEvents(userId: string): Promise<Event[]> {
     const memberEventIds = memberRows.map(r => r.eventId)
     const memberEvents = memberEventIds.length
       ? await db
-          .select()
+          .select({ id: events.id, name: events.name })
           .from(events)
           .where(inArray(events.id, memberEventIds))
           .orderBy(desc(events.createdAt))
@@ -88,7 +88,7 @@ export async function createEvent(
   country: string,
   startDate: string,
   endDate: string
-): Promise<Event> {
+): Promise<{ id: number; name: string }> {
   try {
     const [event] = await db
       .insert(events)
@@ -109,7 +109,7 @@ export async function createEvent(
       role: 'admin',
     })
 
-    return event
+    return { id: event.id, name: event.name }
   } catch (error) {
     console.error('[v0] Error creating event:', error)
     throw new Error('CREATE_EVENT_REAL: ' + (error instanceof Error ? error.message : String(error)))
