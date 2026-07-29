@@ -3,10 +3,10 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { useEventSession } from '@/lib/contexts/event-session-context'
-import { createEvent } from '@/app/actions/events'
+import { createEvent, setDefaultEvent } from '@/app/actions/events'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
-import { Plus } from 'lucide-react'
+import { Plus, Star } from 'lucide-react'
 
 interface EventOption {
   id: number
@@ -24,6 +24,7 @@ export function SelectEventClient({
   const { setEventSession } = useEventSession()
   const [isPending, startTransition] = useTransition()
   const [showCreateForm, setShowCreateForm] = useState(initialEvents.length === 0)
+  const [settingDefault, setSettingDefault] = useState<number | null>(null)
   const [formData, setFormData] = useState({
     name: '',
     country: 'Colombia',
@@ -34,6 +35,19 @@ export function SelectEventClient({
   const handleSelectEvent = (eventId: number) => {
     setEventSession(eventId)
     router.push('/')
+  }
+
+  const handleSetDefault = async (eventId: number) => {
+    setSettingDefault(eventId)
+    try {
+      await setDefaultEvent(userId, eventId)
+      toast.success('Evento establecido como predeterminado')
+    } catch (error) {
+      toast.error('Error al establecer evento predeterminado')
+      console.error(error)
+    } finally {
+      setSettingDefault(null)
+    }
   }
 
   const handleCreateEvent = async (e: React.FormEvent) => {
@@ -77,19 +91,32 @@ export function SelectEventClient({
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
               {initialEvents.map(event => (
-                <button
+                <div
                   key={event.id}
-                  onClick={() => handleSelectEvent(event.id)}
-                  disabled={isPending}
-                  className="p-6 border border-border rounded-lg hover:bg-muted hover:border-primary transition-all duration-200 text-left disabled:opacity-50 disabled:cursor-not-allowed group"
+                  className="p-6 border border-border rounded-lg hover:bg-muted transition-all duration-200 group"
                 >
-                  <div className="font-semibold text-foreground group-hover:text-primary transition-colors">
-                    {event.name}
-                  </div>
-                  <div className="text-sm text-foreground/60 mt-1">
-                    Click para seleccionar
-                  </div>
-                </button>
+                  <button
+                    onClick={() => handleSelectEvent(event.id)}
+                    disabled={isPending}
+                    className="w-full text-left disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <div className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                      {event.name}
+                    </div>
+                    <div className="text-sm text-foreground/60 mt-1">
+                      Click para seleccionar
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => handleSetDefault(event.id)}
+                    disabled={settingDefault !== null || isPending}
+                    className="mt-3 flex items-center gap-2 text-xs text-foreground/60 hover:text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Establecer como evento predeterminado"
+                  >
+                    <Star className="w-3 h-3" />
+                    {settingDefault === event.id ? 'Estableciendo...' : 'Establecer como predeterminado'}
+                  </button>
+                </div>
               ))}
             </div>
 

@@ -89,16 +89,59 @@ export async function createEvent(
       })
       .returning()
 
-    // Insertar al usuario como admin en event_members
+    // Insertar al usuario como admin en event_members (y marcar como default si es el primero)
+    const existingCount = await db
+      .select({ id: eventMembers.id })
+      .from(eventMembers)
+      .where(eq(eventMembers.userId, userId))
+
     await db.insert(eventMembers).values({
       eventId: event.id,
       userId,
       role: 'admin',
+      isDefault: existingCount.length === 0, // Si es el primer evento, marcarlo como default
     })
 
     return { id: event.id, name: event.name }
   } catch (error) {
     console.error('[v0] Error creating event:', error)
     throw new Error('CREATE_EVENT_REAL: ' + (error instanceof Error ? error.message : String(error)))
+  }
+}
+
+// Obtener evento predeterminado del usuario
+export async function getDefaultEvent(userId: string): Promise<{ id: number; name: string } | null> {
+  try {
+    const defaultEvent = await db
+      .select({ id: events.id, name: events.name })
+      .from(events)
+      .innerJoin(eventMembers, eq(events.id, eventMembers.eventId))
+      .where(and(eq(eventMembers.userId, userId), eq(eventMembers.isDefault, true)))
+      .limit(1)
+
+    return defaultEvent.length > 0 ? defaultEvent[0] : null
+  } catch (error) {
+    console.error('[v0] Error getting default event:', error)
+    return null
+  }
+}
+
+// Establecer evento como predeterminado
+export async function setDefaultEvent(userId: string, eventId: number): Promise<void> {
+  try {
+    // Remover default de todos los eventos del usuario
+    await db
+      .update(eventMembers)
+      .set({ isDefault: false })
+      .where(eq(eventMembers.userId, userId))
+
+    // Establecer el nuevo default
+    await db
+      .update(eventMembers)
+      .set({ isDefault: true })
+      .where(and(eq(eventMembers.userId, userId), eq(eventMembers.eventId, eventId)))
+  } catch (error) {
+    console.error('[v0] Error setting default event:', error)
+    throw new Error('SET_DEFAULT_EVENT: ' + (error instanceof Error ? error.message : String(error)))
   }
 }

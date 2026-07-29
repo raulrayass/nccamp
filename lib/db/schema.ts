@@ -27,6 +27,7 @@ export const eventMembers = pgTable('event_members', {
   eventId: integer('eventId').notNull(),
   userId: text('userId').notNull(),
   role: text('role').notNull().default('member'), // 'owner' | 'admin' | 'member'
+  isDefault: boolean('isDefault').notNull().default(false),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
 })
 

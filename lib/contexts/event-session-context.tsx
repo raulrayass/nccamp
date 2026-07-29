@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 import { useUser } from '@/components/user-provider'
+import { getDefaultEvent } from '@/app/actions/events'
 
 interface EventSessionContextType {
   eventId: number | null
@@ -54,7 +55,26 @@ export function EventSessionProvider({ children }: { children: ReactNode }) {
       setEventId(saved)
       setIsInitialized(true)
     }
-  }, [])
+  }, [isInitialized])
+
+  // Load default event if user is authenticated but no event is selected
+  useEffect(() => {
+    if (!user?.id || eventId !== null) return
+
+    async function loadDefaultEvent() {
+      try {
+        const defaultEvent = await getDefaultEvent(user.id)
+        if (defaultEvent) {
+          setEventId(defaultEvent.id)
+          writeSession(SESSION_KEY, defaultEvent.id)
+        }
+      } catch (error) {
+        console.error('Error loading default event:', error)
+      }
+    }
+
+    loadDefaultEvent()
+  }, [user?.id, eventId])
 
   const setEventSession = (id: number) => {
     setEventId(id)
