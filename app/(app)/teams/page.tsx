@@ -2,11 +2,11 @@
 
 import { TeamsClient } from '@/components/teams-client'
 import { useUser } from '@/components/user-provider'
-import { useEvent } from '@/lib/contexts/event-context'
+import { useEventSession } from '@/lib/contexts/event-session-context'
 
 export default function TeamsPage() {
   const { user } = useUser()
-  const { eventId } = useEvent()
+  const { eventId } = useEventSession()
 
   if (!user) {
     return <div className="text-center py-12 text-muted-foreground">Cargando...</div>
