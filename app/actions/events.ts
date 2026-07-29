@@ -112,6 +112,6 @@ export async function createEvent(
     return event
   } catch (error) {
     console.error('[v0] Error creating event:', error)
-    throw error
+    throw new Error('CREATE_EVENT_REAL: ' + (error instanceof Error ? error.message : String(error)))
   }
 }
