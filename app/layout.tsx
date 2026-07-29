@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Poppins } from 'next/font/google'
 import { Toaster } from 'sonner'
 import { UserProvider } from '@/components/user-provider'
 import { EventProvider } from '@/lib/contexts/event-context'
+import { EventSessionProvider } from '@/lib/contexts/event-session-context'
 import { LoadingScreen, LoadingProvider } from '@/components/loading-screen'
 import './globals.css'
 
@@ -70,9 +71,11 @@ export default function RootLayout({
         <LoadingProvider>
           <LoadingScreen />
           <UserProvider>
-            <EventProvider>
-              {children}
-            </EventProvider>
+            <EventSessionProvider>
+              <EventProvider>
+                {children}
+              </EventProvider>
+            </EventSessionProvider>
           </UserProvider>
         </LoadingProvider>
         <Toaster position="top-center" richColors closeButton />
