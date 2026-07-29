@@ -6,11 +6,11 @@ import { eq, and, desc, inArray } from 'drizzle-orm'
 
 // Obtener o crear el evento por defecto para el usuario
 // En Fase A, este es el único evento. En Fase B+, los módulos usarán este eventId
-export async function getOrCreateDefaultEvent(userId: string): Promise<Event> {
+export async function getOrCreateDefaultEvent(userId: string): Promise<{ id: number; name: string }> {
   try {
     // Buscar evento existente del usuario (adminId)
     const existing = await db
-      .select()
+      .select({ id: events.id, name: events.name })
       .from(events)
       .where(eq(events.adminId, userId))
       .orderBy(desc(events.createdAt))
@@ -40,7 +40,7 @@ export async function getOrCreateDefaultEvent(userId: string): Promise<Event> {
       role: 'admin',
     })
 
-    return newEvent
+    return { id: newEvent.id, name: newEvent.name }
   } catch (error) {
     console.error('[v0] Error in getOrCreateDefaultEvent:', error)
     throw new Error('DEFAULT_EVENT_REAL: ' + (error instanceof Error ? error.message : String(error)))
