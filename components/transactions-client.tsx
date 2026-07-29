@@ -18,7 +18,7 @@ import {
   getTransactions, createTransaction, updateTransaction, deleteTransaction, getDashboardData,
 } from '@/app/actions/transactions'
 import { getCategories } from '@/app/actions/categories'
-import { useEvent } from '@/lib/contexts/event-context'
+import { useEventSession } from '@/lib/contexts/event-session-context'
 import { Plus, Pencil, Trash2, ArrowUpRight, ArrowDownRight, FileDown, TrendingUp, TrendingDown, Wallet, Search, X, Filter, ChevronDown as ChevronDownIcon, Download } from 'lucide-react'
 import type { Category } from '@/lib/db/schema'
 import * as XLSX from 'xlsx'
@@ -158,7 +158,7 @@ const defaultForm = {
 }
 
 export function TransactionsClient({ userId, eventId }: { userId: string; eventId: number | null }) {
-  const { eventId: contextEventId, loading: eventLoading } = useEvent()
+  const { eventId: contextEventId } = useEventSession()
   const finalEventId = eventId ?? contextEventId
   const [isPending, startTransition] = useTransition()
   const [transactions, setTransactions] = useState<TransactionRow[]>([])
