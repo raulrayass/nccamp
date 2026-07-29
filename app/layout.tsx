@@ -1,4 +1,3 @@
-import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono, Poppins } from 'next/font/google'
 import { Toaster } from 'sonner'
@@ -77,7 +76,6 @@ export default function RootLayout({
           </UserProvider>
         </LoadingProvider>
         <Toaster position="top-center" richColors closeButton />
-        {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>
   )
