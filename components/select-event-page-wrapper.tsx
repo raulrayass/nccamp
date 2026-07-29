@@ -15,11 +15,11 @@ export function SelectEventPageWrapper() {
   const router = useRouter()
   const { user } = useUser()
   const [events, setEvents] = useState<EventOption[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!user?.id) {
-      router.push('/login')
+      setLoading(false)
       return
     }
 
@@ -30,22 +30,26 @@ export function SelectEventPageWrapper() {
       } catch (error) {
         console.error('Error loading events:', error)
       } finally {
-        setIsLoading(false)
+        setLoading(false)
       }
     }
 
     loadEvents()
-  }, [user, router])
+  }, [user?.id])
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="w-full max-w-2xl">
         <div className="bg-background rounded-lg shadow-lg p-8 border border-border text-center">
-          <div className="text-foreground/60">Cargando eventos...</div>
+          <div className="text-foreground/60">Cargando...</div>
         </div>
       </div>
     )
   }
 
-  return <SelectEventClient userId={user?.id || ''} initialEvents={events} />
+  if (!user?.id) {
+    return null
+  }
+
+  return <SelectEventClient userId={user.id} initialEvents={events} />
 }
