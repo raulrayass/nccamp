@@ -63,18 +63,13 @@ export function EventSessionProvider({ children }: { children: ReactNode }) {
 
     async function loadDefaultEvent() {
       try {
-        console.log('[v0] Loading default event for user:', user.id)
         const defaultEvent = await getDefaultEvent(user.id)
-        console.log('[v0] Default event result:', defaultEvent)
         if (defaultEvent) {
-          console.log('[v0] Setting default event:', defaultEvent.id)
           setEventId(defaultEvent.id)
           writeSession(SESSION_KEY, defaultEvent.id)
-        } else {
-          console.log('[v0] No default event found')
         }
       } catch (error) {
-        console.error('[v0] Error loading default event:', error)
+        console.error('Error loading default event:', error)
       }
     }
 
