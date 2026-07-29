@@ -11,13 +11,13 @@ export const appUsers = pgTable('app_users', {
 // Fase A: Multi-event support tables
 export const events = pgTable('events', {
   id: serial('id').primaryKey(),
-  userId: text('userId').notNull(),
   name: text('name').notNull(),
-  description: text('description'),
-  startDate: timestamp('startDate'),
-  endDate: timestamp('endDate'),
-  location: text('location'),
-  isDefault: boolean('isDefault').notNull().default(false),
+  adminId: text('adminId').notNull(),
+  city: text('city'),
+  country: text('country'),
+  startDate: date('startDate'),
+  endDate: date('endDate'),
+  status: text('status').notNull().default('active'),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
   updatedAt: timestamp('updatedAt').notNull().defaultNow(),
 })
