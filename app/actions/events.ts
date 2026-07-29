@@ -129,6 +129,35 @@ export async function getDefaultEvent(userId: string): Promise<{ id: number; nam
 // Establecer evento como predeterminado
 export async function setDefaultEvent(userId: string, eventId: number): Promise<void> {
   try {
+    // Verificar que el usuario tiene acceso a este evento (como admin o miembro)
+    const access = await db
+      .select({ id: eventMembers.id })
+      .from(eventMembers)
+      .where(and(eq(eventMembers.userId, userId), eq(eventMembers.eventId, eventId)))
+      .limit(1)
+
+    if (access.length === 0) {
+      // Si no existe como miembro, verificar si es admin del evento
+      const eventOwner = await db
+        .select({ adminId: events.adminId })
+        .from(events)
+        .where(eq(events.id, eventId))
+        .limit(1)
+
+      if (eventOwner.length === 0 || eventOwner[0].adminId !== userId) {
+        throw new Error('No tienes acceso a este evento')
+      }
+
+      // Si es admin pero no está en event_members, agregarlo
+      await db.insert(eventMembers).values({
+        eventId,
+        userId,
+        role: 'admin',
+        isDefault: true,
+      })
+      return
+    }
+
     // Remover default de todos los eventos del usuario
     await db
       .update(eventMembers)

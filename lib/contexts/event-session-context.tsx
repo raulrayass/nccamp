@@ -18,7 +18,7 @@ const SESSION_KEY = 'eventSession'
 function readSession(key: string): number | null {
   if (typeof window === 'undefined') return null
   try {
-    const val = sessionStorage.getItem(key)
+    const val = localStorage.getItem(key)
     return val ? parseInt(val, 10) : null
   } catch {
     return null
@@ -28,7 +28,7 @@ function readSession(key: string): number | null {
 function writeSession(key: string, value: number) {
   if (typeof window === 'undefined') return
   try {
-    sessionStorage.setItem(key, String(value))
+    localStorage.setItem(key, String(value))
   } catch {
     // Silently fail
   }
@@ -37,7 +37,7 @@ function writeSession(key: string, value: number) {
 function clearSessionStorage(key: string) {
   if (typeof window === 'undefined') return
   try {
-    sessionStorage.removeItem(key)
+    localStorage.removeItem(key)
   } catch {
     // Silently fail
   }
