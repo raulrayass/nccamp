@@ -112,33 +112,17 @@ export async function createEvent(
 // Obtener evento predeterminado del usuario
 export async function getDefaultEvent(userId: string): Promise<{ id: number; name: string } | null> {
   try {
-    console.log('[v0] getDefaultEvent START for userId:', userId)
-    
-    // Primero obtenemos el eventId del default
-    const defaultMember = await db
-      .select({ eventId: eventMembers.eventId })
+    const result = await db
+      .select({ id: events.id, name: events.name })
       .from(eventMembers)
+      .leftJoin(events, eq(eventMembers.eventId, events.id))
       .where(and(eq(eventMembers.userId, userId), eq(eventMembers.isDefault, true)))
       .limit(1)
 
-    console.log('[v0] Query result defaultMember:', defaultMember)
-
-    if (defaultMember.length === 0) {
-      console.log('[v0] No default member found')
-      return null
-    }
-
-    // Luego obtenemos el evento
-    const eventData = await db
-      .select({ id: events.id, name: events.name })
-      .from(events)
-      .where(eq(events.id, defaultMember[0].eventId))
-      .limit(1)
-
-    console.log('[v0] Event data:', eventData)
-    return eventData.length > 0 ? eventData[0] : null
+    if (result.length === 0) return null
+    return result[0]
   } catch (error) {
-    console.error('[v0] Error getting default event:', error)
+    console.error('Error getting default event:', error)
     return null
   }
 }
@@ -146,54 +130,17 @@ export async function getDefaultEvent(userId: string): Promise<{ id: number; nam
 // Establecer evento como predeterminado
 export async function setDefaultEvent(userId: string, eventId: number): Promise<void> {
   try {
-    console.log('[v0] setDefaultEvent START:', { userId, eventId })
-    
-    // Remover default de TODOS los eventos del usuario primero
-    const removeResult = await db
+    // Remover default de todos los eventos del usuario
+    await db
       .update(eventMembers)
       .set({ isDefault: false })
       .where(eq(eventMembers.userId, userId))
-    console.log('[v0] Removed isDefault from other events:', removeResult)
-
-    // Verificar que el usuario tiene acceso a este evento
-    const access = await db
-      .select({ id: eventMembers.id })
-      .from(eventMembers)
-      .where(and(eq(eventMembers.userId, userId), eq(eventMembers.eventId, eventId)))
-      .limit(1)
-
-    if (access.length === 0) {
-      console.log('[v0] User not in event_members, checking if admin...')
-      // Si no existe como miembro, verificar si es admin del evento
-      const eventOwner = await db
-        .select({ adminId: events.adminId })
-        .from(events)
-        .where(eq(events.id, eventId))
-        .limit(1)
-
-      if (eventOwner.length === 0 || eventOwner[0].adminId !== userId) {
-        throw new Error('No tienes acceso a este evento')
-      }
-
-      // Si es admin pero no está en event_members, agregarlo
-      console.log('[v0] Inserting admin as member with isDefault=true')
-      await db.insert(eventMembers).values({
-        eventId,
-        userId,
-        role: 'admin',
-        isDefault: true,
-      })
-      console.log('[v0] setDefaultEvent SUCCESS (new member)')
-      return
-    }
 
     // Establecer el nuevo default
-    console.log('[v0] Updating isDefault=true for event:', eventId)
-    const updateResult = await db
+    await db
       .update(eventMembers)
       .set({ isDefault: true })
       .where(and(eq(eventMembers.userId, userId), eq(eventMembers.eventId, eventId)))
-    console.log('[v0] setDefaultEvent SUCCESS:', updateResult)
   } catch (error) {
     console.error('[v0] Error setting default event:', error)
     throw new Error('SET_DEFAULT_EVENT: ' + (error instanceof Error ? error.message : String(error)))
