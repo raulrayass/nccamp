@@ -4,12 +4,10 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Square, Users, DollarSign, MapPin, Trophy, LogOut, User } from 'lucide-react'
+import { Square, Users, DollarSign, MapPin, Trophy, LogOut, User, Settings } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useUser } from '@/components/user-provider'
 import { Button } from '@/components/ui/button'
-import { EventSwitcher } from '@/components/event-switcher'
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -116,9 +114,6 @@ export function Topbar() {
             })}
           </nav>
 
-          {/* Event Switcher */}
-          {user && <EventSwitcher />}
-
           {/* User area */}
           {user ? (
             <DropdownMenu>
@@ -136,6 +131,17 @@ export function Topbar() {
                     <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"></p>
                     <p className="text-sm font-semibold text-foreground truncate mt-1">{user.email}</p>
                   </DropdownMenuLabel>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator className="my-2" />
+                <DropdownMenuGroup>
+                  <Link href="/settings" asChild>
+                    <DropdownMenuItem className="gap-2.5 cursor-pointer py-2.5 px-3 transition-all duration-200">
+                      <div className="w-3.5 h-3.5 flex items-center justify-center rounded-md bg-primary/10">
+                        <Settings className="w-3.5 h-3.5 text-primary" />
+                      </div>
+                      <span className="font-medium">Configuración</span>
+                    </DropdownMenuItem>
+                  </Link>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator className="my-2" />
                 <DropdownMenuGroup>
