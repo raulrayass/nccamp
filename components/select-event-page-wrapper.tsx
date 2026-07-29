@@ -16,11 +16,7 @@ export function SelectEventPageWrapper() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  console.log('[v0] SelectEventPageWrapper: user=', user?.id, 'loading=', loading, 'events=', events.length)
-
   useEffect(() => {
-    console.log('[v0] SelectEventPageWrapper useEffect: user?.id=', user?.id)
-    
     if (!user?.id) {
       setLoading(false)
       return
@@ -28,14 +24,12 @@ export function SelectEventPageWrapper() {
 
     async function loadEvents() {
       try {
-        console.log('[v0] Loading events for user:', user.id)
         setLoading(true)
         setError(null)
         const userEvents = await getUserEvents(user.id)
-        console.log('[v0] Got events:', userEvents)
         setEvents(userEvents || [])
       } catch (err) {
-        console.error('[v0] Error loading events:', err)
+        console.error('Error loading events:', err)
         setError(err instanceof Error ? err.message : String(err))
       } finally {
         setLoading(false)
