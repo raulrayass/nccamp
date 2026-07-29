@@ -49,31 +49,37 @@ export function EventProvider({ children }: { children: ReactNode }) {
 
   const initializeEvent = async () => {
     if (!user) {
+      console.log('[v0] EventContext: No user available')
       setLoading(false)
       return
     }
 
     try {
+      console.log('[v0] EventContext: Starting to load events for user:', user.id)
       setLoading(true)
       setError(null)
 
       const userEvents = await getUserEvents(user.id)
+      console.log('[v0] EventContext: getUserEvents returned:', userEvents)
       
       if (!userEvents || userEvents.length === 0) {
+        console.log('[v0] EventContext: No events found for user')
         setEvents([])
         setEventId(null)
         setLoading(false)
         return
       }
 
+      console.log('[v0] EventContext: Setting', userEvents.length, 'events')
       setEvents(userEvents.map((e: any) => ({ id: e.id, name: e.name })))
 
       // Usar el primer evento del usuario
+      console.log('[v0] EventContext: Setting current event to:', userEvents[0].id)
       setEventId(userEvents[0].id)
       writeToStorage(STORAGE_KEY, String(userEvents[0].id))
     } catch (err) {
-      console.error('[v0] Error loading events:', err)
-      setError('Error al cargar eventos')
+      console.error('[v0] EventContext Error:', err)
+      setError(String(err))
     } finally {
       setLoading(false)
     }
