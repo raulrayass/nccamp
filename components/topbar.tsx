@@ -8,6 +8,7 @@ import { Square, Users, DollarSign, MapPin, Trophy, LogOut, User } from 'lucide-
 import { cn } from '@/lib/utils'
 import { useUser } from '@/components/user-provider'
 import { Button } from '@/components/ui/button'
+import { EventSwitcher } from '@/components/event-switcher'
 
 import {
   DropdownMenu,
@@ -114,6 +115,9 @@ export function Topbar() {
               )
             })}
           </nav>
+
+          {/* Event Switcher */}
+          {user && <EventSwitcher />}
 
           {/* User area */}
           {user ? (
