@@ -242,8 +242,13 @@ export function SettingsClient() {
                   <Button
                     size="sm"
                     variant={eventId === event.id ? 'default' : 'outline'}
-                    disabled={eventId === event.id}
+                    disabled={eventId === event.id || settingDefault !== null}
                     className="gap-2"
+                    onClick={() => {
+                      setEventSession(event.id)
+                      handleSetDefault(event.id)
+                      toast.success(`Usando evento: ${event.name}`)
+                    }}
                   >
                     {eventId === event.id ? 'Activo' : 'Usar'}
                   </Button>
