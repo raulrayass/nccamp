@@ -29,10 +29,25 @@ const EXPENSE_COLOR = '#f97316'
 export function DashboardClient({ userId, eventId }: { userId: string; eventId: number | null }) {
   const [data, setData] = useState<DashboardData | null>(null)
   const [churchData, setChurchData] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    getDashboardData(userId, eventId).then(setData)
-    getChurchDistribution(userId, eventId).then(setChurchData)
+    if (!eventId) {
+      setData(null)
+      setChurchData([])
+      return
+    }
+
+    setIsLoading(true)
+    Promise.all([
+      getDashboardData(userId, eventId),
+      getChurchDistribution(userId, eventId),
+    ])
+      .then(([dashData, churchDist]) => {
+        setData(dashData)
+        setChurchData(churchDist)
+      })
+      .finally(() => setIsLoading(false))
   }, [userId, eventId])
 
   if (!data) {
