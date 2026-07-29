@@ -49,36 +49,8 @@ export async function getOrCreateDefaultEvent(userId: string): Promise<{ id: num
 
 // Obtener todos los eventos del usuario (como admin o como miembro) - solo id y name
 export async function getUserEvents(userId: string): Promise<{ id: number; name: string }[]> {
-  try {
-    // Eventos donde el usuario es admin
-    const adminEvents = await db
-      .select({ id: events.id, name: events.name })
-      .from(events)
-      .where(eq(events.adminId, userId))
-      .orderBy(desc(events.createdAt))
-
-    // Eventos donde el usuario es miembro
-    const memberRows = await db
-      .select({ eventId: eventMembers.eventId })
-      .from(eventMembers)
-      .where(eq(eventMembers.userId, userId))
-
-    const memberEventIds = memberRows.map(r => r.eventId)
-    const memberEvents = memberEventIds.length
-      ? await db
-          .select({ id: events.id, name: events.name })
-          .from(events)
-          .where(inArray(events.id, memberEventIds))
-          .orderBy(desc(events.createdAt))
-      : []
-
-    // Combinar y deduplicar por id
-    const all = [...adminEvents, ...memberEvents]
-    return Array.from(new Map(all.map(e => [e.id, e])).values())
-  } catch (error) {
-    console.error('[v0] Error fetching events:', error)
-    throw new Error('GET_EVENTS_REAL: ' + (error instanceof Error ? error.message : String(error)))
-  }
+  // TEMPORAL: datos fijos para diagnosticar
+  return [{ id: 1, name: 'Prueba Fija' }]
 }
 
 // Crear un nuevo evento
