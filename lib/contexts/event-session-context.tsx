@@ -45,14 +45,16 @@ function clearSessionStorage(key: string) {
 export function EventSessionProvider({ children }: { children: ReactNode }) {
   const { user } = useUser()
   const [eventId, setEventId] = useState<number | null>(null)
+  const [isInitialized, setIsInitialized] = useState(false)
 
-  // Initialize from sessionStorage on mount
+  // Initialize from sessionStorage on mount (only once)
   useEffect(() => {
-    if (user) {
+    if (!isInitialized && typeof window !== 'undefined') {
       const saved = readSession(SESSION_KEY)
       setEventId(saved)
+      setIsInitialized(true)
     }
-  }, [user])
+  }, [])
 
   const setEventSession = (id: number) => {
     setEventId(id)

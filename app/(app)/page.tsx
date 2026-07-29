@@ -1,10 +1,13 @@
 'use client'
 
 import { useUser } from '@/components/user-provider'
+import { useEventSession } from '@/lib/contexts/event-session-context'
 import { DashboardClient } from '@/components/dashboard-client'
 
 export default function DashboardPage() {
   const { user } = useUser()
-  if (!user) return null
-  return <DashboardClient userId={user.id} />
+  const { eventId } = useEventSession()
+
+  if (!user || !eventId) return null
+  return <DashboardClient userId={user.id} eventId={eventId} />
 }

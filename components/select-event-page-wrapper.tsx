@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { useUser } from '@/components/user-provider'
 import { getUserEvents } from '@/app/actions/events'
 import { SelectEventClient } from '@/components/select-event-client'
@@ -12,10 +11,10 @@ interface EventOption {
 }
 
 export function SelectEventPageWrapper() {
-  const router = useRouter()
   const { user } = useUser()
   const [events, setEvents] = useState<EventOption[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!user?.id) {
@@ -25,10 +24,13 @@ export function SelectEventPageWrapper() {
 
     async function loadEvents() {
       try {
+        setLoading(true)
+        setError(null)
         const userEvents = await getUserEvents(user.id)
-        setEvents(userEvents)
-      } catch (error) {
-        console.error('Error loading events:', error)
+        setEvents(userEvents || [])
+      } catch (err) {
+        console.error('[v0] Error loading events:', err)
+        setError(err instanceof Error ? err.message : 'Error al cargar eventos')
       } finally {
         setLoading(false)
       }
@@ -41,7 +43,17 @@ export function SelectEventPageWrapper() {
     return (
       <div className="w-full max-w-2xl">
         <div className="bg-background rounded-lg shadow-lg p-8 border border-border text-center">
-          <div className="text-foreground/60">Cargando...</div>
+          <div className="text-foreground/60">Cargando eventos...</div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="w-full max-w-2xl">
+        <div className="bg-background rounded-lg shadow-lg p-8 border border-red-500/50 text-center">
+          <div className="text-red-600">{error}</div>
         </div>
       </div>
     )
