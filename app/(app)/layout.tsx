@@ -1,23 +1,15 @@
 'use client'
 
 import { useEventSession } from '@/lib/contexts/event-session-context'
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { redirect } from 'next/navigation'
 import { Topbar } from '@/components/topbar'
 import { FloatingDock } from '@/components/floating-dock'
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { eventId } = useEventSession()
-  const router = useRouter()
-
-  useEffect(() => {
-    if (!eventId) {
-      router.push('/select-event')
-    }
-  }, [eventId, router])
 
   if (!eventId) {
-    return null
+    redirect('/select-event')
   }
 
   return (
