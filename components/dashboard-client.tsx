@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { CountUp } from 'react-countup'
 import { getDashboardData, getGameActivityData } from '@/app/actions/dashboard'
 import { getChurchDistribution } from '@/app/actions/attendees'
 import { Card } from '@/components/ui/card'
@@ -113,18 +112,9 @@ export function DashboardClient({ userId, eventId }: { userId: string; eventId: 
               <motion.p className="text-xs sm:text-sm text-muted-foreground font-medium mb-1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
                 Balance Total
               </motion.p>
-              <motion.div key={balance} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
-                <p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mt-1 tabular-nums">
-                  <CountUp
-                    start={0}
-                    end={Math.max(0, balance)}
-                    duration={2.5}
-                    separator=","
-                    decimals={0}
-                    prefix="$"
-                  />
-                </p>
-              </motion.div>
+              <motion.p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mt-1 tabular-nums" key={balance} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
+                {formatCurrency(balance)}
+              </motion.p>
             </div>
             <motion.div
               className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-primary/20 flex items-center justify-center shrink-0 icon-glow"
@@ -155,14 +145,7 @@ export function DashboardClient({ userId, eventId }: { userId: string; eventId: 
               <div className="flex-1">
                 <p className="text-xs sm:text-sm text-muted-foreground font-medium mb-1">Total Ingresos</p>
                 <p className="text-lg sm:text-2xl font-bold text-foreground tabular-nums">
-                  <CountUp
-                    start={0}
-                    end={Math.max(0, totalIncome)}
-                    duration={2.5}
-                    separator=","
-                    decimals={0}
-                    prefix="$"
-                  />
+                  {formatCurrency(totalIncome)}
                 </p>
                 <p className="text-xs text-muted-foreground mt-0.5">Acumulado total</p>
               </div>
@@ -182,14 +165,7 @@ export function DashboardClient({ userId, eventId }: { userId: string; eventId: 
               <div className="flex-1">
                 <p className="text-xs sm:text-sm text-muted-foreground font-medium mb-1">Total Egresos</p>
                 <p className="text-lg sm:text-2xl font-bold text-foreground tabular-nums">
-                  <CountUp
-                    start={0}
-                    end={Math.max(0, totalExpense)}
-                    duration={2.5}
-                    separator=","
-                    decimals={0}
-                    prefix="$"
-                  />
+                  {formatCurrency(totalExpense)}
                 </p>
                 <p className="text-xs text-muted-foreground mt-0.5">Acumulado total</p>
               </div>
