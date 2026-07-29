@@ -33,7 +33,7 @@ export function SelectEventClient({
 
   const handleSelectEvent = (eventId: number) => {
     setEventSession(eventId)
-    router.push('/dashboard')
+    router.push('/')
   }
 
   const handleCreateEvent = async (e: React.FormEvent) => {
@@ -53,7 +53,7 @@ export function SelectEventClient({
           formData.endDate
         )
         setEventSession(event.id)
-        router.push('/dashboard')
+        router.push('/')
         toast.success('Evento creado exitosamente')
       } catch (error) {
         toast.error('Error al crear el evento')
