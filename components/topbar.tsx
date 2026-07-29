@@ -89,7 +89,7 @@ export function Topbar() {
               priority
             />
             <div className="flex flex-col leading-tight min-w-0">
-              <span className="font-bold text-foreground text-xs sm:text-sm truncate">Permanece Camp</span>
+              <span className="font-bold text-foreground text-xs sm:text-sm truncate">Permanece</span>
             </div>
           </Link>
 
