@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono, Poppins } from 'next/font/google'
 import { Toaster } from 'sonner'
 import { UserProvider } from '@/components/user-provider'
-import { EventProvider } from '@/lib/contexts/event-context'
 import { EventSessionProvider } from '@/lib/contexts/event-session-context'
 import { LoadingScreen, LoadingProvider } from '@/components/loading-screen'
 import './globals.css'
@@ -72,9 +71,7 @@ export default function RootLayout({
           <LoadingScreen />
           <UserProvider>
             <EventSessionProvider>
-              <EventProvider>
-                {children}
-              </EventProvider>
+              {children}
             </EventSessionProvider>
           </UserProvider>
         </LoadingProvider>
