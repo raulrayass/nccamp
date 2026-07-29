@@ -15,7 +15,7 @@ import { toast } from 'sonner'
 
 export function EventSelector() {
   const { user } = useUser()
-  const { eventId, events, loading, setEvent, refetch } = useEvent()
+  const { eventId, events, loading, error, setEvent, refetch } = useEvent()
   const [isPending, startTransition] = useTransition()
   const [dialogOpen, setDialogOpen] = useState(false)
   const [formData, setFormData] = useState({
@@ -26,6 +26,8 @@ export function EventSelector() {
   })
 
   const currentEvent = events.find(e => e.id === eventId)
+
+  console.log('[v0] EventSelector rendering:', { eventId, events: events.length, loading, error })
 
   async function handleCreateEvent(e: React.FormEvent) {
     e.preventDefault()
@@ -62,6 +64,11 @@ export function EventSelector() {
   return (
     <>
       <div className="flex items-center gap-2">
+        {error && (
+          <div className="text-red-600 text-xs font-semibold max-w-xs truncate" title={error}>
+            Error: {error.substring(0, 30)}...
+          </div>
+        )}
         <select
           value={eventId || ''}
           onChange={(e) => {
@@ -70,11 +77,11 @@ export function EventSelector() {
               setEvent(selectedId)
             }
           }}
-          disabled={loading}
+          disabled={loading || events.length === 0}
           className="h-9 px-3 rounded-md border border-border bg-background text-sm font-medium text-foreground disabled:opacity-50 disabled:cursor-not-allowed hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary"
         >
           <option value="">
-            {loading ? 'Cargando...' : 'Seleccionar evento'}
+            {loading ? 'Cargando...' : events.length === 0 ? 'Sin eventos' : 'Seleccionar evento'}
           </option>
           {events.map(event => (
             <option key={event.id} value={event.id}>
