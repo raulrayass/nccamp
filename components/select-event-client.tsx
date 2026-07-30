@@ -5,8 +5,12 @@ import { useRouter } from 'next/navigation'
 import { useEventSession } from '@/lib/contexts/event-session-context'
 import { createEvent, setDefaultEvent } from '@/app/actions/events'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { toast } from 'sonner'
-import { Plus, Star } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { Plus, Star, Calendar, MapPin, ChevronRight } from 'lucide-react'
+import { SettingSection } from '@/components/setting-section'
+import { SettingRow } from '@/components/setting-row'
 
 interface EventOption {
   id: number
@@ -41,7 +45,7 @@ export function SelectEventClient({
     setSettingDefault(eventId)
     try {
       await setDefaultEvent(userId, eventId)
-      setEventSession(eventId)  // Actualiza el contexto para reflejar el cambio en el front
+      setEventSession(eventId)
       toast.success('Evento establecido como predeterminado')
     } catch (error) {
       toast.error('Error al establecer evento predeterminado')
@@ -78,144 +82,167 @@ export function SelectEventClient({
   }
 
   return (
-    <div className="w-full max-w-2xl">
-      <div className="bg-background rounded-lg shadow-lg p-8 border border-border">
-        <h1 className="text-3xl font-bold text-center mb-2 text-foreground">
-          Selecciona un Evento
-        </h1>
-        <p className="text-center text-foreground/60 mb-8">
-          Elige un evento existente o crea uno nuevo para continuar
-        </p>
+    <motion.div
+      className="w-full max-w-md mx-auto"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <div className="text-center mb-8">
+        <h1 className="text-4xl font-bold text-foreground mb-2">Selecciona Evento</h1>
+        <p className="text-foreground/60">Elige uno de tus eventos o crea uno nuevo</p>
+      </div>
 
-        {/* Mostrar eventos existentes */}
-        {initialEvents.length > 0 && !showCreateForm && (
-          <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-              {initialEvents.map(event => (
-                <div
+      {/* Mostrar eventos existentes */}
+      {initialEvents.length > 0 && !showCreateForm && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <SettingSection title="Mis Eventos">
+            <div className="space-y-1">
+              {initialEvents.map((event, index) => (
+                <motion.div
                   key={event.id}
-                  className="p-6 border border-border rounded-lg hover:bg-muted transition-all duration-200 group"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.05 }}
                 >
                   <button
                     onClick={() => handleSelectEvent(event.id)}
                     disabled={isPending}
-                    className="w-full text-left disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full group relative"
                   >
-                    <div className="font-semibold text-foreground group-hover:text-primary transition-colors">
-                      {event.name}
-                    </div>
-                    <div className="text-sm text-foreground/60 mt-1">
-                      Click para seleccionar
-                    </div>
+                    <SettingRow icon={Calendar} disabled={isPending}>
+                      <div className="flex-1 text-left">
+                        <div className="text-foreground font-medium">{event.name}</div>
+                        <div className="text-xs text-foreground/50 mt-0.5">Toca para seleccionar</div>
+                      </div>
+                      <ChevronRight className="w-5 h-5 text-foreground/30 group-hover:text-foreground/50 transition-colors" />
+                    </SettingRow>
                   </button>
-                  <button
+
+                  <motion.button
                     onClick={() => handleSetDefault(event.id)}
                     disabled={settingDefault !== null || isPending}
-                    className="mt-3 flex items-center gap-2 text-xs text-foreground/60 hover:text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    title="Establecer como evento predeterminado"
+                    className="w-full text-left px-4 py-2.5 text-xs text-foreground/60 hover:text-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2.5"
+                    whileHover={{ x: 2 }}
+                    whileTap={{ scale: 0.98 }}
                   >
-                    <Star className="w-3 h-3" />
+                    <Star className={`w-4 h-4 ${settingDefault === event.id ? 'fill-green-600 text-green-600' : ''}`} />
                     {settingDefault === event.id ? 'Estableciendo...' : 'Establecer como predeterminado'}
-                  </button>
-                </div>
+                  </motion.button>
+                </motion.div>
               ))}
             </div>
+          </SettingSection>
 
-            <div className="flex gap-3">
-              <Button
-                onClick={() => setShowCreateForm(true)}
-                variant="outline"
-                className="flex-1"
-                disabled={isPending}
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Crear Nuevo Evento
-              </Button>
-            </div>
-          </>
-        )}
+          <motion.button
+            onClick={() => setShowCreateForm(true)}
+            disabled={isPending}
+            className="w-full mt-6 py-3 px-4 rounded-lg bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium flex items-center justify-center gap-2 transition-colors"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <Plus className="w-5 h-5" />
+            Crear Nuevo Evento
+          </motion.button>
+        </motion.div>
+      )}
 
-        {/* Formulario para crear evento */}
-        {showCreateForm && (
-          <form onSubmit={handleCreateEvent} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                Nombre del Evento *
-              </label>
-              <input
-                type="text"
-                value={formData.name}
-                onChange={e => setFormData({ ...formData, name: e.target.value })}
-                placeholder="ej: Campamento 2026"
-                disabled={isPending}
-                className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground placeholder-foreground/50 disabled:opacity-50"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                País
-              </label>
-              <input
-                type="text"
-                value={formData.country}
-                onChange={e => setFormData({ ...formData, country: e.target.value })}
-                placeholder="ej: Colombia"
-                disabled={isPending}
-                className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground placeholder-foreground/50 disabled:opacity-50"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
+      {/* Formulario para crear evento */}
+      {showCreateForm && (
+        <motion.form
+          onSubmit={handleCreateEvent}
+          className="space-y-4"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <SettingSection title="Información del Evento">
+            <div className="space-y-4 px-4 py-3">
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
+                <label className="block text-xs font-semibold text-foreground/70 mb-2 uppercase tracking-wider">
+                  Nombre *
+                </label>
+                <Input
+                  type="text"
+                  value={formData.name}
+                  onChange={e => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="ej: Campamento 2026"
+                  disabled={isPending}
+                  className="bg-muted border-0"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-foreground/70 mb-2 uppercase tracking-wider">
+                  País
+                </label>
+                <Input
+                  type="text"
+                  value={formData.country}
+                  onChange={e => setFormData({ ...formData, country: e.target.value })}
+                  placeholder="ej: Colombia"
+                  disabled={isPending}
+                  className="bg-muted border-0"
+                />
+              </div>
+            </div>
+          </SettingSection>
+
+          <SettingSection title="Fechas">
+            <div className="space-y-4 px-4 py-3">
+              <div>
+                <label className="block text-xs font-semibold text-foreground/70 mb-2 uppercase tracking-wider">
                   Fecha Inicio
                 </label>
-                <input
+                <Input
                   type="date"
                   value={formData.startDate}
                   onChange={e => setFormData({ ...formData, startDate: e.target.value })}
                   disabled={isPending}
-                  className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground disabled:opacity-50"
+                  className="bg-muted border-0"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
+                <label className="block text-xs font-semibold text-foreground/70 mb-2 uppercase tracking-wider">
                   Fecha Fin
                 </label>
-                <input
+                <Input
                   type="date"
                   value={formData.endDate}
                   onChange={e => setFormData({ ...formData, endDate: e.target.value })}
                   disabled={isPending}
-                  className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground disabled:opacity-50"
+                  className="bg-muted border-0"
                 />
               </div>
             </div>
+          </SettingSection>
 
-            <div className="flex gap-3 pt-4">
-              {initialEvents.length > 0 && (
-                <Button
-                  type="button"
-                  onClick={() => setShowCreateForm(false)}
-                  variant="outline"
-                  className="flex-1"
-                  disabled={isPending}
-                >
-                  Atrás
-                </Button>
-              )}
+          <div className="flex gap-3 pt-4">
+            {initialEvents.length > 0 && (
               <Button
-                type="submit"
+                type="button"
+                onClick={() => setShowCreateForm(false)}
+                variant="outline"
+                className="flex-1"
                 disabled={isPending}
-                className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
               >
-                {isPending ? 'Creando...' : 'Crear Evento'}
+                Cancelar
               </Button>
-            </div>
-          </form>
-        )}
-      </div>
-    </div>
+            )}
+            <Button
+              type="submit"
+              disabled={isPending}
+              className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+            >
+              {isPending ? 'Creando...' : 'Crear Evento'}
+            </Button>
+          </div>
+        </motion.form>
+      )}
+    </motion.div>
   )
 }
