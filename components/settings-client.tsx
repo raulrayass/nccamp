@@ -71,6 +71,7 @@ export function SettingsClient() {
     setSettingDefault(newEventId)
     try {
       await setDefaultEvent(user.id, newEventId)
+      setEventSession(newEventId)  // Actualiza el contexto para reflejar el cambio en el front
       toast.success('Evento establecido como predeterminado')
     } catch (error) {
       toast.error('Error al establecer evento predeterminado')
