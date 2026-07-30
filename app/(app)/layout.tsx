@@ -8,15 +8,15 @@ import { FloatingDock } from '@/components/floating-dock'
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
-  const { eventId } = useEventSession()
+  const { eventId, isInitialized } = useEventSession()
 
   useEffect(() => {
-    if (eventId === null) {
+    if (isInitialized && eventId === null) {
       router.replace('/select-event')
     }
-  }, [eventId, router])
+  }, [isInitialized, eventId, router])
 
-  if (!eventId) {
+  if (!isInitialized || !eventId) {
     return null
   }
 
