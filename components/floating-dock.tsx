@@ -45,6 +45,7 @@ const navItems = [
 // Acción contextual del "+" flotante según la pantalla.
 function getPrimaryAction(pathname: string): { label: string; href: string } | null {
   if (pathname === '/') return null // en Inicio no hay acción de agregar
+  if (pathname.startsWith('/attendees')) return { label: 'Agregar campero', href: '/attendees/new' }
   if (pathname.startsWith('/transactions') || pathname.startsWith('/categories'))
     return { label: 'Nueva transacción', href: '/transactions?new=1' }
   if (pathname.startsWith('/rooms') || pathname.startsWith('/churches'))
@@ -52,7 +53,7 @@ function getPrimaryAction(pathname: string): { label: string; href: string } | n
   if (pathname.startsWith('/games')) return { label: 'Nuevo juego', href: '/games?new=1' }
   if (pathname.startsWith('/staff')) return { label: 'Nuevo staff', href: '/staff?new=1' }
   if (pathname.startsWith('/teams')) return { label: 'Nuevo equipo', href: '/teams?new=1' }
-  return { label: 'Agregar campero', href: '/attendees?new=1' }
+  return null
 }
 
 // Pantallas con barra de búsqueda con id="page-search".
