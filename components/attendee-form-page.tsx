@@ -39,9 +39,9 @@ const GENDERS = [
 
 export function AttendeeFormPage({ userId, attendeeId, mode }: AttendeeFormPageProps) {
   const router = useRouter()
-  const { eventId } = useEventSession()
+  const { eventId, isInitialized } = useEventSession()
   const [isPending, startTransition] = useTransition()
-  const [loading, setLoading] = useState(mode === 'edit')
+  const [loading, setLoading] = useState(mode === 'edit' || !isInitialized)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
   const [churches, setChurches] = useState<Church[]>([])
@@ -117,7 +117,7 @@ export function AttendeeFormPage({ userId, attendeeId, mode }: AttendeeFormPageP
     }
 
     loadData()
-  }, [eventId, mode, attendeeId])
+  }, [eventId, mode, attendeeId, isInitialized])
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -176,6 +176,12 @@ export function AttendeeFormPage({ userId, attendeeId, mode }: AttendeeFormPageP
         console.error(error)
       }
     })
+  }
+
+  // Redirect if eventId is not available after initialization
+  if (isInitialized && !eventId) {
+    router.push('/select-event')
+    return null
   }
 
   if (loading) {
