@@ -13,33 +13,48 @@ interface EventSessionContextType {
 
 const EventSessionContext = createContext<EventSessionContextType | undefined>(undefined)
 
-const SESSION_KEY = 'eventSession'
+const COOKIE_NAME = 'eventSession'
+const COOKIE_MAX_AGE = 365 * 24 * 60 * 60 // 1 year in seconds
 
-function readSession(key: string): number | null {
-  if (typeof window === 'undefined') return null
+// Read eventId from cookie
+function readSession(): number | null {
+  if (typeof document === 'undefined') return null
   try {
-    const val = localStorage.getItem(key)
-    return val ? parseInt(val, 10) : null
+    const nameEQ = COOKIE_NAME + '='
+    const cookies = document.cookie.split(';')
+    for (let c of cookies) {
+      c = c.trim()
+      if (c.indexOf(nameEQ) === 0) {
+        const val = c.substring(nameEQ.length)
+        return val ? parseInt(val, 10) : null
+      }
+    }
+    return null
   } catch {
     return null
   }
 }
 
-function writeSession(key: string, value: number) {
-  if (typeof window === 'undefined') return
+// Write eventId to cookie (1 year expiration, SameSite=Lax, path=/)
+function writeSession(value: number) {
+  if (typeof document === 'undefined') return
   try {
-    localStorage.setItem(key, String(value))
+    const date = new Date()
+    date.setTime(date.getTime() + COOKIE_MAX_AGE * 1000)
+    const expires = 'expires=' + date.toUTCString()
+    document.cookie = `${COOKIE_NAME}=${value};${expires};path=/;SameSite=Lax`
   } catch {
-    // Silently fail
+    // Cookie write failed silently
   }
 }
 
-function clearSessionStorage(key: string) {
-  if (typeof window === 'undefined') return
+// Delete eventId cookie
+function clearSessionStorage() {
+  if (typeof document === 'undefined') return
   try {
-    localStorage.removeItem(key)
+    document.cookie = `${COOKIE_NAME}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`
   } catch {
-    // Silently fail
+    // Cookie delete failed silently
   }
 }
 
@@ -48,10 +63,10 @@ export function EventSessionProvider({ children }: { children: ReactNode }) {
   const [eventId, setEventId] = useState<number | null>(null)
   const [isInitialized, setIsInitialized] = useState(false)
 
-  // Initialize from sessionStorage on mount (only once)
+  // Initialize from cookie on mount (only once)
   useEffect(() => {
     if (!isInitialized && typeof window !== 'undefined') {
-      const saved = readSession(SESSION_KEY)
+      const saved = readSession()
       setEventId(saved)
       setIsInitialized(true)
     }
@@ -66,7 +81,7 @@ export function EventSessionProvider({ children }: { children: ReactNode }) {
         const defaultEvent = await getDefaultEvent(user.id)
         if (defaultEvent) {
           setEventId(defaultEvent.id)
-          writeSession(SESSION_KEY, defaultEvent.id)
+          writeSession(defaultEvent.id)
         }
       } catch (error) {
         console.error('Error loading default event:', error)
@@ -78,12 +93,12 @@ export function EventSessionProvider({ children }: { children: ReactNode }) {
 
   const setEventSession = (id: number) => {
     setEventId(id)
-    writeSession(SESSION_KEY, id)
+    writeSession(id)
   }
 
   const clearEventSession = () => {
     setEventId(null)
-    clearSessionStorage(SESSION_KEY)
+    clearSessionStorage()
   }
 
   return (
