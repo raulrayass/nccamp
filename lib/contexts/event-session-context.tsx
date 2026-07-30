@@ -9,6 +9,7 @@ interface EventSessionContextType {
   setEventSession: (id: number) => void
   clearEventSession: () => void
   isSessionActive: boolean
+  isInitialized: boolean
 }
 
 const EventSessionContext = createContext<EventSessionContextType | undefined>(undefined)
@@ -72,9 +73,9 @@ export function EventSessionProvider({ children }: { children: ReactNode }) {
     }
   }, [isInitialized])
 
-  // Load default event if user is authenticated but no event is selected
+  // Load default event if user is authenticated but no event is selected (only after initialization)
   useEffect(() => {
-    if (!user?.id || eventId !== null) return
+    if (!isInitialized || !user?.id || eventId !== null) return
 
     async function loadDefaultEvent() {
       try {
@@ -89,7 +90,7 @@ export function EventSessionProvider({ children }: { children: ReactNode }) {
     }
 
     loadDefaultEvent()
-  }, [user?.id, eventId])
+  }, [isInitialized, user?.id, eventId])
 
   const setEventSession = (id: number) => {
     setEventId(id)
@@ -108,6 +109,7 @@ export function EventSessionProvider({ children }: { children: ReactNode }) {
         setEventSession,
         clearEventSession,
         isSessionActive: eventId !== null,
+        isInitialized,
       }}
     >
       {children}
