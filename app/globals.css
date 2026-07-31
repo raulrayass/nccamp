@@ -90,21 +90,21 @@
   color-scheme: dark;
   --background: #000000;
   --foreground: #e6edf3;
-  --card: #0a0a0a;
+  --card: #111111;
   --card-foreground: #e6edf3;
-  --popover: #0a0a0a;
+  --popover: #111111;
   --popover-foreground: #e6edf3;
   --primary: #2ea043;
   --primary-foreground: #ffffff;
-  --secondary: #121212;
+  --secondary: #1a1a1a;
   --secondary-foreground: #e6edf3;
-  --muted: #1a1a1a;
+  --muted: #1f1f1f;
   --muted-foreground: #8b949e;
   --accent: #2ea043;
   --accent-foreground: #ffffff;
   --destructive: #f85149;
-  --border: #1f1f1f;
-  --input: #0a0a0a;
+  --border: #262626;
+  --input: #1a1a1a;
   --ring: #2ea043;
   --chart-1: #2ea043;
   --chart-2: #1db854;
@@ -128,7 +128,7 @@
     color-scheme: dark;
     --background: #000000;
     --foreground: #e6edf3;
-    --card: #0a0a0a;
+    --card: #111111;
     --card-foreground: #e6edf3;
     --popover: #0a0a0a;
     --popover-foreground: #e6edf3;
@@ -713,13 +713,13 @@ input:focus, textarea:focus, select:focus {
   }
 }
 
-/* Pulse animation - extra smooth for skeletons */
+/* Pulse animation - ML-style smooth opacity fade */
 @keyframes pulse {
   0%, 100% {
-    opacity: 1;
+    opacity: 0.65;
   }
   50% {
-    opacity: 0.65;
+    opacity: 0.95;
   }
 }
 
@@ -811,16 +811,8 @@ input:focus, textarea:focus, select:focus {
 }
 
 .animate-skeleton-shimmer {
-  background: linear-gradient(
-    90deg,
-    var(--muted) 0%,
-    var(--muted) calc(100% - 468px),
-    rgba(255, 255, 255, 0.15) 50%,
-    var(--muted) calc(100% + 468px),
-    var(--muted) 100%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 2s ease-in-out infinite;
+  background: var(--muted);
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 .animate-skeleton-neumorphic {
