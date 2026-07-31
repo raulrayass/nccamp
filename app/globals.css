@@ -318,6 +318,11 @@ input:focus, textarea:focus, select:focus {
     border-color: hsl(from var(--primary) h s calc(l - 18%));
   }
 
+  .dark .clay-card {
+    background: var(--card);
+    border-color: hsl(from var(--primary) h s calc(l - 20%));
+  }
+
   .clay-card:hover {
     transform: translateY(-2px);
     border-color: hsl(from var(--primary) h s calc(l - 10%));
@@ -341,11 +346,7 @@ input:focus, textarea:focus, select:focus {
 
   /* Aurora card - gradiente sutil tipo aurora boreal */
   .aurora-card {
-    background: linear-gradient(
-      to bottom right,
-      hsl(from var(--primary) h calc(s + 5%) calc(l + 1.5%)),
-      var(--card)
-    );
+    background: var(--card);
     border: 1px solid hsl(from var(--primary) h s calc(l - 12%));
     box-shadow:
       0 8px 28px -4px rgba(0, 0, 0, 0.06),
@@ -354,6 +355,14 @@ input:focus, textarea:focus, select:focus {
     position: relative;
     overflow: hidden;
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  :is(html:not(.dark)) .aurora-card {
+    background: linear-gradient(
+      to bottom right,
+      hsl(from var(--primary) h calc(s + 5%) calc(l + 1.5%)),
+      var(--card)
+    );
   }
 
   .aurora-card::before {
@@ -365,8 +374,12 @@ input:focus, textarea:focus, select:focus {
       hsl(from var(--primary) h calc(s + 10%) calc(l + 4%)) 0%,
       transparent 60%
     );
-    opacity: 0.12;
+    opacity: 0.08;
     pointer-events: none;
+  }
+
+  .dark .aurora-card::before {
+    opacity: 0.04;
   }
 
   .aurora-card:hover {
@@ -379,12 +392,8 @@ input:focus, textarea:focus, select:focus {
 
   /* Stat card - para números con estilo moderno */
   .stat-card {
-    background: linear-gradient(
-      135deg,
-      hsl(from var(--primary) h calc(s + 3%) calc(l + 1%)) 0%,
-      var(--card) 100%
-    );
-    border: 1px solid hsl(from var(--primary) h s calc(l - 10%));
+    background: var(--card);
+    border: 1px solid hsl(from var(--primary) h s calc(l - 15%));
     box-shadow:
       0 8px 28px -4px rgba(0, 0, 0, 0.07),
       inset 0 1px 0 rgba(255, 255, 255, 0.08),
@@ -392,6 +401,14 @@ input:focus, textarea:focus, select:focus {
     position: relative;
     overflow: hidden;
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  :is(html:not(.dark)) .stat-card {
+    background: linear-gradient(
+      135deg,
+      hsl(from var(--primary) h calc(s + 3%) calc(l + 1%)) 0%,
+      var(--card) 100%
+    );
   }
 
   .stat-card::after {
@@ -452,13 +469,8 @@ input:focus, textarea:focus, select:focus {
 
   /* Card vibrante - para juegos y equipos */
   .card-vibrant {
-    background: linear-gradient(
-      135deg,
-      hsl(from var(--primary) h calc(s + 8%) calc(l + 3%)) 0%,
-      var(--card) 50%,
-      hsl(from var(--primary) h calc(s - 5%) calc(l - 1%)) 100%
-    );
-    border: 1.5px solid hsl(from var(--primary) h s calc(l - 12%));
+    background: var(--card);
+    border: 1.5px solid hsl(from var(--primary) h s calc(l - 15%));
     box-shadow:
       0 12px 40px -6px rgba(0, 0, 0, 0.15),
       inset 0 1px 0 rgba(255, 255, 255, 0.1),
