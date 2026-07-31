@@ -183,6 +183,12 @@ export async function getGameActivityData(userId: string, eventId?: number | nul
       scoreConditions.push(eq(gameScores.eventId, eventId))
     }
 
+    // Build join condition for teams - filter by eventId only if provided
+    const teamJoinConditions = [eq(gameScores.teamId, teams.id)]
+    if (eventId !== undefined && eventId !== null) {
+      teamJoinConditions.push(eq(teams.eventId, eventId))
+    }
+
     const allScores = await db
       .select({
         gameId: gameScores.gameId,
@@ -191,7 +197,7 @@ export async function getGameActivityData(userId: string, eventId?: number | nul
         teamName: teams.name,
       })
       .from(gameScores)
-      .leftJoin(teams, and(eq(gameScores.teamId, teams.id), eq(teams.eventId, eventId || 0)))
+      .leftJoin(teams, and(...(teamJoinConditions as any)))
       .where(and(...(scoreConditions as any)))
 
     for (const score of allScores) {
