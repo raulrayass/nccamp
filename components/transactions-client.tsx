@@ -748,8 +748,8 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
             </div>
             <div className="flex justify-end gap-1.5 sm:gap-2 mt-1 sm:mt-2">
               <Button type="button" variant="outline" onClick={() => { setDialogOpen(false); clearNewParam() }} className="h-8 text-xs sm:text-sm hover:bg-slate-100">Cancelar</Button>
-              <Button type="submit" disabled={isPending || !form.categoryId || eventLoading} className="h-8 text-xs sm:text-sm bg-green-600 hover:bg-green-700 text-white disabled:bg-slate-400">
-                {isPending ? 'Guardando...' : eventLoading ? 'Cargando evento...' : editingId ? 'Actualizar' : 'Crear'}
+              <Button type="submit" disabled={isPending || !form.categoryId} className="h-8 text-xs sm:text-sm bg-green-600 hover:bg-green-700 text-white disabled:bg-slate-400">
+                {isPending ? 'Guardando...' : editingId ? 'Actualizar' : 'Crear'}
               </Button>
             </div>
           </form>
