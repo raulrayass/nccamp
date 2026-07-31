@@ -76,6 +76,26 @@ export function DashboardClient({ userId, eventId }: { userId: string; eventId: 
     return () => clearInterval(interval)
   }, [userId, eventId])
 
+  // Pull-to-refresh: detect cuando llega al tope de la página
+  useEffect(() => {
+    let lastScrollTop = 0
+    
+    const handleScroll = () => {
+      const scrollTop = window.scrollY
+      
+      // Si está en el tope (scrollY === 0) y acaba de scrollear hacia arriba, recargar
+      if (scrollTop === 0 && lastScrollTop > 0 && !isLoading && !isRefreshing) {
+        setIsRefreshing(true)
+        loadData().finally(() => setIsRefreshing(false))
+      }
+      
+      lastScrollTop = scrollTop
+    }
+    
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [eventId, userId, isLoading, isRefreshing])
+
   if (!data) {
     return <DashboardSkeleton />
   }
