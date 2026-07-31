@@ -32,7 +32,6 @@ export function DashboardClient({ userId, eventId }: { userId: string; eventId: 
   const [churchData, setChurchData] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [isRefreshing, setIsRefreshing] = useState(false)
-  const [touchStartY, setTouchStartY] = useState(0)
 
   // Función para cargar datos
   const loadData = async () => {
@@ -64,30 +63,7 @@ export function DashboardClient({ userId, eventId }: { userId: string; eventId: 
     loadData()
   }, [userId, eventId])
 
-  // Detectar pull-to-refresh en móvil
-  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-    if (window.scrollY === 0) {
-      setTouchStartY(e.touches[0].clientY)
-    }
-  }
 
-  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
-    if (window.scrollY === 0 && touchStartY > 0) {
-      const currentY = e.touches[0].clientY
-      const diff = currentY - touchStartY
-      
-      // Si el usuario desliza hacia abajo más de 80px, recargar
-      if (diff > 80 && !isRefreshing && !isLoading) {
-        setIsRefreshing(true)
-        loadData().finally(() => setIsRefreshing(false))
-        setTouchStartY(0)
-      }
-    }
-  }
-
-  const handleTouchEnd = () => {
-    setTouchStartY(0)
-  }
 
   // Polling automático cada 10 segundos para reflejar cambios en tiempo real
   useEffect(() => {
@@ -151,10 +127,6 @@ export function DashboardClient({ userId, eventId }: { userId: string; eventId: 
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-      style={{ overscrollBehavior: 'none' }}
     >
 
       {/* ===== 1. Balance Total (héroe) ===== */}
