@@ -212,10 +212,9 @@ export function SettingsClient() {
   return (
     <div className="w-full min-h-screen flex flex-col">
       {/* Header Section */}
-      <div className="px-4 sm:px-6 lg:px-8 pt-4 pb-6 border-b border-border">
+      <div className="px-4 sm:px-6 lg:px-8 pt-4 pb-4 border-b border-border">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-1">Configuración</h1>
-          <p className="text-sm sm:text-base text-muted-foreground">Gestiona tu perfil y eventos</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Configuración</h1>
         </div>
       </div>
 
@@ -260,7 +259,6 @@ export function SettingsClient() {
                 <DialogContent className="max-w-md rounded-2xl">
                   <DialogHeader>
                     <DialogTitle className="text-xl">Crear Evento</DialogTitle>
-                    <DialogDescription>Completa los detalles del evento</DialogDescription>
                   </DialogHeader>
                   <form onSubmit={handleCreateEvent} className="space-y-4">
                     <div>
@@ -389,7 +387,6 @@ export function SettingsClient() {
                           <DialogContent className="max-w-md rounded-2xl">
                             <DialogHeader>
                               <DialogTitle className="text-xl">Editar Evento</DialogTitle>
-                              <DialogDescription>Actualiza los detalles del evento</DialogDescription>
                             </DialogHeader>
                             <form onSubmit={(e) => handleUpdateEvent(e, event)} className="space-y-4">
                               <div>
@@ -485,7 +482,6 @@ export function SettingsClient() {
               Cerrar Sesión
             </h2>
             <Card className="p-5 sm:p-6 shadow-sm border-red-500/20 bg-red-500/5">
-              <p className="text-sm text-muted-foreground mb-4">Cierra tu sesión y vuelve a la pantalla de login</p>
               <AlertDialog open={logoutOpen} onOpenChange={setLogoutOpen}>
                 <Button
                   onClick={() => setLogoutOpen(true)}
