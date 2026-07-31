@@ -44,8 +44,8 @@ export function AttendeeFormPage({ userId, eventId, attendeeId, mode }: Attendee
   const [form, setForm] = useState({
     name: '',
     age: '',
-    shirtSize: 'M',
-    sex: 'male',
+    shirtSize: '',
+    sex: '',
     phone: '',
     church: '',
     emergencyContactName: '',
@@ -84,8 +84,8 @@ export function AttendeeFormPage({ userId, eventId, attendeeId, mode }: Attendee
             setForm({
               name: attendee.name || '',
               age: attendee.age?.toString() || '',
-              shirtSize: attendee.shirtSize || 'M',
-              sex: attendee.sex || 'male',
+              shirtSize: attendee.shirtSize || '',
+              sex: attendee.sex || '',
               phone: attendee.phone || '',
               church: attendee.church || '',
               emergencyContactName: attendee.emergencyContactName || '',
@@ -114,6 +114,22 @@ export function AttendeeFormPage({ userId, eventId, attendeeId, mode }: Attendee
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    // Validar solo los campos obligatorios: Nombre, Teléfono y Monto a pagar
+    if (!form.name.trim()) {
+      toast.error('El nombre es obligatorio')
+      return
+    }
+
+    if (!form.phone.trim()) {
+      toast.error('El teléfono personal es obligatorio')
+      return
+    }
+
+    if (!form.totalAmount.trim()) {
+      toast.error('El monto a pagar es obligatorio')
+      return
+    }
 
     startTransition(async () => {
       try {
