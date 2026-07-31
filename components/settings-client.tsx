@@ -118,8 +118,10 @@ export function SettingsClient() {
         endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       })
       toast.success('Evento creado exitosamente')
-      // Redirect to dashboard after creating event
-      router.push('/')
+      // Wait for state update before redirecting
+      setTimeout(() => {
+        router.push('/')
+      }, 500)
     } catch (error) {
       toast.error('Error al crear evento')
       console.error(error)
@@ -171,13 +173,16 @@ export function SettingsClient() {
       await deleteEvent(user.id, eventIdToDelete)
       const updatedEvents = events.filter(e => e.id !== eventIdToDelete)
       setEvents(updatedEvents)
+      setDeleteConfirmId(null)
       
       // If no events remain after deletion, redirect to select-event
       if (updatedEvents.length === 0) {
-        setEventSession(null)
-        setDeleteConfirmId(null)
         toast.success('Evento eliminado exitosamente')
-        router.push('/select-event')
+        setEventSession(null)
+        // Wait for state update before redirecting
+        setTimeout(() => {
+          router.push('/select-event')
+        }, 500)
         return
       }
       
@@ -190,7 +195,6 @@ export function SettingsClient() {
         }
       }
       
-      setDeleteConfirmId(null)
       toast.success('Evento eliminado exitosamente')
     } catch (error: any) {
       toast.error(error?.message || 'Error al eliminar evento')
