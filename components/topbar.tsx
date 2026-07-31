@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Square, Users, DollarSign, MapPin, Trophy, User, Search, Bell } from 'lucide-react'
+import { Square, Users, DollarSign, MapPin, Trophy, User } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useUser } from '@/components/user-provider'
 import { useEventSession } from '@/lib/contexts/event-session-context'
@@ -110,28 +110,17 @@ export function Topbar() {
             })}
           </nav>
 
-          {/* Right: Action buttons + User */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            {/* Search button */}
-            <button className="w-10 h-10 rounded-full bg-primary-foreground/15 flex items-center justify-center hover:bg-primary-foreground/25 transition-colors">
-              <Search className="w-5 h-5 text-primary-foreground" />
-            </button>
-            
-            {/* Notifications button */}
-            <button className="w-10 h-10 rounded-full bg-primary-foreground/15 flex items-center justify-center hover:bg-primary-foreground/25 transition-colors relative">
-              <Bell className="w-5 h-5 text-primary-foreground" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-destructive rounded-full"></span>
-            </button>
-            
-            {/* User button */}
-            {user ? (
-              <Link href="/settings" className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-primary-foreground/10 transition-all duration-200">
-                <div className="w-8 h-8 rounded-lg bg-primary-foreground flex items-center justify-center shrink-0">
-                  <User className="w-4 h-4 text-primary" />
-                </div>
-              </Link>
-            ) : null}
-          </div>
+          {/* Right: User button */}
+          {user ? (
+            <Link href="/settings" className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-primary-foreground/10 transition-all duration-200 shrink-0">
+              <div className="w-8 h-8 rounded-lg bg-primary-foreground flex items-center justify-center shrink-0">
+                <User className="w-4 h-4 text-primary" />
+              </div>
+              <span className="hidden sm:block text-xs text-primary-foreground font-medium">
+                Perfil
+              </span>
+            </Link>
+          ) : null}
         </div>
       </div>
     </header>
