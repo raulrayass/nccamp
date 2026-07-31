@@ -169,8 +169,8 @@ function DockItem({
       className={cn(
         'flex flex-1 flex-col items-center justify-center gap-0.5 py-1.5 rounded-2xl transition-colors duration-200 focus:outline-none',
         active 
-          ? 'bg-white text-green-600' 
-          : 'text-gray-600 dark:text-gray-200 hover:text-foreground'
+          ? 'text-green-600' 
+          : 'text-white hover:text-white/80'
       )}
     >
       <Icon className="w-5 h-5" />

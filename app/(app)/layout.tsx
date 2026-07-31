@@ -16,7 +16,14 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     }
   }, [isInitialized, eventId, router])
 
-  if (!isInitialized || !eventId) {
+  // Wait for initialization before rendering anything
+  if (!isInitialized) {
+    return null
+  }
+
+  // If eventId is null, let the polling in EventSessionContext detect and handle redirect
+  // Don't render children to avoid errors with invalid eventId
+  if (!eventId) {
     return null
   }
 

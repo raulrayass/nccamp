@@ -144,32 +144,42 @@ export function EventSessionProvider({ children }: { children: ReactNode }) {
 
   // Periodic validation to detect cross-device deletions and new events
   useEffect(() => {
-    if (!isInitialized || !user?.id || !eventId) return
+    if (!isInitialized || !user?.id) return
 
     const interval = setInterval(async () => {
       try {
-        // Check if current event still exists AND get all events
+        // Always check for user's events
         const userEvents = await getUserEvents(user.id)
         
         if (!userEvents || userEvents.length === 0) {
-          // No events at all - redirect
-          setEventId(null)
-          clearSessionStorage()
-          clearInterval(interval)
-          window.location.href = '/select-event'
+          // No events - redirect to select-event
+          if (eventId !== null) {
+            setEventId(null)
+            clearSessionStorage()
+            clearInterval(interval)
+            window.location.href = '/select-event'
+          }
+          return
+        }
+
+        // If we have no eventId but there are events (new event created on other device)
+        if (!eventId && userEvents.length > 0) {
+          const defaultEvent = userEvents[0]
+          setEventId(defaultEvent.id)
+          writeSession(defaultEvent.id)
+          setEvents(userEvents)
           return
         }
         
-        // If event was deleted on another device, redirect and reload
-        if (!userEvents.some(e => e.id === eventId)) {
+        // If current event still exists, just sync the list
+        if (eventId && userEvents.some(e => e.id === eventId)) {
+          setEvents(userEvents)
+        } else if (eventId) {
+          // Event was deleted - redirect
           setEventId(null)
           clearSessionStorage()
           clearInterval(interval)
-          // Use full page reload to ensure layout processes the change
           window.location.href = '/select-event'
-        } else {
-          // Update events list for real-time sync (new events created on other devices)
-          setEvents(userEvents)
         }
       } catch (error) {
         console.error('[v0] Error validating event in polling:', error)
