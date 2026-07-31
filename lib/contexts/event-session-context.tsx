@@ -1,8 +1,9 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { useRouter } from 'next/navigation'
 import { useUser } from '@/components/user-provider'
-import { getDefaultEvent } from '@/app/actions/events'
+import { getDefaultEvent, getUserEvents } from '@/app/actions/events'
 
 interface EventSessionContextType {
   eventId: number | null
@@ -61,6 +62,7 @@ function clearSessionStorage() {
 
 export function EventSessionProvider({ children }: { children: ReactNode }) {
   const { user } = useUser()
+  const router = useRouter()
   const [eventId, setEventId] = useState<number | null>(null)
   const [isInitialized, setIsInitialized] = useState(false)
 
@@ -73,24 +75,64 @@ export function EventSessionProvider({ children }: { children: ReactNode }) {
     }
   }, [isInitialized])
 
-  // Load default event if user is authenticated but no event is selected (only after initialization)
+  // Validate event and load/redirect accordingly
   useEffect(() => {
-    if (!isInitialized || !user?.id || eventId !== null) return
+    if (!isInitialized || !user?.id) return
 
-    async function loadDefaultEvent() {
+    async function validateAndLoadEvent() {
       try {
+        // Get all events for this user
+        const userEvents = await getUserEvents(user.id)
+        
+        // If user has no events, clear session and redirect to select-event
+        if (userEvents.length === 0) {
+          setEventId(null)
+          clearSessionStorage()
+          router.push('/select-event')
+          return
+        }
+
+        // If eventId from cookie exists in user's events, keep it
+        if (eventId !== null && userEvents.some(e => e.id === eventId)) {
+          return // Event is valid, keep it
+        }
+
+        // If eventId from cookie is invalid (was deleted), try to load default
+        if (eventId !== null) {
+          const defaultEvent = await getDefaultEvent(user.id)
+          if (defaultEvent) {
+            setEventId(defaultEvent.id)
+            writeSession(defaultEvent.id)
+            return
+          }
+          // No default, use first event from list
+          const firstEvent = userEvents[0]
+          setEventId(firstEvent.id)
+          writeSession(firstEvent.id)
+          return
+        }
+
+        // No eventId selected yet, try default
         const defaultEvent = await getDefaultEvent(user.id)
-        if (defaultEvent) {
+        if (defaultEvent && userEvents.some(e => e.id === defaultEvent.id)) {
           setEventId(defaultEvent.id)
           writeSession(defaultEvent.id)
+          return
         }
+
+        // Use first event as fallback
+        const firstEvent = userEvents[0]
+        setEventId(firstEvent.id)
+        writeSession(firstEvent.id)
       } catch (error) {
-        console.error('Error loading default event:', error)
+        console.error('[v0] Error validating event:', error)
+        setEventId(null)
+        clearSessionStorage()
       }
     }
 
-    loadDefaultEvent()
-  }, [isInitialized, user?.id, eventId])
+    validateAndLoadEvent()
+  }, [isInitialized, user?.id, eventId, router])
 
   const setEventSession = (id: number) => {
     setEventId(id)
