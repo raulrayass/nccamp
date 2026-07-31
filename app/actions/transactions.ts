@@ -3,7 +3,7 @@
 import { db } from '@/lib/db'
 import { transactions, categories, staff, attendees, staffPayments, attendeePayments } from '@/lib/db/schema'
 import { and, eq, desc, gte, lte, count } from 'drizzle-orm'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 
 export async function getTransactions(
   userId: string,
@@ -187,6 +187,7 @@ export async function createTransaction(
   })
   revalidatePath('/')
   revalidatePath('/transactions')
+  revalidateTag('dashboard')
 }
 
 export async function updateTransaction(
@@ -308,6 +309,7 @@ export async function updateTransaction(
 
   revalidatePath('/')
   revalidatePath('/transactions')
+  revalidateTag('dashboard')
 }
 
 export async function deleteTransaction(userId: string, id: number, eventId?: number | null) {
@@ -401,6 +403,7 @@ export async function deleteTransaction(userId: string, id: number, eventId?: nu
   
   revalidatePath('/')
   revalidatePath('/transactions')
+  revalidateTag('dashboard')
 }
 
 export async function getPaymentMethodBreakdown(userId: string, eventId?: number | null) {
