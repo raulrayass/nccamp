@@ -236,18 +236,37 @@ export async function deleteEvent(userId: string, eventId: number): Promise<void
     // Eliminar todas las referencias del evento (en cascada, en orden correcto)
     // El orden importa para mantener integridad referencial
     
-    // Tablas que dependen de transacciones (eliminar primero)
+    // 1. Eliminar transacciones
     await db.delete(transactions).where(eq(transactions.eventId, eventId))
     
-    // Tablas que dependen de attendees y staff
-    await db.delete(attendeePayments).where(eq(attendeePayments.eventId, eventId))
-    await db.delete(staffPayments).where(eq(staffPayments.eventId, eventId))
+    // 2. Obtener IDs de attendees y staff para eliminar sus pagos (no tienen eventId)
+    const eventAttendees = await db
+      .select({ id: attendees.id })
+      .from(attendees)
+      .where(eq(attendees.eventId, eventId))
+
+    const eventStaff = await db
+      .select({ id: staff.id })
+      .from(staff)
+      .where(eq(staff.eventId, eventId))
+
+    // Eliminar pagos de asistentes y staff
+    if (eventAttendees.length > 0) {
+      const attendeeIds = eventAttendees.map(a => a.id)
+      await db.delete(attendeePayments).where(inArray(attendeePayments.attendeeId, attendeeIds))
+    }
+    if (eventStaff.length > 0) {
+      const staffIds = eventStaff.map(s => s.id)
+      await db.delete(staffPayments).where(inArray(staffPayments.staffId, staffIds))
+    }
     
-    // Tablas que dependen de games y teams
+    // 3. Eliminar game scores (depende de games y teams)
     await db.delete(gameScores).where(eq(gameScores.eventId, eventId))
+    
+    // 4. Eliminar games
     await db.delete(games).where(eq(games.eventId, eventId))
     
-    // Entidades principales del evento
+    // 5. Eliminar entidades principales del evento
     await db.delete(teams).where(eq(teams.eventId, eventId))
     await db.delete(attendees).where(eq(attendees.eventId, eventId))
     await db.delete(staff).where(eq(staff.eventId, eventId))
@@ -255,10 +274,10 @@ export async function deleteEvent(userId: string, eventId: number): Promise<void
     await db.delete(categories).where(eq(categories.eventId, eventId))
     await db.delete(churches).where(eq(churches.eventId, eventId))
     
-    // Eliminar miembros del evento
+    // 6. Eliminar miembros del evento
     await db.delete(eventMembers).where(eq(eventMembers.eventId, eventId))
     
-    // Finalmente, eliminar el evento
+    // 7. Finalmente, eliminar el evento
     await db.delete(events).where(eq(events.id, eventId))
   } catch (error) {
     console.error('[v0] Error deleting event:', error)
