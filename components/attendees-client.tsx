@@ -403,7 +403,8 @@ export function AttendeesClient({ userId, eventId }: Props) {
           allergies: String(row[10] || '').trim() || undefined,
           totalAmount: parseFloat(String(row[13] || '0')),
           initialPayment: parseFloat(String(row[14] || '0')) || 0,
-          notes: String(row[17] || '').trim() || undefined,
+          notes: String(row[15] || '').trim() || undefined,
+          eventId: eventId,
         }))
 
         // Validar solo campos requeridos: nombre y monto total
