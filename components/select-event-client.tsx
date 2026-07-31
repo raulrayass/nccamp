@@ -31,7 +31,7 @@ export function SelectEventClient({
   const [settingDefault, setSettingDefault] = useState<number | null>(null)
   const [formData, setFormData] = useState({
     name: '',
-    country: 'Colombia',
+    country: 'México',
     startDate: new Date().toISOString().split('T')[0],
     endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
   })

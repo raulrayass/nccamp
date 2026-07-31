@@ -104,6 +104,10 @@ export function SettingsClient() {
         formData.endDate
       )
 
+      if (!newEvent || !newEvent.id) {
+        throw new Error('Evento creado pero sin ID')
+      }
+
       setEvents([...events, { id: newEvent.id, name: newEvent.name }])
       setEventSession(newEvent.id)
       setShowCreateForm(false)
@@ -114,6 +118,8 @@ export function SettingsClient() {
         endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       })
       toast.success('Evento creado exitosamente')
+      // Redirect to dashboard after creating event
+      router.push('/')
     } catch (error) {
       toast.error('Error al crear evento')
       console.error(error)
@@ -166,17 +172,21 @@ export function SettingsClient() {
       const updatedEvents = events.filter(e => e.id !== eventIdToDelete)
       setEvents(updatedEvents)
       
-      // Si se eliminó el evento actual, cambiar a otro o redirigir
+      // If no events remain after deletion, redirect to select-event
+      if (updatedEvents.length === 0) {
+        setEventSession(null)
+        setDeleteConfirmId(null)
+        toast.success('Evento eliminado exitosamente')
+        router.push('/select-event')
+        return
+      }
+      
+      // Si se eliminó el evento actual, cambiar a otro
       if (eventId === eventIdToDelete) {
         const remainingEvent = updatedEvents[0]
         if (remainingEvent) {
           setEventSession(remainingEvent.id)
           await setDefaultEvent(user.id, remainingEvent.id)
-        } else {
-          // No hay más eventos, redirigir a crear evento
-          setEventSession(null)
-          router.push('/select-event')
-          return
         }
       }
       
