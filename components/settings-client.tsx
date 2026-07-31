@@ -44,7 +44,6 @@ export function SettingsClient() {
   const [editingEventId, setEditingEventId] = useState<number | null>(null)
   const [isUpdating, setIsUpdating] = useState(false)
   const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null)
-  const [deleteConfirmName, setDeleteConfirmName] = useState('')
   const [isDeleting, setIsDeleting] = useState(false)
   const [logoutOpen, setLogoutOpen] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
@@ -160,10 +159,6 @@ export function SettingsClient() {
 
   const handleDeleteEvent = async (eventId: number) => {
     if (!user?.id) return
-    if (deleteConfirmName !== events.find(e => e.id === eventId)?.name) {
-      toast.error('El nombre del evento no coincide')
-      return
-    }
 
     setIsDeleting(true)
     try {
@@ -179,7 +174,6 @@ export function SettingsClient() {
       }
       
       setDeleteConfirmId(null)
-      setDeleteConfirmName('')
       toast.success('Evento eliminado exitosamente')
     } catch (error: any) {
       toast.error(error?.message || 'Error al eliminar evento')
@@ -419,7 +413,6 @@ export function SettingsClient() {
                   <AlertDialog open={deleteConfirmId === event.id} onOpenChange={(open) => {
                     if (!open) {
                       setDeleteConfirmId(null)
-                      setDeleteConfirmName('')
                     }
                   }}>
                     <button
@@ -431,30 +424,20 @@ export function SettingsClient() {
                     </button>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Confirmar eliminación de evento</AlertDialogTitle>
+                        <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
                         <AlertDialogDescription>
-                          Esta acción NO se puede deshacer. Se eliminarán todos los datos asociados (camperos, staff, transacciones, etc.). Escribe el nombre del evento para confirmar.
+                          Se eliminarán permanentemente el evento "{event.name}" y todos sus datos asociados (camperos, staff, transacciones, etc.). Esta acción NO se puede deshacer.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
-                      <div className="space-y-4">
-                        <p className="font-medium">Nombre del evento: <span className="text-primary">{event.name}</span></p>
-                        <input
-                          type="text"
-                          placeholder={`Escribe "${event.name}" para confirmar`}
-                          value={deleteConfirmName}
-                          onChange={(e) => setDeleteConfirmName(e.target.value)}
-                          className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                        />
-                        <div className="flex gap-3 justify-end">
-                          <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
-                          <AlertDialogAction
-                            onClick={() => handleDeleteEvent(event.id)}
-                            disabled={isDeleting || deleteConfirmName !== event.name}
-                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                          >
-                            {isDeleting ? 'Eliminando...' : 'Eliminar Evento'}
-                          </AlertDialogAction>
-                        </div>
+                      <div className="flex gap-3 justify-end">
+                        <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => handleDeleteEvent(event.id)}
+                          disabled={isDeleting}
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        >
+                          {isDeleting ? 'Eliminando...' : 'Sí, eliminar'}
+                        </AlertDialogAction>
                       </div>
                     </AlertDialogContent>
                   </AlertDialog>
