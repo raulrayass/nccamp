@@ -4,11 +4,11 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useUser } from '@/components/user-provider'
 import { useEventSession } from '@/lib/contexts/event-session-context'
-import { getUserEvents, setDefaultEvent, createEvent } from '@/app/actions/events'
+import { getUserEvents, setDefaultEvent, createEvent, updateEvent, deleteEvent } from '@/app/actions/events'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { toast } from 'sonner'
-import { Star, Plus, LogOut } from 'lucide-react'
+import { Star, Plus, LogOut, Edit2, Trash2 } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -41,11 +41,16 @@ export function SettingsClient() {
   const [settingDefault, setSettingDefault] = useState<number | null>(null)
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [isCreating, setIsCreating] = useState(false)
+  const [editingEventId, setEditingEventId] = useState<number | null>(null)
+  const [isUpdating, setIsUpdating] = useState(false)
+  const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null)
+  const [deleteConfirmName, setDeleteConfirmName] = useState('')
+  const [isDeleting, setIsDeleting] = useState(false)
   const [logoutOpen, setLogoutOpen] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
-    country: 'Colombia',
+    country: 'México',
     startDate: new Date().toISOString().split('T')[0],
     endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
   })
@@ -105,7 +110,7 @@ export function SettingsClient() {
       setShowCreateForm(false)
       setFormData({
         name: '',
-        country: 'Colombia',
+        country: 'México',
         startDate: new Date().toISOString().split('T')[0],
         endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       })
@@ -115,6 +120,72 @@ export function SettingsClient() {
       console.error(error)
     } finally {
       setIsCreating(false)
+    }
+  }
+
+  const handleUpdateEvent = async (e: React.FormEvent, eventToUpdate: EventOption) => {
+    e.preventDefault()
+    if (!user?.id || !formData.name.trim()) {
+      toast.error('Ingresa un nombre para el evento')
+      return
+    }
+
+    setIsUpdating(true)
+    try {
+      await updateEvent(user.id, eventToUpdate.id, {
+        name: formData.name,
+        country: formData.country,
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+      })
+
+      setEvents(events.map(e => 
+        e.id === eventToUpdate.id ? { ...e, name: formData.name } : e
+      ))
+      setEditingEventId(null)
+      setFormData({
+        name: '',
+        country: 'México',
+        startDate: new Date().toISOString().split('T')[0],
+        endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      })
+      toast.success('Evento actualizado exitosamente')
+    } catch (error: any) {
+      toast.error(error?.message || 'Error al actualizar evento')
+      console.error(error)
+    } finally {
+      setIsUpdating(false)
+    }
+  }
+
+  const handleDeleteEvent = async (eventId: number) => {
+    if (!user?.id) return
+    if (deleteConfirmName !== events.find(e => e.id === eventId)?.name) {
+      toast.error('El nombre del evento no coincide')
+      return
+    }
+
+    setIsDeleting(true)
+    try {
+      await deleteEvent(user.id, eventId)
+      setEvents(events.filter(e => e.id !== eventId))
+      
+      // Si se eliminó el evento actual, cambiar a otro
+      if (eventId === eventId) {
+        const remainingEvent = events.find(e => e.id !== eventId)
+        if (remainingEvent) {
+          setEventSession(remainingEvent.id)
+        }
+      }
+      
+      setDeleteConfirmId(null)
+      setDeleteConfirmName('')
+      toast.success('Evento eliminado exitosamente')
+    } catch (error: any) {
+      toast.error(error?.message || 'Error al eliminar evento')
+      console.error(error)
+    } finally {
+      setIsDeleting(false)
     }
   }
 
@@ -264,6 +335,129 @@ export function SettingsClient() {
                   >
                     <Star className={`w-5 h-5 ${settingDefault === event.id ? 'animate-spin' : ''}`} />
                   </button>
+                  <Dialog open={editingEventId === event.id} onOpenChange={(open) => {
+                    if (open) {
+                      setEditingEventId(event.id)
+                      setFormData({
+                        name: event.name,
+                        country: 'México',
+                        startDate: new Date().toISOString().split('T')[0],
+                        endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                      })
+                    } else {
+                      setEditingEventId(null)
+                    }
+                  }}>
+                    <button
+                      className="p-2 rounded-lg hover:bg-muted transition-colors disabled:opacity-50"
+                      title="Editar evento"
+                      onClick={() => {
+                        setEditingEventId(event.id)
+                        setFormData({
+                          name: event.name,
+                          country: 'México',
+                          startDate: new Date().toISOString().split('T')[0],
+                          endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                        })
+                      }}
+                    >
+                      <Edit2 className="w-5 h-5" />
+                    </button>
+                    <DialogContent className="max-w-md">
+                      <DialogHeader>
+                        <DialogTitle>Editar Evento</DialogTitle>
+                        <DialogDescription>Actualiza los detalles del evento</DialogDescription>
+                      </DialogHeader>
+                      <form onSubmit={(e) => handleUpdateEvent(e, event)} className="space-y-4">
+                        <div>
+                          <label className="text-sm font-medium text-foreground">Nombre del Evento</label>
+                          <input
+                            type="text"
+                            required
+                            value={formData.name}
+                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                            className="w-full mt-1 px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium text-foreground">País</label>
+                          <input
+                            type="text"
+                            value={formData.country}
+                            onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                            className="w-full mt-1 px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <label className="text-sm font-medium text-foreground">Fecha Inicio</label>
+                            <input
+                              type="date"
+                              required
+                              value={formData.startDate}
+                              onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                              className="w-full mt-1 px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-sm font-medium text-foreground">Fecha Fin</label>
+                            <input
+                              type="date"
+                              required
+                              value={formData.endDate}
+                              onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                              className="w-full mt-1 px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                            />
+                          </div>
+                        </div>
+                        <Button type="submit" disabled={isUpdating} className="w-full">
+                          {isUpdating ? 'Actualizando...' : 'Actualizar Evento'}
+                        </Button>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
+                  <AlertDialog open={deleteConfirmId === event.id} onOpenChange={(open) => {
+                    if (!open) {
+                      setDeleteConfirmId(null)
+                      setDeleteConfirmName('')
+                    }
+                  }}>
+                    <button
+                      className="p-2 rounded-lg hover:bg-red-100 hover:text-red-600 transition-colors disabled:opacity-50"
+                      title="Eliminar evento"
+                      onClick={() => setDeleteConfirmId(event.id)}
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Confirmar eliminación de evento</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Esta acción NO se puede deshacer. Se eliminarán todos los datos asociados (camperos, staff, transacciones, etc.). Escribe el nombre del evento para confirmar.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <div className="space-y-4">
+                        <p className="font-medium">Nombre del evento: <span className="text-primary">{event.name}</span></p>
+                        <input
+                          type="text"
+                          placeholder={`Escribe "${event.name}" para confirmar`}
+                          value={deleteConfirmName}
+                          onChange={(e) => setDeleteConfirmName(e.target.value)}
+                          className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                        />
+                        <div className="flex gap-3 justify-end">
+                          <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => handleDeleteEvent(event.id)}
+                            disabled={isDeleting || deleteConfirmName !== event.name}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          >
+                            {isDeleting ? 'Eliminando...' : 'Eliminar Evento'}
+                          </AlertDialogAction>
+                        </div>
+                      </div>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </div>
             ))}
