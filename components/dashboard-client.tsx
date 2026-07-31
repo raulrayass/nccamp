@@ -128,11 +128,11 @@ export function DashboardClient({ userId, eventId }: { userId: string; eventId: 
 
       {/* ===== 1. Balance Total (héroe) — animated count-up ===== */}
       <motion.div variants={itemVariants} whileTap={{ scale: 0.95 }} className="cursor-pointer">
-        <Card className="clay-card p-5 sm:p-6 rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
-          <div className="flex justify-between items-start mb-4">
+        <Card className="clay-card p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
+          <div className="flex justify-between items-start">
             <div className="flex-1">
               <motion.p className="text-xs sm:text-sm text-muted-foreground font-medium mb-1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
-                Balance Total
+                Saldo Total
               </motion.p>
               <motion.p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mt-1 tabular-nums" key={balance} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
                 {formatCurrency(balance)}
@@ -146,16 +146,6 @@ export function DashboardClient({ userId, eventId }: { userId: string; eventId: 
               <Wallet className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
             </motion.div>
           </div>
-          <motion.div className="space-y-2 text-sm border-t border-primary/20 pt-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
-            <div className="flex justify-between items-center">
-              <span className="text-muted-foreground">Efectivo disponible</span>
-              <span className="font-semibold tabular-nums text-emerald-600">{formatCurrency(cashAvailable)}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-muted-foreground">Banca Móvil disponible</span>
-              <span className="font-semibold tabular-nums text-blue-600">{formatCurrency(bancaMovil)}</span>
-            </div>
-          </motion.div>
         </Card>
       </motion.div>
 
@@ -206,9 +196,11 @@ export function DashboardClient({ userId, eventId }: { userId: string; eventId: 
       {/* ===== 3. Disponible por método ===== */}
       {totalAvailable > 0 && (
         <motion.div variants={itemVariants}>
-          <Card className="clay-card p-5 sm:p-6 rounded-xl sm:rounded-2xl">
-            <h2 className="font-semibold text-lg text-foreground mb-5">Disponible por método</h2>
-            <div className="space-y-4">
+          <motion.h2 className="font-semibold text-lg text-foreground mb-4 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
+            Disponible por método
+          </motion.h2>
+          <Card className="clay-card p-5 sm:p-6 rounded-2xl">
+            <div className="space-y-4 sm:space-y-5">
               {methodBars.map((m, idx) => {
                 const Icon = m.icon
                 const pctValue = pct(m.value)
@@ -267,10 +259,10 @@ export function DashboardClient({ userId, eventId }: { userId: string; eventId: 
 
       {/* ===== 4. Movimientos recientes ===== */}
       <motion.div variants={itemVariants}>
-        <Card className="aurora-card p-5 sm:p-6 rounded-xl sm:rounded-2xl">
-          <motion.h2 className="font-semibold text-lg text-foreground mb-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}>
-            Movimientos recientes
-          </motion.h2>
+        <motion.h2 className="font-semibold text-lg text-foreground mb-4 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}>
+          Últimas actividades
+        </motion.h2>
+        <Card className="aurora-card p-5 sm:p-6 rounded-2xl">
           {recentTransactions.length === 0 ? (
             <motion.p className="text-muted-foreground text-sm text-center py-8" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}>
               No hay transacciones aun. Ve a Finanzas para agregar.
@@ -319,11 +311,11 @@ export function DashboardClient({ userId, eventId }: { userId: string; eventId: 
 
       {/* ===== 5. Donuts: Ingresos y Egresos por categoría ===== */}
       <motion.div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5" variants={itemVariants}>
-        <motion.div variants={itemVariants} whileHover={{ y: -2 }}>
-          <Card className="clay-card p-5 sm:p-6 rounded-xl sm:rounded-2xl">
-            <motion.h2 className="font-semibold text-lg text-foreground mb-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9 }}>
-              Ingresos por categoría
-            </motion.h2>
+        <motion.div variants={itemVariants}>
+          <motion.h2 className="font-semibold text-lg text-foreground mb-3 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9 }}>
+            Ingresos por categoría
+          </motion.h2>
+          <Card className="clay-card p-5 sm:p-6 rounded-2xl">
             {incomeByCategory.length > 0 ? (
               <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.95, type: 'spring', stiffness: 100, damping: 15 }}>
                 <DonutChart
@@ -338,11 +330,11 @@ export function DashboardClient({ userId, eventId }: { userId: string; eventId: 
           </Card>
         </motion.div>
 
-        <motion.div variants={itemVariants} whileHover={{ y: -2 }}>
-          <Card className="clay-card p-5 sm:p-6 rounded-xl sm:rounded-2xl">
-            <motion.h2 className="font-semibold text-lg text-foreground mb-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}>
-              Egresos por categoría
-            </motion.h2>
+        <motion.div variants={itemVariants}>
+          <motion.h2 className="font-semibold text-lg text-foreground mb-3 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}>
+            Egresos por categoría
+          </motion.h2>
+          <Card className="clay-card p-5 sm:p-6 rounded-2xl">
             {expenseByCategory.length > 0 ? (
               <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 1.05, type: 'spring', stiffness: 100, damping: 15 }}>
                 <DonutChart
@@ -360,10 +352,10 @@ export function DashboardClient({ userId, eventId }: { userId: string; eventId: 
 
       {/* ===== 6. Ingresos vs Egresos por mes ===== */}
       <motion.div variants={itemVariants}>
-        <Card className="clay-card p-5 sm:p-6 rounded-xl sm:rounded-2xl overflow-hidden w-full">
-          <motion.h2 className="font-semibold text-lg text-foreground mb-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }}>
-            Ingresos vs Egresos por mes
-          </motion.h2>
+        <motion.h2 className="font-semibold text-lg text-foreground mb-4 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }}>
+          Ingresos vs Egresos por mes
+        </motion.h2>
+        <Card className="clay-card p-5 sm:p-6 rounded-2xl overflow-hidden w-full">
           {monthlyData.some(m => m.income > 0 || m.expense > 0) ? (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.15 }} className="w-full">
               <ResponsiveContainer width="100%" height={280}>
@@ -396,11 +388,11 @@ export function DashboardClient({ userId, eventId }: { userId: string; eventId: 
 
       {/* ===== 7. Comparativo por categoría ===== */}
       <motion.div variants={itemVariants}>
-        <Card className="clay-card p-5 sm:p-6 rounded-xl sm:rounded-2xl overflow-hidden w-full">
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }}>
-            <h2 className="font-semibold text-lg text-foreground mb-1">Ingreso y Egreso por categoría</h2>
-            <p className="text-xs text-muted-foreground mb-4">Comparativo de cada categoría del campamento</p>
-          </motion.div>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }} className="mb-4 px-0.5">
+          <h2 className="font-semibold text-lg text-foreground mb-1">Ingreso y Egreso por categoría</h2>
+          <p className="text-xs text-muted-foreground">Comparativo de cada categoría del campamento</p>
+        </motion.div>
+        <Card className="clay-card p-5 sm:p-6 rounded-2xl overflow-hidden w-full">
           {hasAnyData && categoryComparison.length > 0 ? (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.25 }} className="w-full">
               <ResponsiveContainer width="100%" height={Math.max(240, categoryComparison.length * 56)}>
