@@ -1,7 +1,20 @@
 'use server'
 
 import { db } from '@/lib/db'
-import { events, eventMembers, Event } from '@/lib/db/schema'
+import {
+  events,
+  eventMembers,
+  Event,
+  transactions,
+  gameScores,
+  games,
+  teams,
+  rooms,
+  attendeePayments,
+  attendees,
+  staffPayments,
+  staff,
+} from '@/lib/db/schema'
 import { eq, and, desc, inArray } from 'drizzle-orm'
 
 // Obtener o crear el evento por defecto para el usuario
@@ -218,98 +231,35 @@ export async function deleteEvent(userId: string, eventId: number): Promise<void
       throw new Error('UNAUTHORIZED: Solo el admin del evento puede eliminarlo')
     }
 
-    // Eliminar todas las referencias del evento (en cascada)
-    // Primero, obtener todos los IDs de entidades relacionadas para borrar en orden correcto
+    // Eliminar todas las referencias del evento (en cascada, en orden correcto)
+    // El orden importa para mantener integridad referencial
     
-    // Eliminar transacciones
-    const transactions = await db.query.transactions.findMany({
-      where: (t) => eq(t.eventId, eventId),
-      columns: { id: true },
-    })
-    if (transactions.length > 0) {
-      const transactionIds = transactions.map(t => t.id)
-      await db.delete(db.query.transactions).where((t) => inArray(t.id, transactionIds))
-    }
+    // Eliminar transacciones asociadas
+    await db.delete(transactions).where(eq(transactions.eventId, eventId))
 
     // Eliminar game scores
-    const gameScores = await db.query.gameScores.findMany({
-      where: (g) => eq(g.eventId, eventId),
-      columns: { id: true },
-    })
-    if (gameScores.length > 0) {
-      const gameScoreIds = gameScores.map(g => g.id)
-      await db.delete(db.query.gameScores).where((g) => inArray(g.id, gameScoreIds))
-    }
+    await db.delete(gameScores).where(eq(gameScores.eventId, eventId))
 
     // Eliminar games
-    const games = await db.query.games.findMany({
-      where: (g) => eq(g.eventId, eventId),
-      columns: { id: true },
-    })
-    if (games.length > 0) {
-      const gameIds = games.map(g => g.id)
-      await db.delete(db.query.games).where((g) => inArray(g.id, gameIds))
-    }
+    await db.delete(games).where(eq(games.eventId, eventId))
 
     // Eliminar equipos
-    const teams = await db.query.teams.findMany({
-      where: (t) => eq(t.eventId, eventId),
-      columns: { id: true },
-    })
-    if (teams.length > 0) {
-      const teamIds = teams.map(t => t.id)
-      await db.delete(db.query.teams).where((t) => inArray(t.id, teamIds))
-    }
+    await db.delete(teams).where(eq(teams.eventId, eventId))
 
     // Eliminar habitaciones
-    const rooms = await db.query.rooms.findMany({
-      where: (r) => eq(r.eventId, eventId),
-      columns: { id: true },
-    })
-    if (rooms.length > 0) {
-      const roomIds = rooms.map(r => r.id)
-      await db.delete(db.query.rooms).where((r) => inArray(r.id, roomIds))
-    }
+    await db.delete(rooms).where(eq(rooms.eventId, eventId))
 
     // Eliminar pagos de asistentes
-    const attendeePayments = await db.query.attendeePayments.findMany({
-      where: (a) => eq(a.eventId, eventId),
-      columns: { id: true },
-    })
-    if (attendeePayments.length > 0) {
-      const paymentIds = attendeePayments.map(p => p.id)
-      await db.delete(db.query.attendeePayments).where((a) => inArray(a.id, paymentIds))
-    }
+    await db.delete(attendeePayments).where(eq(attendeePayments.eventId, eventId))
 
     // Eliminar asistentes
-    const attendees = await db.query.attendees.findMany({
-      where: (a) => eq(a.eventId, eventId),
-      columns: { id: true },
-    })
-    if (attendees.length > 0) {
-      const attendeeIds = attendees.map(a => a.id)
-      await db.delete(db.query.attendees).where((a) => inArray(a.id, attendeeIds))
-    }
+    await db.delete(attendees).where(eq(attendees.eventId, eventId))
 
     // Eliminar pagos de staff
-    const staffPayments = await db.query.staffPayments.findMany({
-      where: (s) => eq(s.eventId, eventId),
-      columns: { id: true },
-    })
-    if (staffPayments.length > 0) {
-      const paymentIds = staffPayments.map(p => p.id)
-      await db.delete(db.query.staffPayments).where((s) => inArray(s.id, paymentIds))
-    }
+    await db.delete(staffPayments).where(eq(staffPayments.eventId, eventId))
 
     // Eliminar staff
-    const staffRecords = await db.query.staff.findMany({
-      where: (s) => eq(s.eventId, eventId),
-      columns: { id: true },
-    })
-    if (staffRecords.length > 0) {
-      const staffIds = staffRecords.map(s => s.id)
-      await db.delete(db.query.staff).where((s) => inArray(s.id, staffIds))
-    }
+    await db.delete(staff).where(eq(staff.eventId, eventId))
 
     // Eliminar miembros del evento
     await db.delete(eventMembers).where(eq(eventMembers.eventId, eventId))
