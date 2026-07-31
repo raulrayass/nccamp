@@ -142,6 +142,35 @@ export function EventSessionProvider({ children }: { children: ReactNode }) {
     validateAndLoadEvent()
   }, [isInitialized, user?.id, eventId, router])
 
+  // Periodic validation to detect cross-device deletions
+  useEffect(() => {
+    if (!isInitialized || !user?.id || !eventId) return
+
+    const interval = setInterval(async () => {
+      try {
+        // Check if current event still exists
+        const userEvents = await getUserEvents(user.id)
+        
+        // If event was deleted on another device, redirect
+        if (!userEvents?.some(e => e.id === eventId)) {
+          setEventId(null)
+          clearSessionStorage()
+          startTransition(() => {
+            router.push('/select-event')
+          })
+          clearInterval(interval)
+        } else {
+          // Update events list for real-time sync
+          setEvents(userEvents || [])
+        }
+      } catch (error) {
+        console.error('[v0] Error validating event in polling:', error)
+      }
+    }, 5000) // Check every 5 seconds
+
+    return () => clearInterval(interval)
+  }, [isInitialized, user?.id, eventId, router])
+
   const setEventSession = (id: number) => {
     setEventId(id)
     writeSession(id)
