@@ -11,10 +11,10 @@ interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
  */
 export function Skeleton({ className, variant = 'default', ...props }: SkeletonProps) {
   const variants = {
-    default: 'h-12 w-12 rounded-lg',
-    text: 'h-4 w-full rounded',
+    default: 'h-12 w-12 rounded-xl',
+    text: 'h-4 w-full rounded-md',
     avatar: 'h-10 w-10 rounded-full',
-    card: 'h-40 w-full rounded-xl',
+    card: 'h-40 w-full rounded-2xl',
     input: 'h-10 w-full rounded-lg',
     button: 'h-10 w-32 rounded-lg',
   }
@@ -36,7 +36,7 @@ export function Skeleton({ className, variant = 'default', ...props }: SkeletonP
  */
 export function CardSkeleton() {
   return (
-    <div className="clay-card p-4 sm:p-6 rounded-xl sm:rounded-2xl">
+    <div className="clay-card p-4 sm:p-6 rounded-2xl">
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <Skeleton variant="text" className="h-6 w-40" />
@@ -61,7 +61,7 @@ export function CardSkeleton() {
  */
 export function TableSkeleton({ rows = 5 }: { rows?: number }) {
   return (
-    <div className="clay-card rounded-xl sm:rounded-2xl overflow-hidden">
+    <div className="clay-card rounded-2xl overflow-hidden">
       <div className="space-y-0">
         {/* Header */}
         <div className="flex gap-4 p-4 border-b border-border">
@@ -110,7 +110,7 @@ export function ListSkeleton({ items = 3 }: { items?: number }) {
  */
 export function StatCardSkeleton() {
   return (
-    <div className="stat-card p-5 sm:p-6 rounded-xl sm:rounded-2xl">
+    <div className="stat-card p-5 sm:p-6 rounded-2xl">
       <div className="space-y-3">
         <div className="flex items-start justify-between">
           <div className="flex-1 space-y-2">
@@ -130,7 +130,7 @@ export function StatCardSkeleton() {
  */
 export function ChartSkeleton() {
   return (
-    <div className="aurora-card p-5 sm:p-6 rounded-xl sm:rounded-2xl min-h-80">
+    <div className="aurora-card p-5 sm:p-6 rounded-2xl min-h-80">
       <div className="space-y-3">
         <Skeleton variant="text" className="h-4 w-40 mb-4" />
         <div className="space-y-2">
@@ -178,7 +178,7 @@ export function MobileListSkeleton() {
   return (
     <div className="space-y-3">
       {Array.from({ length: 8 }).map((_, i) => (
-        <div key={i} className="clay-card flex gap-3 p-3 sm:p-4 rounded-xl sm:rounded-2xl">
+        <div key={i} className="clay-card flex gap-3 p-3 sm:p-4 rounded-2xl">
           <Skeleton variant="avatar" className="h-10 w-10 shrink-0" />
           <div className="flex-1 space-y-2">
             <Skeleton variant="text" className="h-3 w-3/4" />

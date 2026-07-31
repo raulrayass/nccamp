@@ -713,13 +713,13 @@ input:focus, textarea:focus, select:focus {
   }
 }
 
-/* Pulse animation - extra smooth for skeletons */
+/* Pulse animation - ML-style smooth opacity fade */
 @keyframes pulse {
   0%, 100% {
-    opacity: 1;
+    opacity: 0.65;
   }
   50% {
-    opacity: 0.65;
+    opacity: 0.95;
   }
 }
 
@@ -811,16 +811,8 @@ input:focus, textarea:focus, select:focus {
 }
 
 .animate-skeleton-shimmer {
-  background: linear-gradient(
-    90deg,
-    var(--muted) 0%,
-    var(--muted) calc(100% - 468px),
-    rgba(255, 255, 255, 0.15) 50%,
-    var(--muted) calc(100% + 468px),
-    var(--muted) 100%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 2s ease-in-out infinite;
+  background: var(--muted);
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 .animate-skeleton-neumorphic {
