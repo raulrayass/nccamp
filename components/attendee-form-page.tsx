@@ -489,3 +489,11 @@ export function AttendeeFormPage({ userId, eventId, attendeeId, mode }: Attendee
     </motion.div>
   )
 }
+
+const GENDERS = [
+  { value: 'male', label: 'Masculino' },
+  { value: 'female', label: 'Femenino' },
+  { value: 'other', label: 'Otro' },
+]
+
+const SHIRT_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
