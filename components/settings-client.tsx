@@ -104,6 +104,10 @@ export function SettingsClient() {
         formData.endDate
       )
 
+      if (!newEvent || !newEvent.id) {
+        throw new Error('Evento creado pero sin ID')
+      }
+
       setEvents([...events, { id: newEvent.id, name: newEvent.name }])
       setEventSession(newEvent.id)
       setShowCreateForm(false)
@@ -114,6 +118,8 @@ export function SettingsClient() {
         endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       })
       toast.success('Evento creado exitosamente')
+      // Redirect to dashboard after creating event
+      router.push('/')
     } catch (error) {
       toast.error('Error al crear evento')
       console.error(error)
@@ -166,17 +172,21 @@ export function SettingsClient() {
       const updatedEvents = events.filter(e => e.id !== eventIdToDelete)
       setEvents(updatedEvents)
       
-      // Si se eliminó el evento actual, cambiar a otro o redirigir
+      // If no events remain after deletion, redirect to select-event
+      if (updatedEvents.length === 0) {
+        setEventSession(null)
+        setDeleteConfirmId(null)
+        toast.success('Evento eliminado exitosamente')
+        router.push('/select-event')
+        return
+      }
+      
+      // Si se eliminó el evento actual, cambiar a otro
       if (eventId === eventIdToDelete) {
         const remainingEvent = updatedEvents[0]
         if (remainingEvent) {
           setEventSession(remainingEvent.id)
           await setDefaultEvent(user.id, remainingEvent.id)
-        } else {
-          // No hay más eventos, redirigir a crear evento
-          setEventSession(null)
-          router.push('/select-event')
-          return
         }
       }
       
@@ -200,294 +210,310 @@ export function SettingsClient() {
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground mb-2">Configuración</h1>
-        <p className="text-muted-foreground">Gestiona tu perfil, eventos y preferencias</p>
+    <div className="w-full min-h-screen flex flex-col">
+      {/* Header Section */}
+      <div className="px-4 sm:px-6 lg:px-8 pt-4 pb-4 border-b border-border">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Configuración</h1>
+        </div>
       </div>
 
-      {/* User Profile Card */}
-      <Card className="mb-8 p-6 border-border">
-        <h2 className="text-xl font-semibold text-foreground mb-4">Tu Perfil</h2>
-        <div className="space-y-4">
+      {/* Main Content */}
+      <div className="flex-1 px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <div className="max-w-4xl mx-auto space-y-6">
+          
+          {/* User Profile Section */}
           <div>
-            <label className="text-sm font-medium text-muted-foreground">Email</label>
-            <p className="text-lg text-foreground mt-1">{user.email}</p>
-          </div>
-          <div>
-            <label className="text-sm font-medium text-muted-foreground">Nombre</label>
-            <p className="text-lg text-foreground mt-1">{user.name || 'Sin nombre registrado'}</p>
-          </div>
-        </div>
-      </Card>
-
-      {/* Events Management Card */}
-      <Card className="mb-8 p-6 border-border">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-xl font-semibold text-foreground">Mis Eventos</h2>
-            <p className="text-sm text-muted-foreground mt-1">Gestiona y personaliza tus eventos</p>
-          </div>
-          <Dialog open={showCreateForm} onOpenChange={setShowCreateForm}>
-            <DialogTrigger asChild>
-              <Button className="gap-2">
-                <Plus className="w-4 h-4" />
-                Crear Evento
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-md">
-              <DialogHeader>
-                <DialogTitle>Crear Nuevo Evento</DialogTitle>
-                <DialogDescription>Completa los detalles de tu nuevo evento</DialogDescription>
-              </DialogHeader>
-              <form onSubmit={handleCreateEvent} className="space-y-4">
+            <h2 className="text-base font-semibold text-foreground mb-3 flex items-center gap-2">
+              <div className="w-1 h-5 bg-primary rounded-full"></div>
+              Tu Perfil
+            </h2>
+            <Card className="p-5 sm:p-6 shadow-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <label className="text-sm font-medium text-foreground">Nombre del Evento</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full mt-1 px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                    placeholder="Ej: Campamento 2024"
-                  />
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Email</label>
+                  <p className="text-foreground mt-2 break-all">{user.email}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-foreground">País</label>
-                  <input
-                    type="text"
-                    value={formData.country}
-                    onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-                    className="w-full mt-1 px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium text-foreground">Fecha Inicio</label>
-                    <input
-                      type="date"
-                      required
-                      value={formData.startDate}
-                      onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                      className="w-full mt-1 px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-foreground">Fecha Fin</label>
-                    <input
-                      type="date"
-                      required
-                      value={formData.endDate}
-                      onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                      className="w-full mt-1 px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                    />
-                  </div>
-                </div>
-                <Button type="submit" disabled={isCreating} className="w-full">
-                  {isCreating ? 'Creando...' : 'Crear Evento'}
-                </Button>
-              </form>
-            </DialogContent>
-          </Dialog>
-        </div>
-
-        {loading ? (
-          <div className="text-center py-8 text-muted-foreground">Cargando eventos...</div>
-        ) : events.length === 0 ? (
-          <div className="text-center py-8">
-            <p className="text-muted-foreground mb-4">No tienes eventos aún</p>
-            <Button onClick={() => setShowCreateForm(true)} variant="outline" className="gap-2">
-              <Plus className="w-4 h-4" />
-              Crear tu primer evento
-            </Button>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {events.map((event) => (
-              <div
-                key={event.id}
-                className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border border-border hover:border-primary/50 transition-colors"
-              >
-                <div>
-                  <h3 className="font-semibold text-foreground">{event.name}</h3>
-                  <p className="text-sm text-muted-foreground">ID: {event.id}</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    size="sm"
-                    variant={eventId === event.id ? 'default' : 'outline'}
-                    disabled={eventId === event.id || settingDefault !== null}
-                    className="gap-2"
-                    onClick={() => {
-                      setEventSession(event.id)
-                      handleSetDefault(event.id)
-                      toast.success(`Usando evento: ${event.name}`)
-                      router.push('/')
-                    }}
-                  >
-                    {eventId === event.id ? 'Activo' : 'Usar'}
-                  </Button>
-                  <button
-                    onClick={() => handleSetDefault(event.id)}
-                    disabled={settingDefault !== null}
-                    className="p-2 rounded-lg hover:bg-muted transition-colors disabled:opacity-50"
-                    title="Establecer como predeterminado"
-                  >
-                    <Star className={`w-5 h-5 ${settingDefault === event.id ? 'animate-spin' : ''}`} />
-                  </button>
-                  <Dialog open={editingEventId === event.id} onOpenChange={(open) => {
-                    if (open) {
-                      setEditingEventId(event.id)
-                      setFormData({
-                        name: event.name,
-                        country: 'México',
-                        startDate: new Date().toISOString().split('T')[0],
-                        endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-                      })
-                    } else {
-                      setEditingEventId(null)
-                    }
-                  }}>
-                    <button
-                      className="p-2 rounded-lg hover:bg-muted transition-colors disabled:opacity-50"
-                      title="Editar evento"
-                      onClick={() => {
-                        setEditingEventId(event.id)
-                        setFormData({
-                          name: event.name,
-                          country: 'México',
-                          startDate: new Date().toISOString().split('T')[0],
-                          endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-                        })
-                      }}
-                    >
-                      <Edit2 className="w-5 h-5" />
-                    </button>
-                    <DialogContent className="max-w-md">
-                      <DialogHeader>
-                        <DialogTitle>Editar Evento</DialogTitle>
-                        <DialogDescription>Actualiza los detalles del evento</DialogDescription>
-                      </DialogHeader>
-                      <form onSubmit={(e) => handleUpdateEvent(e, event)} className="space-y-4">
-                        <div>
-                          <label className="text-sm font-medium text-foreground">Nombre del Evento</label>
-                          <input
-                            type="text"
-                            required
-                            value={formData.name}
-                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            className="w-full mt-1 px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium text-foreground">País</label>
-                          <input
-                            type="text"
-                            value={formData.country}
-                            onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-                            className="w-full mt-1 px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                          />
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <label className="text-sm font-medium text-foreground">Fecha Inicio</label>
-                            <input
-                              type="date"
-                              required
-                              value={formData.startDate}
-                              onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                              className="w-full mt-1 px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                            />
-                          </div>
-                          <div>
-                            <label className="text-sm font-medium text-foreground">Fecha Fin</label>
-                            <input
-                              type="date"
-                              required
-                              value={formData.endDate}
-                              onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                              className="w-full mt-1 px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                            />
-                          </div>
-                        </div>
-                        <Button type="submit" disabled={isUpdating} className="w-full">
-                          {isUpdating ? 'Actualizando...' : 'Actualizar Evento'}
-                        </Button>
-                      </form>
-                    </DialogContent>
-                  </Dialog>
-                  <AlertDialog open={deleteConfirmId === event.id} onOpenChange={(open) => {
-                    if (!open) {
-                      setDeleteConfirmId(null)
-                    }
-                  }}>
-                    <button
-                      className="p-2 rounded-lg hover:bg-red-100 hover:text-red-600 transition-colors disabled:opacity-50"
-                      title="Eliminar evento"
-                      onClick={() => setDeleteConfirmId(event.id)}
-                    >
-                      <Trash2 className="w-5 h-5" />
-                    </button>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Se eliminarán permanentemente el evento "{event.name}" y todos sus datos asociados (camperos, staff, transacciones, etc.). Esta acción NO se puede deshacer.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <div className="flex gap-3 justify-end">
-                        <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={() => handleDeleteEvent(event.id)}
-                          disabled={isDeleting}
-                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                        >
-                          {isDeleting ? 'Eliminando...' : 'Sí, eliminar'}
-                        </AlertDialogAction>
-                      </div>
-                    </AlertDialogContent>
-                  </AlertDialog>
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Nombre</label>
+                  <p className="text-foreground mt-2">{user.name || 'Sin nombre registrado'}</p>
                 </div>
               </div>
-            ))}
+            </Card>
           </div>
-        )}
-      </Card>
 
-      {/* Logout Card */}
-      <Card className="p-6 border-red-500/30 bg-red-500/5">
-        <h2 className="text-xl font-semibold text-foreground mb-4">Cerrar Sesión</h2>
-        <p className="text-muted-foreground mb-4">Cierra tu sesión actual y vuelve a la pantalla de login</p>
-        <AlertDialog open={logoutOpen} onOpenChange={setLogoutOpen}>
-          <Button
-            onClick={() => setLogoutOpen(true)}
-            variant="destructive"
-            className="gap-2"
-          >
-            <LogOut className="w-4 h-4" />
-            Cerrar Sesión
-          </Button>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Confirmar cierre de sesión</AlertDialogTitle>
-              <AlertDialogDescription>
-                ¿Estás seguro de que deseas cerrar sesión? Tendrás que iniciar sesión nuevamente.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <div className="flex gap-3 justify-end">
-              <AlertDialogCancel disabled={isLoggingOut}>Cancelar</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={handleLogout}
-                disabled={isLoggingOut}
-                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              >
-                {isLoggingOut ? 'Cerrando...' : 'Cerrar Sesión'}
-              </AlertDialogAction>
+          {/* Events Management Section */}
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-base font-semibold text-foreground flex items-center gap-2">
+                <div className="w-1 h-5 bg-primary rounded-full"></div>
+                Mis Eventos
+              </h2>
+              <Dialog open={showCreateForm} onOpenChange={setShowCreateForm}>
+                <DialogTrigger asChild>
+                  <Button className="gap-2 h-9 text-sm">
+                    <Plus className="w-4 h-4" />
+                    Crear
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-md rounded-2xl">
+                  <DialogHeader>
+                    <DialogTitle className="text-xl">Crear Evento</DialogTitle>
+                  </DialogHeader>
+                  <form onSubmit={handleCreateEvent} className="space-y-4">
+                    <div>
+                      <label className="text-xs font-semibold text-muted-foreground uppercase">Nombre</label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        className="w-full mt-2 px-3 py-2 bg-muted/50 border border-border rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                        placeholder="Ej: Campamento 2024"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-semibold text-muted-foreground uppercase">País</label>
+                      <input
+                        type="text"
+                        value={formData.country}
+                        onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                        className="w-full mt-2 px-3 py-2 bg-muted/50 border border-border rounded-xl text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-xs font-semibold text-muted-foreground uppercase">Inicio</label>
+                        <input
+                          type="date"
+                          required
+                          value={formData.startDate}
+                          onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                          className="w-full mt-2 px-3 py-2 bg-muted/50 border border-border rounded-xl text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-semibold text-muted-foreground uppercase">Fin</label>
+                        <input
+                          type="date"
+                          required
+                          value={formData.endDate}
+                          onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                          className="w-full mt-2 px-3 py-2 bg-muted/50 border border-border rounded-xl text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                        />
+                      </div>
+                    </div>
+                    <Button type="submit" disabled={isCreating} className="w-full mt-5">
+                      {isCreating ? 'Creando...' : 'Crear Evento'}
+                    </Button>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </div>
-          </AlertDialogContent>
-        </AlertDialog>
-      </Card>
+
+            <Card className="p-5 sm:p-6 shadow-sm">
+              {loading ? (
+                <div className="text-center py-8 text-muted-foreground text-sm">Cargando eventos...</div>
+              ) : events.length === 0 ? (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground mb-4 text-sm">No tienes eventos aún</p>
+                  <Button onClick={() => setShowCreateForm(true)} variant="outline" className="gap-2 h-9 text-sm">
+                    <Plus className="w-4 h-4" />
+                    Crear tu primer evento
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {events.map((event) => (
+                    <div
+                      key={event.id}
+                      className="flex items-center justify-between p-4 bg-muted/40 rounded-xl hover:bg-muted/60 transition-colors group"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-foreground text-sm truncate">{event.name}</h3>
+                        <p className="text-xs text-muted-foreground mt-1">ID: {event.id}</p>
+                      </div>
+                      <div className="flex items-center gap-2 ml-4 flex-shrink-0">
+                        <Button
+                          size="sm"
+                          variant={eventId === event.id ? 'default' : 'outline'}
+                          disabled={eventId === event.id || settingDefault !== null}
+                          className="gap-1 h-8 text-xs"
+                          onClick={() => {
+                            setEventSession(event.id)
+                            handleSetDefault(event.id)
+                            toast.success(`Usando evento: ${event.name}`)
+                            router.push('/')
+                          }}
+                        >
+                          {eventId === event.id ? 'Activo' : 'Usar'}
+                        </Button>
+                        <button
+                          onClick={() => handleSetDefault(event.id)}
+                          disabled={settingDefault !== null}
+                          className="p-1.5 rounded-lg hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all disabled:opacity-50"
+                          title="Establecer como predeterminado"
+                        >
+                          <Star className={`w-4 h-4 ${settingDefault === event.id ? 'animate-spin text-yellow-500' : ''}`} />
+                        </button>
+                        <Dialog open={editingEventId === event.id} onOpenChange={(open) => {
+                          if (open) {
+                            setEditingEventId(event.id)
+                            setFormData({
+                              name: event.name,
+                              country: 'México',
+                              startDate: new Date().toISOString().split('T')[0],
+                              endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                            })
+                          } else {
+                            setEditingEventId(null)
+                          }
+                        }}>
+                          <button
+                            className="p-1.5 rounded-lg hover:bg-blue-500/10 text-muted-foreground hover:text-blue-600 transition-all disabled:opacity-50"
+                            title="Editar evento"
+                            onClick={() => {
+                              setEditingEventId(event.id)
+                              setFormData({
+                                name: event.name,
+                                country: 'México',
+                                startDate: new Date().toISOString().split('T')[0],
+                                endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                              })
+                            }}
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+                          <DialogContent className="max-w-md rounded-2xl">
+                            <DialogHeader>
+                              <DialogTitle className="text-xl">Editar Evento</DialogTitle>
+                            </DialogHeader>
+                            <form onSubmit={(e) => handleUpdateEvent(e, event)} className="space-y-4">
+                              <div>
+                                <label className="text-xs font-semibold text-muted-foreground uppercase">Nombre</label>
+                                <input
+                                  type="text"
+                                  required
+                                  value={formData.name}
+                                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                  className="w-full mt-2 px-3 py-2 bg-muted/50 border border-border rounded-xl text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                                />
+                              </div>
+                              <div>
+                                <label className="text-xs font-semibold text-muted-foreground uppercase">País</label>
+                                <input
+                                  type="text"
+                                  value={formData.country}
+                                  onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                                  className="w-full mt-2 px-3 py-2 bg-muted/50 border border-border rounded-xl text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                                />
+                              </div>
+                              <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                  <label className="text-xs font-semibold text-muted-foreground uppercase">Inicio</label>
+                                  <input
+                                    type="date"
+                                    required
+                                    value={formData.startDate}
+                                    onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                                    className="w-full mt-2 px-3 py-2 bg-muted/50 border border-border rounded-xl text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="text-xs font-semibold text-muted-foreground uppercase">Fin</label>
+                                  <input
+                                    type="date"
+                                    required
+                                    value={formData.endDate}
+                                    onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                                    className="w-full mt-2 px-3 py-2 bg-muted/50 border border-border rounded-xl text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                                  />
+                                </div>
+                              </div>
+                              <Button type="submit" disabled={isUpdating} className="w-full mt-5">
+                                {isUpdating ? 'Actualizando...' : 'Actualizar Evento'}
+                              </Button>
+                            </form>
+                          </DialogContent>
+                        </Dialog>
+                        <AlertDialog open={deleteConfirmId === event.id} onOpenChange={(open) => {
+                          if (!open) {
+                            setDeleteConfirmId(null)
+                          }
+                        }}>
+                          <button
+                            className="p-1.5 rounded-lg hover:bg-red-500/10 text-muted-foreground hover:text-red-600 transition-all disabled:opacity-50"
+                            title="Eliminar evento"
+                            onClick={() => setDeleteConfirmId(event.id)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Se eliminarán permanentemente el evento "{event.name}" y todos sus datos asociados. Esta acción NO se puede deshacer.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <div className="flex gap-3 justify-end">
+                              <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDeleteEvent(event.id)}
+                                disabled={isDeleting}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                {isDeleting ? 'Eliminando...' : 'Sí, eliminar'}
+                              </AlertDialogAction>
+                            </div>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </Card>
+          </div>
+
+          {/* Logout Section */}
+          <div>
+            <h2 className="text-base font-semibold text-foreground mb-3 flex items-center gap-2">
+              <div className="w-1 h-5 bg-red-500 rounded-full"></div>
+              Cerrar Sesión
+            </h2>
+            <Card className="p-5 sm:p-6 shadow-sm border-red-500/20 bg-red-500/5">
+              <AlertDialog open={logoutOpen} onOpenChange={setLogoutOpen}>
+                <Button
+                  onClick={() => setLogoutOpen(true)}
+                  variant="destructive"
+                  className="gap-2 h-9 text-sm"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Cerrar Sesión
+                </Button>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Confirmar cierre de sesión</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      ¿Estás seguro de que deseas cerrar sesión? Tendrás que iniciar sesión nuevamente.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <div className="flex gap-3 justify-end">
+                    <AlertDialogCancel disabled={isLoggingOut}>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleLogout}
+                      disabled={isLoggingOut}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
+                      {isLoggingOut ? 'Cerrando...' : 'Cerrar Sesión'}
+                    </AlertDialogAction>
+                  </div>
+                </AlertDialogContent>
+              </AlertDialog>
+            </Card>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
