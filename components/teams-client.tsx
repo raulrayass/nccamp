@@ -29,7 +29,7 @@ interface Props {
 
 export function TeamsClient({ userId, eventId }: Props) {
   // Hooks centralizados para sincronización
-  const { teams: teamList, isLoading: teamsLoading } = useTeams(eventId)
+  const { teams: teamList, isLoading: teamsLoading, refetch: refetchTeams } = useTeams(eventId)
   const { scores: allGameScores } = useGameScores()
 
   // Local UI state
@@ -121,11 +121,11 @@ export function TeamsClient({ userId, eventId }: Props) {
           await createTeam(userId, { ...form, eventId })
           toast.success('Equipo creado')
         }
+        await refetchTeams()
         setDialogOpen(false)
         setForm({ ...emptyForm })
         setEditingId(null)
         clearNewParam()
-        // Los hooks SWR se actualizan automáticamente
       } catch (error) {
         toast.error('Error al guardar el equipo')
         console.error(error)
@@ -138,8 +138,8 @@ export function TeamsClient({ userId, eventId }: Props) {
       try {
         await deleteTeam(userId, id)
         toast.success('Equipo eliminado')
+        await refetchTeams()
         setDeleteDialogOpen(false)
-        // Los hooks SWR se actualizan automáticamente
       } catch (error) {
         toast.error('Error al eliminar el equipo')
         console.error(error)
@@ -397,7 +397,7 @@ export function TeamsClient({ userId, eventId }: Props) {
           <AlertDialogHeader>
             <AlertDialogTitle>¿Eliminar equipo?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta acción no se puede deshacer. Se eliminará el equipo pero los camperos asignados a este equipo no serán eliminados.
+              Esta acción no se puede deshacer. Se eliminará el equipo pero los camperos asignados a este equipo no ser��n eliminados.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="flex gap-2 justify-end">

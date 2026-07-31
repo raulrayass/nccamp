@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { useUser } from '@/components/user-provider'
 import { useEventSession } from '@/lib/contexts/event-session-context'
 import { getUserEvents, setDefaultEvent, createEvent } from '@/app/actions/events'
@@ -32,6 +33,7 @@ interface EventOption {
 }
 
 export function SettingsClient() {
+  const router = useRouter()
   const { user, signOut } = useUser()
   const { eventId, setEventSession } = useEventSession()
   const [events, setEvents] = useState<EventOption[]>([])
@@ -249,6 +251,7 @@ export function SettingsClient() {
                       setEventSession(event.id)
                       handleSetDefault(event.id)
                       toast.success(`Usando evento: ${event.name}`)
+                      router.push('/')
                     }}
                   >
                     {eventId === event.id ? 'Activo' : 'Usar'}
