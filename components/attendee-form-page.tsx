@@ -26,22 +26,15 @@ import { toast } from 'sonner'
 
 interface AttendeeFormPageProps {
   userId: string
+  eventId: number
   attendeeId?: number
   mode: 'create' | 'edit'
 }
 
-const SHIRT_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
-const GENDERS = [
-  { value: 'male', label: 'Masculino' },
-  { value: 'female', label: 'Femenino' },
-  { value: 'other', label: 'Otro' },
-]
-
-export function AttendeeFormPage({ userId, attendeeId, mode }: AttendeeFormPageProps) {
+export function AttendeeFormPage({ userId, eventId, attendeeId, mode }: AttendeeFormPageProps) {
   const router = useRouter()
-  const { eventId, isInitialized } = useEventSession()
   const [isPending, startTransition] = useTransition()
-  const [loading, setLoading] = useState(mode === 'edit' || !isInitialized)
+  const [loading, setLoading] = useState(mode === 'edit')
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
   const [churches, setChurches] = useState<Church[]>([])
@@ -117,14 +110,10 @@ export function AttendeeFormPage({ userId, attendeeId, mode }: AttendeeFormPageP
     }
 
     loadData()
-  }, [eventId, mode, attendeeId, isInitialized])
+  }, [eventId, mode, attendeeId])
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!eventId) {
-      toast.error('Evento no seleccionado')
-      return
-    }
 
     startTransition(async () => {
       try {
@@ -176,12 +165,6 @@ export function AttendeeFormPage({ userId, attendeeId, mode }: AttendeeFormPageP
         console.error(error)
       }
     })
-  }
-
-  // Redirect if eventId is not available after initialization
-  if (isInitialized && !eventId) {
-    router.push('/select-event')
-    return null
   }
 
   if (loading) {
