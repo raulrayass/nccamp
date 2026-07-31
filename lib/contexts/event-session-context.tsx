@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, ReactNode, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { useUser } from '@/components/user-provider'
 import { getDefaultEvent, getUserEvents } from '@/app/actions/events'
@@ -64,6 +64,7 @@ function clearSessionStorage() {
 export function EventSessionProvider({ children }: { children: ReactNode }) {
   const { user } = useUser()
   const router = useRouter()
+  const [isPending, startTransition] = useTransition()
   const [eventId, setEventId] = useState<number | null>(null)
   const [events, setEvents] = useState<{ id: number; name: string }[]>([])
   const [isInitialized, setIsInitialized] = useState(false)
@@ -93,7 +94,9 @@ export function EventSessionProvider({ children }: { children: ReactNode }) {
         if (!userEvents || userEvents.length === 0) {
           setEventId(null)
           clearSessionStorage()
-          router.push('/select-event')
+          startTransition(() => {
+            router.push('/select-event')
+          })
           return
         }
 
