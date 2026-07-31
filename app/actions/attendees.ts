@@ -7,44 +7,41 @@ import { eq, and, desc, count } from 'drizzle-orm'
 const ATTENDEES_PER_PAGE = 20
 
 // Get ALL attendees for reports and metrics (no pagination)
-// eventId: nullable para filtrar por evento específico o traer todos
+// Filtrar por eventId (camperos pertenecen a eventos, no a usuarios)
 export async function getAllAttendees(userId: string, eventId?: number | null) {
-  const conditions = [eq(attendees.userId, userId)]
-  if (eventId !== undefined && eventId !== null) {
-    conditions.push(eq(attendees.eventId, eventId))
+  if (!eventId) {
+    return []
   }
   return db
     .select()
     .from(attendees)
-    .where(and(...(conditions as any)))
+    .where(eq(attendees.eventId, eventId))
     .orderBy(desc(attendees.createdAt))
 }
 
 // Get paginated attendees for UI display
 export async function getAttendees(userId: string, page: number = 1, eventId?: number | null) {
-  const offset = (page - 1) * ATTENDEES_PER_PAGE
-  const conditions = [eq(attendees.userId, userId)]
-  if (eventId !== undefined && eventId !== null) {
-    conditions.push(eq(attendees.eventId, eventId))
+  if (!eventId) {
+    return []
   }
+  const offset = (page - 1) * ATTENDEES_PER_PAGE
   return db
     .select()
     .from(attendees)
-    .where(and(...(conditions as any)))
+    .where(eq(attendees.eventId, eventId))
     .orderBy(desc(attendees.createdAt))
     .limit(ATTENDEES_PER_PAGE)
     .offset(offset)
 }
 
 export async function getAttendeesCount(userId: string, eventId?: number | null) {
-  const conditions = [eq(attendees.userId, userId)]
-  if (eventId !== undefined && eventId !== null) {
-    conditions.push(eq(attendees.eventId, eventId))
+  if (!eventId) {
+    return 0
   }
   const result = await db
     .select({ count: count() })
     .from(attendees)
-    .where(and(...(conditions as any)))
+    .where(eq(attendees.eventId, eventId))
   return Number(result[0]?.count ?? 0)
 }
 

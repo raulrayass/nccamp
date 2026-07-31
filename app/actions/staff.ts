@@ -8,42 +8,39 @@ const STAFF_PER_PAGE = 20
 
 // Get ALL staff for reports and metrics (no pagination)
 export async function getAllStaff(userId: string, eventId?: number | null) {
-  const conditions = [eq(staff.userId, userId)]
-  if (eventId !== undefined && eventId !== null) {
-    conditions.push(eq(staff.eventId, eventId))
+  if (!eventId) {
+    return []
   }
   return db
     .select()
     .from(staff)
-    .where(and(...(conditions as any)))
+    .where(eq(staff.eventId, eventId))
     .orderBy(desc(staff.createdAt))
 }
 
 // Get paginated staff for UI display
 export async function getStaff(userId: string, page: number = 1, eventId?: number | null) {
-  const offset = (page - 1) * STAFF_PER_PAGE
-  const conditions = [eq(staff.userId, userId)]
-  if (eventId !== undefined && eventId !== null) {
-    conditions.push(eq(staff.eventId, eventId))
+  if (!eventId) {
+    return []
   }
+  const offset = (page - 1) * STAFF_PER_PAGE
   return db
     .select()
     .from(staff)
-    .where(and(...(conditions as any)))
+    .where(eq(staff.eventId, eventId))
     .orderBy(desc(staff.createdAt))
     .limit(STAFF_PER_PAGE)
     .offset(offset)
 }
 
 export async function getStaffCount(userId: string, eventId?: number | null) {
-  const conditions = [eq(staff.userId, userId)]
-  if (eventId !== undefined && eventId !== null) {
-    conditions.push(eq(staff.eventId, eventId))
+  if (!eventId) {
+    return 0
   }
   const result = await db
     .select({ count: count() })
     .from(staff)
-    .where(and(...(conditions as any)))
+    .where(eq(staff.eventId, eventId))
   return Number(result[0]?.count ?? 0)
 }
 
