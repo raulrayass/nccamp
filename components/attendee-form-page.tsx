@@ -67,9 +67,9 @@ export function AttendeeFormPage({ userId, eventId, attendeeId, mode }: Attendee
         if (!eventId) return
 
         const [churchesData, teamsData, roomsData] = await Promise.all([
-          getChurches(eventId),
-          getTeams(eventId),
-          getRooms(eventId),
+          getChurches(userId, eventId),
+          getTeams(userId, 1, eventId),
+          getRooms(userId, eventId),
         ])
 
         setChurches(churchesData || [])
@@ -78,7 +78,7 @@ export function AttendeeFormPage({ userId, eventId, attendeeId, mode }: Attendee
 
         // Load attendee if editing
         if (mode === 'edit' && attendeeId) {
-          const attendees = await getAttendees(eventId)
+          const attendees = await getAttendees(userId, 1, eventId)
           const attendee = attendees.find((a) => a.id === attendeeId)
           if (attendee) {
             setForm({

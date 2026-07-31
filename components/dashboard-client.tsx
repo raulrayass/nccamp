@@ -32,7 +32,8 @@ export function DashboardClient({ userId, eventId }: { userId: string; eventId: 
   const [churchData, setChurchData] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(false)
 
-  useEffect(() => {
+  // Función para cargar datos
+  const loadData = async () => {
     if (!eventId) {
       setData(null)
       setChurchData([])
@@ -40,15 +41,32 @@ export function DashboardClient({ userId, eventId }: { userId: string; eventId: 
     }
 
     setIsLoading(true)
-    Promise.all([
-      getDashboardData(userId, eventId),
-      getChurchDistribution(userId, eventId),
-    ])
-      .then(([dashData, churchDist]) => {
-        setData(dashData)
-        setChurchData(churchDist)
-      })
-      .finally(() => setIsLoading(false))
+    try {
+      const [dashData, churchDist] = await Promise.all([
+        getDashboardData(userId, eventId),
+        getChurchDistribution(userId, eventId),
+      ])
+      setData(dashData)
+      setChurchData(churchDist)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // Cargar datos cuando userId o eventId cambian
+  useEffect(() => {
+    loadData()
+  }, [userId, eventId])
+
+  // Polling automático cada 10 segundos para reflejar cambios en tiempo real
+  useEffect(() => {
+    if (!eventId) return
+
+    const interval = setInterval(() => {
+      loadData()
+    }, 10000)
+
+    return () => clearInterval(interval)
   }, [userId, eventId])
 
   if (!data) {
