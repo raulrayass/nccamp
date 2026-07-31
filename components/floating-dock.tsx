@@ -167,7 +167,7 @@ function DockItem({
       href={item.href}
       title={item.label}
       className={cn(
-        'flex flex-1 flex-col items-center justify-center gap-0.5 py-1.5 rounded-2xl transition-colors duration-200',
+        'flex flex-1 flex-col items-center justify-center gap-0.5 py-1.5 rounded-2xl transition-colors duration-200 focus:outline-none',
         active 
           ? 'bg-white text-green-600' 
           : 'text-gray-600 dark:text-gray-200 hover:text-foreground'
