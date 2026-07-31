@@ -119,7 +119,7 @@ export async function getDashboardData(userId: string, eventId?: number | null) 
       })
     }
 
-    // Payment method breakdown
+    // Payment method breakdown (income - expenses = available)
     const paymentMethodBreakdown: Record<string, { available: number }> = {
       cash: { available: 0 },
       transfer: { available: 0 },
@@ -127,10 +127,15 @@ export async function getDashboardData(userId: string, eventId?: number | null) 
     }
 
     for (const tx of allTransactions) {
-      if (tx.type === 'income' && tx.paymentMethod) {
+      if (tx.paymentMethod) {
         const method = tx.paymentMethod as keyof typeof paymentMethodBreakdown
         if (paymentMethodBreakdown[method]) {
-          paymentMethodBreakdown[method].available += Number(tx.amount)
+          const amount = Number(tx.amount)
+          if (tx.type === 'income') {
+            paymentMethodBreakdown[method].available += amount
+          } else {
+            paymentMethodBreakdown[method].available -= amount
+          }
         }
       }
     }

@@ -19,7 +19,14 @@ export default function AttendeeDetailPage({ params }: { params: { id: string } 
   const attendeeId = parseInt(params.id, 10)
 
   if (isNaN(attendeeId)) {
-    return <div className="text-center py-8">ID de campero inválido</div>
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">ID de campero inválido: {params.id}</p>
+          <a href="/attendees" className="text-blue-600 underline">Volver a camperos</a>
+        </div>
+      </div>
+    )
   }
 
   return <AttendeeFormPage userId={user.id} eventId={eventId} attendeeId={attendeeId} mode="edit" />
