@@ -153,10 +153,10 @@ export function AttendeeFormPage({ userId, eventId, attendeeId, mode }: Attendee
         }
 
         if (mode === 'create') {
-          await createAttendee(eventId, data)
+          await createAttendee(userId, { ...data, eventId })
           toast.success('Campero creado')
         } else if (attendeeId) {
-          await updateAttendee(eventId, attendeeId, data)
+          await updateAttendee(userId, attendeeId, data)
           toast.success('Campero actualizado')
         }
 
