@@ -4,19 +4,10 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Square, Users, DollarSign, MapPin, Trophy, LogOut, User, Settings } from 'lucide-react'
+import { Square, Users, DollarSign, MapPin, Trophy, User } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useUser } from '@/components/user-provider'
 import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -114,49 +105,16 @@ export function Topbar() {
             })}
           </nav>
 
-          {/* User area */}
+          {/* User area - Direct link to settings */}
           {user ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger className="flex items-center gap-2 px-2 sm:px-3 py-1.5 rounded-lg hover:bg-muted/50 transition-all duration-200 group">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shrink-0 shadow-sm group-hover:shadow-md transition-all duration-200">
-                  <User className="w-4 h-4 text-primary-foreground" />
-                </div>
-                <span className="hidden sm:block truncate text-foreground text-sm font-medium max-w-[120px]">
-                  {user.name || user.email?.split('@')[0] || 'Usuario'}
-                </span>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 mt-2">
-                <DropdownMenuGroup>
-                  <DropdownMenuLabel className="font-normal px-2 py-3 bg-muted/30 rounded-t-lg">
-                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"></p>
-                    <p className="text-sm font-semibold text-foreground truncate mt-1">{user.email}</p>
-                  </DropdownMenuLabel>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator className="my-2" />
-                <DropdownMenuGroup>
-                  <Link href="/settings" asChild>
-                    <DropdownMenuItem className="gap-2.5 cursor-pointer py-2.5 px-3 transition-all duration-200">
-                      <div className="w-3.5 h-3.5 flex items-center justify-center rounded-md bg-primary/10">
-                        <Settings className="w-3.5 h-3.5 text-primary" />
-                      </div>
-                      <span className="font-medium">Configuración</span>
-                    </DropdownMenuItem>
-                  </Link>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator className="my-2" />
-                <DropdownMenuGroup>
-                  <DropdownMenuItem
-                    onClick={() => setLogoutDialogOpen(true)}
-                    className="text-destructive/80 focus:text-destructive focus:bg-destructive/5 hover:bg-destructive/5 gap-2.5 cursor-pointer py-2.5 px-3 transition-all duration-200 group/logout"
-                  >
-                    <div className="w-3.5 h-3.5 flex items-center justify-center rounded-md bg-destructive/10 group-hover/logout:bg-destructive/15">
-                      <LogOut className="w-3.5 h-3.5" />
-                    </div>
-                    <span className="font-medium">Cerrar sesión</span>
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Link href="/settings" className="flex items-center gap-2 px-2 sm:px-3 py-1.5 rounded-lg hover:bg-muted/50 transition-all duration-200 group">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shrink-0 shadow-sm group-hover:shadow-md transition-all duration-200">
+                <User className="w-4 h-4 text-primary-foreground" />
+              </div>
+              <span className="hidden sm:block truncate text-foreground text-sm font-medium max-w-[120px]">
+                {user.name || user.email?.split('@')[0] || 'Usuario'}
+              </span>
+            </Link>
           ) : null}
         </div>
       </div>
