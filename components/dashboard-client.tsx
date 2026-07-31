@@ -55,6 +55,10 @@ export function DashboardClient({ userId, eventId }: { userId: string; eventId: 
 
   // Cargar datos cuando userId o eventId cambian
   useEffect(() => {
+    // Limpiar datos viejos cuando eventId cambia
+    setData(null)
+    setChurchData([])
+    // Luego cargar datos nuevos
     loadData()
   }, [userId, eventId])
 

@@ -191,7 +191,7 @@ export async function getGameActivityData(userId: string, eventId?: number | nul
         teamName: teams.name,
       })
       .from(gameScores)
-      .leftJoin(teams, eq(gameScores.teamId, teams.id))
+      .leftJoin(teams, and(eq(gameScores.teamId, teams.id), eq(teams.eventId, eventId || 0)))
       .where(and(...(scoreConditions as any)))
 
     for (const score of allScores) {
