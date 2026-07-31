@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useGames, useTeams, useAttendees, useGameScores } from '@/lib/hooks'
 import { useSession } from '@/lib/auth-client'
+import { useEventSession } from '@/lib/contexts/event-session-context'
 
 export interface DashboardStats {
   totalGames: number
@@ -18,9 +19,10 @@ export interface DashboardStats {
 
 export function useDashboardStats(): DashboardStats {
   const session = useSession()
-  const { games, isLoading: gamesLoading } = useGames()
-  const { teams, isLoading: teamsLoading } = useTeams()
-  const { scores: gameScores, isLoading: scoresLoading } = useGameScores()
+  const { eventId } = useEventSession()
+  const { games, isLoading: gamesLoading } = useGames(eventId)
+  const { teams, isLoading: teamsLoading } = useTeams(eventId)
+  const { scores: gameScores, isLoading: scoresLoading } = useGameScores(eventId)
   const [attendees, setAttendees] = useState<any[]>([])
   const [isLoadingAttendees, setIsLoadingAttendees] = useState(false)
   const [error, setError] = useState<Error | null>(null)
