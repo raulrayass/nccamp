@@ -80,7 +80,7 @@ export function Topbar() {
             </Link>
             <div className="flex flex-col gap-0.5 min-w-0">
               <p className="text-xs sm:text-sm font-bold text-primary-foreground leading-tight">
-                Hola, {user?.name?.split(' ')[0] || 'Usuario'}
+                Hola, {user?.name || 'Usuario'}
               </p>
               <p className="text-xs text-primary-foreground/80 truncate font-medium">
                 {eventName}
