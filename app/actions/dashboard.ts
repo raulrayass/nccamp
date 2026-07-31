@@ -75,27 +75,47 @@ export async function getDashboardData(userId: string, eventId?: number | null) 
       .slice(-12)
 
     // Calculate category breakdown
-    const expenseByCategory: Record<string, number> = {}
-    const incomeByCategory: Record<string, number> = {}
+    const expenseByCategoryMap: Record<string, { total: number; color: string }> = {}
+    const incomeByCategoryMap: Record<string, { total: number; color: string }> = {}
     const categoryComparison: Array<{ name: string; income: number; expense: number }> = []
 
     for (const tx of allTransactions) {
       const catName = tx.categoryName || 'Sin categoría'
       const amount = Number(tx.amount)
+      const color = tx.categoryColor || '#888888'
 
       if (tx.type === 'income') {
-        incomeByCategory[catName] = (incomeByCategory[catName] || 0) + amount
+        if (!incomeByCategoryMap[catName]) {
+          incomeByCategoryMap[catName] = { total: 0, color }
+        }
+        incomeByCategoryMap[catName].total += amount
       } else {
-        expenseByCategory[catName] = (expenseByCategory[catName] || 0) + amount
+        if (!expenseByCategoryMap[catName]) {
+          expenseByCategoryMap[catName] = { total: 0, color }
+        }
+        expenseByCategoryMap[catName].total += amount
       }
     }
 
-    const allCats = new Set([...Object.keys(incomeByCategory), ...Object.keys(expenseByCategory)])
+    // Convert to arrays for frontend
+    const expenseByCategory = Object.entries(expenseByCategoryMap).map(([name, data]) => ({
+      name,
+      total: data.total,
+      color: data.color,
+    }))
+
+    const incomeByCategory = Object.entries(incomeByCategoryMap).map(([name, data]) => ({
+      name,
+      total: data.total,
+      color: data.color,
+    }))
+
+    const allCats = new Set([...Object.keys(incomeByCategoryMap), ...Object.keys(expenseByCategoryMap)])
     for (const cat of allCats) {
       categoryComparison.push({
         name: cat,
-        income: incomeByCategory[cat] || 0,
-        expense: expenseByCategory[cat] || 0,
+        income: incomeByCategoryMap[cat]?.total || 0,
+        expense: expenseByCategoryMap[cat]?.total || 0,
       })
     }
 

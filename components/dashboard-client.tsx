@@ -34,7 +34,9 @@ export function DashboardClient({ userId, eventId }: { userId: string; eventId: 
 
   // Función para cargar datos
   const loadData = async () => {
+    console.log("[v0] loadData called with userId:", userId, "eventId:", eventId)
     if (!eventId) {
+      console.log("[v0] No eventId, clearing data")
       setData(null)
       setChurchData([])
       return
@@ -42,12 +44,16 @@ export function DashboardClient({ userId, eventId }: { userId: string; eventId: 
 
     setIsLoading(true)
     try {
+      console.log("[v0] Fetching dashboard data...")
       const [dashData, churchDist] = await Promise.all([
         getDashboardData(userId, eventId),
         getChurchDistribution(userId, eventId),
       ])
+      console.log("[v0] Dashboard data received:", dashData)
       setData(dashData)
       setChurchData(churchDist)
+    } catch (error) {
+      console.log("[v0] Error loading dashboard data:", error)
     } finally {
       setIsLoading(false)
     }

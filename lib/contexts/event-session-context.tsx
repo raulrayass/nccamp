@@ -68,6 +68,7 @@ export function EventSessionProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!isInitialized && typeof window !== 'undefined') {
       const saved = readSession()
+      console.log("[v0] EventSessionProvider: Read saved eventId from cookie:", saved)
       setEventId(saved)
       setIsInitialized(true)
     }
@@ -75,14 +76,18 @@ export function EventSessionProvider({ children }: { children: ReactNode }) {
 
   // Load default event if user is authenticated but no event is selected (only after initialization)
   useEffect(() => {
+    console.log("[v0] Default event effect - isInitialized:", isInitialized, "user:", user?.id, "eventId:", eventId)
     if (!isInitialized || !user?.id || eventId !== null) return
 
     async function loadDefaultEvent() {
       try {
+        console.log("[v0] Loading default event...")
         const defaultEvent = await getDefaultEvent(user.id)
+        console.log("[v0] Default event loaded:", defaultEvent)
         if (defaultEvent) {
           setEventId(defaultEvent.id)
           writeSession(defaultEvent.id)
+          console.log("[v0] Set event to:", defaultEvent.id)
         }
       } catch (error) {
         console.error('Error loading default event:', error)
