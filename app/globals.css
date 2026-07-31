@@ -302,162 +302,24 @@ input:focus, textarea:focus, select:focus {
 
   /* ===== CLAYMORPHISM + AURORA DESIGN (Refinado) ===== */
 
-  /* Tarjeta claymorphism refinada */
-  .clay-card {
-    background: var(--card);
-    border: 1px solid hsl(from var(--primary) h s calc(l - 15%));
-    box-shadow:
-      0 8px 32px -4px rgba(0, 0, 0, 0.08),
-      inset 0 1px 0 rgba(255, 255, 255, 0.06),
-      0 0 32px -8px hsl(from var(--primary) h s calc(l - 10%));
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  :is(html:not(.dark)) .clay-card {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, var(--card) 100%);
-    border-color: hsl(from var(--primary) h s calc(l - 18%));
-  }
-
-  .dark .clay-card {
-    background: var(--card);
-    border-color: hsl(from var(--primary) h s calc(l - 20%));
-  }
-
-  .clay-card:hover {
-    transform: translateY(-2px);
-    border-color: hsl(from var(--primary) h s calc(l - 10%));
-    box-shadow:
-      0 12px 48px -6px rgba(0, 0, 0, 0.12),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1),
-      0 0 40px -4px hsl(from var(--primary) h s calc(l - 10%));
-  }
-
-  .dark .clay-card {
-    border: 1px solid hsl(from var(--primary) h s calc(l - 5%));
-  }
-
-  .dark .clay-card:hover {
-    border-color: hsl(from var(--primary) h s calc(l + 5%));
-    box-shadow:
-      0 12px 48px -6px rgba(0, 0, 0, 0.4),
-      inset 0 1px 0 rgba(255, 255, 255, 0.08),
-      0 0 40px -2px hsl(from var(--primary) h s calc(l + 5%));
-  }
-
-  /* Aurora card - gradiente sutil tipo aurora boreal */
-  .aurora-card {
-    background: var(--card);
-    border: 1px solid hsl(from var(--primary) h s calc(l - 12%));
-    box-shadow:
-      0 8px 28px -4px rgba(0, 0, 0, 0.06),
-      inset 0 1px 0 rgba(255, 255, 255, 0.08),
-      0 0 40px -12px hsl(from var(--primary) h s calc(l - 5%));
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  :is(html:not(.dark)) .aurora-card {
-    background: linear-gradient(
-      to bottom right,
-      hsl(from var(--primary) h calc(s + 5%) calc(l + 1.5%)),
-      var(--card)
-    );
-  }
-
-  .aurora-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(
-      circle at top left,
-      hsl(from var(--primary) h calc(s + 10%) calc(l + 4%)) 0%,
-      transparent 60%
-    );
-    opacity: 0.08;
-    pointer-events: none;
-  }
-
-  .dark .aurora-card::before {
-    opacity: 0.04;
-  }
-
-  .aurora-card:hover {
-    transform: translateY(-2px);
-    box-shadow:
-      0 12px 40px -4px rgba(0, 0, 0, 0.10),
-      inset 0 1px 0 rgba(255, 255, 255, 0.12),
-      0 0 50px -8px hsl(from var(--primary) h s calc(l - 5%));
-  }
-
-  /* Stat card - para números con estilo moderno */
+  /* Simplified card styles - clean and minimal */
+  .clay-card,
+  .aurora-card,
   .stat-card {
     background: var(--card);
-    border: 1px solid hsl(from var(--primary) h s calc(l - 15%));
-    box-shadow:
-      0 8px 28px -4px rgba(0, 0, 0, 0.07),
-      inset 0 1px 0 rgba(255, 255, 255, 0.08),
-      0 0 36px -8px hsl(from var(--primary) h s calc(l - 8%));
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid var(--border);
+    transition: all 0.2s ease;
   }
 
-  :is(html:not(.dark)) .stat-card {
-    background: linear-gradient(
-      135deg,
-      hsl(from var(--primary) h calc(s + 3%) calc(l + 1%)) 0%,
-      var(--card) 100%
-    );
-  }
-
-  .stat-card::after {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(
-      circle,
-      hsl(from var(--primary) h calc(s + 15%) calc(l + 10%)) 0%,
-      transparent 70%
-    );
-    opacity: 0.06;
-    pointer-events: none;
-  }
-
+  .clay-card:hover,
+  .aurora-card:hover,
   .stat-card:hover {
-    transform: translateY(-2px);
     border-color: hsl(from var(--primary) h s calc(l - 5%));
-    box-shadow:
-      0 12px 40px -4px rgba(0, 0, 0, 0.10),
-      inset 0 1px 0 rgba(255, 255, 255, 0.12),
-      0 0 48px -4px hsl(from var(--primary) h s calc(l - 8%));
-  }
-
-  /* Animación sutil para stat cards */
-  @keyframes float-subtle {
-    0%, 100% {
-      transform: translateY(0px);
-    }
-    50% {
-      transform: translateY(-1px);
-    }
-  }
-
-  .stat-card {
-    animation: float-subtle 4s ease-in-out infinite;
   }
 
   /* Ícono con glow suave */
   .icon-glow {
-    filter: drop-shadow(0 0 6px color-mix(in srgb, currentColor 35%, transparent));
     transition: filter 0.3s ease;
-  }
-
-  .icon-glow:hover {
-    filter: drop-shadow(0 0 12px color-mix(in srgb, currentColor 55%, transparent));
   }
 
   /* Progress bar */
@@ -470,14 +332,12 @@ input:focus, textarea:focus, select:focus {
   /* Card vibrante - para juegos y equipos */
   .card-vibrant {
     background: var(--card);
-    border: 1.5px solid hsl(from var(--primary) h s calc(l - 15%));
-    box-shadow:
-      0 12px 40px -6px rgba(0, 0, 0, 0.15),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1),
-      0 0 60px -12px hsl(from var(--primary) h s calc(l - 8%));
-    position: relative;
-    overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid var(--border);
+    transition: all 0.2s ease;
+  }
+
+  .card-vibrant:hover {
+    border-color: hsl(from var(--primary) h s calc(l - 5%));
   }
 
   :is(html:not(.dark)) .card-vibrant {
