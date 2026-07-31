@@ -356,12 +356,12 @@ export function DashboardClient({ userId, eventId }: { userId: string; eventId: 
 
       {/* ===== 6. Ingresos vs Egresos por mes ===== */}
       <motion.div variants={itemVariants}>
-        <Card className="clay-card p-5 sm:p-6 rounded-xl sm:rounded-2xl overflow-hidden">
+        <Card className="clay-card p-5 sm:p-6 rounded-xl sm:rounded-2xl overflow-hidden w-full">
           <motion.h2 className="font-semibold text-lg text-foreground mb-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }}>
             Ingresos vs Egresos por mes
           </motion.h2>
           {monthlyData.some(m => m.income > 0 || m.expense > 0) ? (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.15 }}>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.15 }} className="w-full">
               <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={monthlyData} barGap={6}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} opacity={0.5} />
@@ -392,13 +392,13 @@ export function DashboardClient({ userId, eventId }: { userId: string; eventId: 
 
       {/* ===== 7. Comparativo por categoría ===== */}
       <motion.div variants={itemVariants}>
-        <Card className="clay-card p-5 sm:p-6 rounded-xl sm:rounded-2xl overflow-hidden">
+        <Card className="clay-card p-5 sm:p-6 rounded-xl sm:rounded-2xl overflow-hidden w-full">
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }}>
             <h2 className="font-semibold text-lg text-foreground mb-1">Ingreso y Egreso por categoría</h2>
             <p className="text-xs text-muted-foreground mb-4">Comparativo de cada categoría del campamento</p>
           </motion.div>
           {hasAnyData && categoryComparison.length > 0 ? (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.25 }}>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.25 }} className="w-full">
               <ResponsiveContainer width="100%" height={Math.max(240, categoryComparison.length * 56)}>
                 <BarChart
                   data={categoryComparison}
