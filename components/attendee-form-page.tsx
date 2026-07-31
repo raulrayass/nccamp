@@ -507,9 +507,8 @@ export function AttendeeFormPage({ userId, eventId, attendeeId, mode }: Attendee
 }
 
 const GENDERS = [
-  { value: 'male', label: 'Masculino' },
-  { value: 'female', label: 'Femenino' },
-  { value: 'other', label: 'Otro' },
+  { value: 'Hombre', label: 'Hombre' },
+  { value: 'Mujer', label: 'Mujer' },
 ]
 
 const SHIRT_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL']

@@ -702,7 +702,7 @@ export function AttendeesClient({ userId, eventId }: Props) {
           <Download className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
           <span>Exportar PDF</span>
         </Button>
-        <Button onClick={() => router.push('/attendees/new')} size="sm" className="gap-1.5 text-xs sm:text-sm h-9 sm:h-10 px-2 sm:px-3 bg-green-600 hover:bg-green-700 text-white">
+        <Button onClick={() => { setEditingId(null); setForm({ ...emptyForm }); setDialogOpen(true) }} size="sm" className="gap-1.5 text-xs sm:text-sm h-9 sm:h-10 px-2 sm:px-3 bg-green-600 hover:bg-green-700 text-white">
           <Plus className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
           <span>Agregar</span>
         </Button>
@@ -1064,7 +1064,7 @@ export function AttendeesClient({ userId, eventId }: Props) {
               <h3 className="text-lg font-semibold text-foreground mb-1">Sin camperos registrados</h3>
               <p className="text-sm text-muted-foreground">Comienza agregando camperos usando el botón "Agregar" o importando un archivo Excel</p>
             </div>
-            <Button onClick={() => router.push('/attendees/new')} className="mt-2 gap-2">
+            <Button onClick={() => { setEditingId(null); setForm({ ...emptyForm }); setDialogOpen(true) }} className="mt-2 gap-2">
               <Plus className="w-4 h-4" />
               Agregar primer campero
             </Button>
@@ -1177,7 +1177,28 @@ export function AttendeesClient({ userId, eventId }: Props) {
                             <History className="w-4 h-4 text-accent" />
                           </Button>
                           <Button
-                            onClick={() => router.push(`/attendees/${attendee.id}`)}
+                            onClick={() => {
+                              setEditingId(attendee.id)
+                              setForm({
+                                name: attendee.name,
+                                age: attendee.age != null ? String(attendee.age) : '',
+                                shirtSize: attendee.shirtSize || '',
+                                sex: attendee.sex || '',
+                                phone: attendee.phone || '',
+                                church: attendee.church || '',
+                                emergencyContactName: attendee.emergencyContactName || '',
+                                emergencyContactPhone: attendee.emergencyContactPhone || '',
+                                emergencyContactName2: attendee.emergencyContactName2 || '',
+                                emergencyContactPhone2: attendee.emergencyContactPhone2 || '',
+                                allergies: attendee.allergies || '',
+                                roomId: attendee.roomId?.toString() || '',
+                                teamId: attendee.teamId?.toString() || '',
+                                totalAmount: attendee.totalAmount?.toString() || '',
+                                discount: attendee.discount || 0,
+                                notes: attendee.notes || '',
+                              })
+                              setDialogOpen(true)
+                            }}
                             size="sm"
                             variant="ghost"
                             className="h-6 w-6 p-0 hover:bg-blue-100"
