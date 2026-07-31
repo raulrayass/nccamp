@@ -1,7 +1,7 @@
 'use server'
 
 import { db } from '@/lib/db'
-import { churches } from '@/lib/db/schema'
+import { churches, events } from '@/lib/db/schema'
 import { eq, and, asc, count } from 'drizzle-orm'
 
 const CHURCHES_PER_PAGE = 25
@@ -51,15 +51,28 @@ export async function createChurch(userId: string, name: string, eventId?: numbe
     throw new Error('El nombre de la iglesia es requerido')
   }
 
-  // Check if church already exists
-  const dupConditions = [eq(churches.userId, userId), eq(churches.name, name.trim())]
-  if (eventId !== undefined && eventId !== null) {
-    dupConditions.push(eq(churches.eventId, eventId))
+  // CRITICAL: Validate eventId is provided and exists
+  if (!eventId || eventId === null) {
+    throw new Error('INVALID_EVENT: Debe seleccionar un evento para crear una iglesia')
   }
+
+  // Verify event exists and belongs to user
+  const eventExists = await db
+    .select()
+    .from(events)
+    .where(and(eq(events.id, eventId), eq(events.adminId, userId)))
+    .limit(1)
+    .then(r => r.length > 0)
+
+  if (!eventExists) {
+    throw new Error('INVALID_EVENT: El evento no existe o no tienes permisos para acceder')
+  }
+
+  // Check if church already exists
   const existing = await db
     .select()
     .from(churches)
-    .where(and(...(dupConditions as any)))
+    .where(and(eq(churches.userId, userId), eq(churches.name, name.trim()), eq(churches.eventId, eventId)))
     .limit(1)
     .then(r => r[0])
 
@@ -69,7 +82,7 @@ export async function createChurch(userId: string, name: string, eventId?: numbe
 
   await db.insert(churches).values({
     userId,
-    eventId: eventId ?? null,
+    eventId,
     name: name.trim(),
   })
 }

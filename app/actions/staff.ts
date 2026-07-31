@@ -1,7 +1,7 @@
 'use server'
 
 import { db } from '@/lib/db'
-import { staff, staffPayments, transactions, categories } from '@/lib/db/schema'
+import { staff, staffPayments, transactions, categories, events } from '@/lib/db/schema'
 import { eq, and, desc, count } from 'drizzle-orm'
 
 const STAFF_PER_PAGE = 20
@@ -67,9 +67,26 @@ export async function createStaff(
     eventId?: number | null
   }
 ) {
+  // CRITICAL: Validate eventId is provided and exists
+  if (!data.eventId || data.eventId === null) {
+    throw new Error('INVALID_EVENT: Debe seleccionar un evento para crear staff')
+  }
+
+  // Verify event exists and belongs to user
+  const eventExists = await db
+    .select()
+    .from(events)
+    .where(and(eq(events.id, data.eventId), eq(events.adminId, userId)))
+    .limit(1)
+    .then(r => r.length > 0)
+
+  if (!eventExists) {
+    throw new Error('INVALID_EVENT: El evento no existe o no tienes permisos para acceder')
+  }
+
   await db.insert(staff).values({
     userId,
-    eventId: data.eventId ?? null,
+    eventId: data.eventId,
     name: data.name,
     age: data.age ?? null,
     shirtSize: data.shirtSize || null,

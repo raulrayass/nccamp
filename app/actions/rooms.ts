@@ -1,7 +1,7 @@
 'use server'
 
 import { db } from '@/lib/db'
-import { rooms, attendees } from '@/lib/db/schema'
+import { rooms, attendees, events } from '@/lib/db/schema'
 import { eq, and, asc, count } from 'drizzle-orm'
 
 const ROOMS_PER_PAGE = 20
@@ -54,10 +54,24 @@ export async function createRoom(
     throw new Error('El nombre de la habitación es requerido')
   }
 
-  const dupConditions = [eq(rooms.userId, userId), eq(rooms.name, data.name.trim())]
-  if (data.eventId !== undefined && data.eventId !== null) {
-    dupConditions.push(eq(rooms.eventId, data.eventId))
+  // CRITICAL: Validate eventId is provided and exists
+  if (!data.eventId || data.eventId === null) {
+    throw new Error('INVALID_EVENT: Debe seleccionar un evento para crear una habitación')
   }
+
+  // Verify event exists and belongs to user
+  const eventExists = await db
+    .select()
+    .from(events)
+    .where(and(eq(events.id, data.eventId), eq(events.adminId, userId)))
+    .limit(1)
+    .then(r => r.length > 0)
+
+  if (!eventExists) {
+    throw new Error('INVALID_EVENT: El evento no existe o no tienes permisos para acceder')
+  }
+
+  const dupConditions = [eq(rooms.userId, userId), eq(rooms.name, data.name.trim()), eq(rooms.eventId, data.eventId)]
   const existing = await db
     .select()
     .from(rooms)
@@ -71,7 +85,7 @@ export async function createRoom(
 
   await db.insert(rooms).values({
     userId,
-    eventId: data.eventId ?? null,
+    eventId: data.eventId,
     name: data.name.trim(),
     capacity: data.capacity ?? null,
   })

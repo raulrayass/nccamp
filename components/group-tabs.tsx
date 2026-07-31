@@ -18,18 +18,18 @@ export function GroupTabs({ tabs, className }: GroupTabsProps) {
   const pathname = usePathname()
 
   return (
-    <div className={cn('flex gap-1.5 p-1 rounded-xl bg-muted/60 w-full sm:w-fit', className)}>
-      {tabs.map((tab) => {
+    <div className={cn('flex gap-0 bg-muted/40 rounded-2xl p-1 w-full sm:w-fit overflow-hidden', className)}>
+      {tabs.map((tab, idx) => {
         const active = pathname === tab.href || pathname.startsWith(tab.href + '/')
         return (
           <Link
             key={tab.href}
             href={tab.href}
             className={cn(
-              'flex-1 sm:flex-initial text-center px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap',
+              'flex-1 sm:flex-initial text-center px-4 py-2 text-sm font-medium transition-all duration-300 whitespace-nowrap',
               active
-                ? 'bg-green-600 text-white shadow-sm'
-                : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+                ? 'bg-card text-foreground rounded-xl shadow-sm'
+                : 'text-muted-foreground hover:text-foreground'
             )}
           >
             {tab.label}

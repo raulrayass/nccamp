@@ -1,7 +1,7 @@
 'use server'
 
 import { db } from '@/lib/db'
-import { transactions, categories, staff, attendees, staffPayments, attendeePayments } from '@/lib/db/schema'
+import { transactions, categories, staff, attendees, staffPayments, attendeePayments, events } from '@/lib/db/schema'
 import { and, eq, desc, gte, lte, count } from 'drizzle-orm'
 import { revalidatePath, revalidateTag } from 'next/cache'
 
@@ -178,10 +178,27 @@ export async function createTransaction(
   userId: string,
   data: { categoryId: number; type: string; amount: string; description: string; date: string; paymentMethod?: string; eventId?: number | null }
 ) {
+  // CRITICAL: Validate eventId is provided and exists
+  if (!data.eventId || data.eventId === null) {
+    throw new Error('INVALID_EVENT: Debe seleccionar un evento para crear una transacción')
+  }
+
+  // Verify event exists and belongs to user
+  const eventExists = await db
+    .select()
+    .from(events)
+    .where(and(eq(events.id, data.eventId), eq(events.adminId, userId)))
+    .limit(1)
+    .then(r => r.length > 0)
+
+  if (!eventExists) {
+    throw new Error('INVALID_EVENT: El evento no existe o no tienes permisos para acceder')
+  }
+
   const { eventId, paymentMethod, ...rest } = data
   await db.insert(transactions).values({
     userId,
-    eventId: eventId ?? null,
+    eventId,
     paymentMethod: paymentMethod || 'cash',
     ...rest,
   })

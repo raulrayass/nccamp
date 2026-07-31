@@ -1,7 +1,7 @@
 'use server'
 
 import { db } from '@/lib/db'
-import { categories } from '@/lib/db/schema'
+import { categories, events } from '@/lib/db/schema'
 import { and, eq, asc, count } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 
@@ -51,7 +51,24 @@ export async function createCategory(
   userId: string,
   data: { name: string; type: string; color: string; icon: string; eventId?: number | null }
 ) {
-  await db.insert(categories).values({ userId, eventId: data.eventId ?? null, ...data })
+  // CRITICAL: Validate eventId is provided and exists
+  if (!data.eventId || data.eventId === null) {
+    throw new Error('INVALID_EVENT: Debe seleccionar un evento para crear una categoría')
+  }
+
+  // Verify event exists and belongs to user
+  const eventExists = await db
+    .select()
+    .from(events)
+    .where(and(eq(events.id, data.eventId), eq(events.adminId, userId)))
+    .limit(1)
+    .then(r => r.length > 0)
+
+  if (!eventExists) {
+    throw new Error('INVALID_EVENT: El evento no existe o no tienes permisos para acceder')
+  }
+
+  await db.insert(categories).values({ userId, eventId: data.eventId, ...data })
   revalidatePath('/')
   revalidatePath('/categories')
   revalidatePath('/transactions')
