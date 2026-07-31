@@ -7,6 +7,7 @@ import { getDefaultEvent, getUserEvents } from '@/app/actions/events'
 
 interface EventSessionContextType {
   eventId: number | null
+  events: { id: number; name: string }[]
   setEventSession: (id: number) => void
   clearEventSession: () => void
   isSessionActive: boolean
@@ -64,6 +65,7 @@ export function EventSessionProvider({ children }: { children: ReactNode }) {
   const { user } = useUser()
   const router = useRouter()
   const [eventId, setEventId] = useState<number | null>(null)
+  const [events, setEvents] = useState<{ id: number; name: string }[]>([])
   const [isInitialized, setIsInitialized] = useState(false)
 
   // Initialize from cookie on mount (only once)
@@ -84,8 +86,11 @@ export function EventSessionProvider({ children }: { children: ReactNode }) {
         // Get all events for this user
         const userEvents = await getUserEvents(user.id)
         
+        // Store events in state
+        setEvents(userEvents || [])
+        
         // If user has no events, clear session and redirect to select-event
-        if (userEvents.length === 0) {
+        if (!userEvents || userEvents.length === 0) {
           setEventId(null)
           clearSessionStorage()
           router.push('/select-event')
@@ -148,6 +153,7 @@ export function EventSessionProvider({ children }: { children: ReactNode }) {
     <EventSessionContext.Provider
       value={{
         eventId,
+        events,
         setEventSession,
         clearEventSession,
         isSessionActive: eventId !== null,
