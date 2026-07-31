@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, ReactNode, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { useUser } from '@/components/user-provider'
 import { getDefaultEvent, getUserEvents } from '@/app/actions/events'
@@ -64,6 +64,7 @@ function clearSessionStorage() {
 export function EventSessionProvider({ children }: { children: ReactNode }) {
   const { user } = useUser()
   const router = useRouter()
+  const [isPending, startTransition] = useTransition()
   const [eventId, setEventId] = useState<number | null>(null)
   const [events, setEvents] = useState<{ id: number; name: string }[]>([])
   const [isInitialized, setIsInitialized] = useState(false)
@@ -93,7 +94,9 @@ export function EventSessionProvider({ children }: { children: ReactNode }) {
         if (!userEvents || userEvents.length === 0) {
           setEventId(null)
           clearSessionStorage()
-          router.push('/select-event')
+          startTransition(() => {
+            router.push('/select-event')
+          })
           return
         }
 
@@ -137,6 +140,35 @@ export function EventSessionProvider({ children }: { children: ReactNode }) {
     }
 
     validateAndLoadEvent()
+  }, [isInitialized, user?.id, eventId, router])
+
+  // Periodic validation to detect cross-device deletions
+  useEffect(() => {
+    if (!isInitialized || !user?.id || !eventId) return
+
+    const interval = setInterval(async () => {
+      try {
+        // Check if current event still exists
+        const userEvents = await getUserEvents(user.id)
+        
+        // If event was deleted on another device, redirect
+        if (!userEvents?.some(e => e.id === eventId)) {
+          setEventId(null)
+          clearSessionStorage()
+          startTransition(() => {
+            router.push('/select-event')
+          })
+          clearInterval(interval)
+        } else {
+          // Update events list for real-time sync
+          setEvents(userEvents || [])
+        }
+      } catch (error) {
+        console.error('[v0] Error validating event in polling:', error)
+      }
+    }, 5000) // Check every 5 seconds
+
+    return () => clearInterval(interval)
   }, [isInitialized, user?.id, eventId, router])
 
   const setEventSession = (id: number) => {
