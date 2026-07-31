@@ -14,6 +14,8 @@ import {
   attendees,
   staffPayments,
   staff,
+  categories,
+  churches,
 } from '@/lib/db/schema'
 import { eq, and, desc, inArray } from 'drizzle-orm'
 
@@ -234,36 +236,28 @@ export async function deleteEvent(userId: string, eventId: number): Promise<void
     // Eliminar todas las referencias del evento (en cascada, en orden correcto)
     // El orden importa para mantener integridad referencial
     
-    // Eliminar transacciones asociadas
+    // Tablas que dependen de transacciones (eliminar primero)
     await db.delete(transactions).where(eq(transactions.eventId, eventId))
-
-    // Eliminar game scores
-    await db.delete(gameScores).where(eq(gameScores.eventId, eventId))
-
-    // Eliminar games
-    await db.delete(games).where(eq(games.eventId, eventId))
-
-    // Eliminar equipos
-    await db.delete(teams).where(eq(teams.eventId, eventId))
-
-    // Eliminar habitaciones
-    await db.delete(rooms).where(eq(rooms.eventId, eventId))
-
-    // Eliminar pagos de asistentes
+    
+    // Tablas que dependen de attendees y staff
     await db.delete(attendeePayments).where(eq(attendeePayments.eventId, eventId))
-
-    // Eliminar asistentes
-    await db.delete(attendees).where(eq(attendees.eventId, eventId))
-
-    // Eliminar pagos de staff
     await db.delete(staffPayments).where(eq(staffPayments.eventId, eventId))
-
-    // Eliminar staff
+    
+    // Tablas que dependen de games y teams
+    await db.delete(gameScores).where(eq(gameScores.eventId, eventId))
+    await db.delete(games).where(eq(games.eventId, eventId))
+    
+    // Entidades principales del evento
+    await db.delete(teams).where(eq(teams.eventId, eventId))
+    await db.delete(attendees).where(eq(attendees.eventId, eventId))
     await db.delete(staff).where(eq(staff.eventId, eventId))
-
+    await db.delete(rooms).where(eq(rooms.eventId, eventId))
+    await db.delete(categories).where(eq(categories.eventId, eventId))
+    await db.delete(churches).where(eq(churches.eventId, eventId))
+    
     // Eliminar miembros del evento
     await db.delete(eventMembers).where(eq(eventMembers.eventId, eventId))
-
+    
     // Finalmente, eliminar el evento
     await db.delete(events).where(eq(events.id, eventId))
   } catch (error) {

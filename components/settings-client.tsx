@@ -157,19 +157,21 @@ export function SettingsClient() {
     }
   }
 
-  const handleDeleteEvent = async (eventId: number) => {
+  const handleDeleteEvent = async (eventIdToDelete: number) => {
     if (!user?.id) return
 
     setIsDeleting(true)
     try {
-      await deleteEvent(user.id, eventId)
-      setEvents(events.filter(e => e.id !== eventId))
+      await deleteEvent(user.id, eventIdToDelete)
+      const updatedEvents = events.filter(e => e.id !== eventIdToDelete)
+      setEvents(updatedEvents)
       
       // Si se eliminó el evento actual, cambiar a otro
-      if (eventId === eventId) {
-        const remainingEvent = events.find(e => e.id !== eventId)
+      if (eventId === eventIdToDelete) {
+        const remainingEvent = updatedEvents[0]
         if (remainingEvent) {
           setEventSession(remainingEvent.id)
+          await setDefaultEvent(user.id, remainingEvent.id)
         }
       }
       
