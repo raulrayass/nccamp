@@ -142,34 +142,42 @@ export function EventSessionProvider({ children }: { children: ReactNode }) {
     validateAndLoadEvent()
   }, [isInitialized, user?.id, eventId, router])
 
-  // Periodic validation to detect cross-device deletions
+  // Periodic validation to detect cross-device deletions and new events
   useEffect(() => {
     if (!isInitialized || !user?.id || !eventId) return
 
     const interval = setInterval(async () => {
       try {
-        // Check if current event still exists
+        // Check if current event still exists AND get all events
         const userEvents = await getUserEvents(user.id)
         
-        // If event was deleted on another device, redirect
-        if (!userEvents?.some(e => e.id === eventId)) {
+        if (!userEvents || userEvents.length === 0) {
+          // No events at all - redirect
           setEventId(null)
           clearSessionStorage()
-          startTransition(() => {
-            router.push('/select-event')
-          })
           clearInterval(interval)
+          window.location.href = '/select-event'
+          return
+        }
+        
+        // If event was deleted on another device, redirect and reload
+        if (!userEvents.some(e => e.id === eventId)) {
+          setEventId(null)
+          clearSessionStorage()
+          clearInterval(interval)
+          // Use full page reload to ensure layout processes the change
+          window.location.href = '/select-event'
         } else {
-          // Update events list for real-time sync
-          setEvents(userEvents || [])
+          // Update events list for real-time sync (new events created on other devices)
+          setEvents(userEvents)
         }
       } catch (error) {
         console.error('[v0] Error validating event in polling:', error)
       }
-    }, 5000) // Check every 5 seconds
+    }, 3000) // Check every 3 seconds
 
     return () => clearInterval(interval)
-  }, [isInitialized, user?.id, eventId, router])
+  }, [isInitialized, user?.id, eventId])
 
   const setEventSession = (id: number) => {
     setEventId(id)
