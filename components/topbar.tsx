@@ -3,9 +3,10 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Square, Users, DollarSign, MapPin, Trophy, User } from 'lucide-react'
+import { Square, Users, DollarSign, MapPin, Trophy, User, Search, Bell } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useUser } from '@/components/user-provider'
+import { useEventSession } from '@/lib/contexts/event-session-context'
 import { Button } from '@/components/ui/button'
 import {
   AlertDialog,
@@ -55,28 +56,40 @@ const navItems = [
 export function Topbar() {
   const pathname = usePathname()
   const { user } = useUser()
+  const { events, eventId } = useEventSession()
+  
+  // Obtener el evento actual
+  const currentEvent = events.find(e => e.id === eventId)
+  const eventName = currentEvent?.name || 'Evento'
 
   return (
-    <header className="sticky top-0 z-40 bg-transparent">
-      <div className="w-full px-4 sm:px-6 lg:px-8 py-4">
-        <div className="flex items-center justify-between h-12 gap-3 sm:gap-4 px-4 py-3 rounded-2xl bg-card border-glow shadow-lg backdrop-blur-sm">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 sm:gap-3 shrink-0 hover:opacity-80 transition-opacity">
-            <Image
-              src="/permanece-camp-logo.png"
-              alt="Permanece Camp"
-              width={40}
-              height={40}
-              className="w-10 h-10 rounded-lg object-contain"
-              priority
-            />
-            <div className="flex flex-col leading-tight min-w-0">
-              <span className="font-bold text-foreground text-xs sm:text-sm truncate">Permanece</span>
+    <header className="sticky top-0 z-40 bg-primary">
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-3">
+        <div className="flex items-center justify-between gap-4">
+          {/* Left: Logo + Greeting */}
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <Link href="/" className="flex items-center gap-2 shrink-0 hover:opacity-90 transition-opacity">
+              <Image
+                src="/permanece-camp-logo.png"
+                alt="Permanece Camp"
+                width={40}
+                height={40}
+                className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg object-contain"
+                priority
+              />
+            </Link>
+            <div className="flex flex-col gap-0.5 min-w-0">
+              <p className="text-xs sm:text-sm font-bold text-primary-foreground leading-tight">
+                Hola, {user?.name?.split(' ')[0] || 'Usuario'}
+              </p>
+              <p className="text-xs text-primary-foreground/80 truncate font-medium">
+                {eventName}
+              </p>
             </div>
-          </Link>
+          </div>
 
           {/* Nav - Hidden on mobile, shown on md+ */}
-          <nav className="hidden lg:flex items-center gap-1 flex-1 ml-6">
+          <nav className="hidden lg:flex items-center gap-1">
             {navItems.map(({ href, label, icon: Icon, match }) => {
               const active = match(pathname)
               return (
@@ -86,8 +99,8 @@ export function Topbar() {
                   className={cn(
                     'flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200',
                     active
-                      ? 'bg-primary/10 text-primary ring-1 ring-primary/30 shadow-md'
-                      : 'text-foreground/60 hover:text-foreground hover:bg-muted'
+                      ? 'bg-primary-foreground/15 text-primary-foreground'
+                      : 'text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10'
                   )}
                 >
                   <Icon className="w-4 h-4 shrink-0" />
@@ -97,21 +110,30 @@ export function Topbar() {
             })}
           </nav>
 
-          {/* User area - Direct link to settings */}
-          {user ? (
-            <Link href="/settings" className="flex items-center gap-2 px-2 sm:px-3 py-1.5 rounded-lg hover:bg-muted/50 transition-all duration-200 group">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shrink-0 shadow-sm group-hover:shadow-md transition-all duration-200">
-                <User className="w-4 h-4 text-primary-foreground" />
-              </div>
-              <span className="hidden sm:block truncate text-foreground text-sm font-medium max-w-[120px]">
-                {user.name || user.email?.split('@')[0] || 'Usuario'}
-              </span>
-            </Link>
-          ) : null}
+          {/* Right: Action buttons + User */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            {/* Search button */}
+            <button className="w-10 h-10 rounded-full bg-primary-foreground/15 flex items-center justify-center hover:bg-primary-foreground/25 transition-colors">
+              <Search className="w-5 h-5 text-primary-foreground" />
+            </button>
+            
+            {/* Notifications button */}
+            <button className="w-10 h-10 rounded-full bg-primary-foreground/15 flex items-center justify-center hover:bg-primary-foreground/25 transition-colors relative">
+              <Bell className="w-5 h-5 text-primary-foreground" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-destructive rounded-full"></span>
+            </button>
+            
+            {/* User button */}
+            {user ? (
+              <Link href="/settings" className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-primary-foreground/10 transition-all duration-200">
+                <div className="w-8 h-8 rounded-lg bg-primary-foreground flex items-center justify-center shrink-0">
+                  <User className="w-4 h-4 text-primary" />
+                </div>
+              </Link>
+            ) : null}
+          </div>
         </div>
       </div>
-
-
     </header>
   )
 }
