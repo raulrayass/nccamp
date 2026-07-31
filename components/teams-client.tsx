@@ -21,6 +21,7 @@ import { TeamFlag } from '@/components/team-flag'
 import { useTeams, useGameScores } from '@/lib/hooks'
 import { MobileSheet } from '@/components/mobile'
 import { ListSkeleton } from '@/components/list-skeleton'
+import { ListItemCard } from '@/components/list-item-card'
 
 interface Props {
   userId: string
@@ -186,8 +187,8 @@ export function TeamsClient({ userId, eventId }: Props) {
         <div className="space-y-2">
           {teamList.map((team) => (
             <div key={team.id}>
-              <Card className="overflow-hidden hover:shadow-md transition-shadow">
-                <CardContent className="p-4">
+              <ListItemCard className="overflow-hidden">
+                <CardContent className="p-3 sm:p-4">
                   <div className="flex items-center justify-between gap-3">
                     <button
                       onClick={() => toggleTeamMembers(team.id)}
@@ -197,12 +198,12 @@ export function TeamsClient({ userId, eventId }: Props) {
                         country={team.country}
                         color={team.color || '#4a9d67'}
                         shape="rect"
-                        className="w-9 h-7"
+                        className="w-10 h-8"
                       />
                       <div className="min-w-0 flex-1">
-                        <h3 className="font-semibold text-sm truncate">{team.name}</h3>
+                        <h3 className="font-semibold text-sm truncate text-foreground">{team.name}</h3>
                         <p className="text-xs text-muted-foreground flex items-center gap-1">
-                          <Users className="w-3 h-3" />
+                          <Users className="w-3.5 h-3.5" />
                           {memberCounts[team.id] || 0} integrante{(memberCounts[team.id] || 0) !== 1 ? 's' : ''}
                         </p>
                       </div>
@@ -255,7 +256,7 @@ export function TeamsClient({ userId, eventId }: Props) {
                     </div>
                   </div>
                 </CardContent>
-              </Card>
+              </ListItemCard>
 
               {/* Expanded Members List */}
               {expandedTeamId === team.id && expandedMembers[team.id] && (
