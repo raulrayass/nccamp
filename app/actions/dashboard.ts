@@ -2,7 +2,7 @@
 
 import { db } from '@/lib/db'
 import { transactions, categories, games, gameScores, teams, attendees } from '@/lib/db/schema'
-import { eq, and, desc, sum, count } from 'drizzle-orm'
+import { eq, and, desc, sum, count, sql } from 'drizzle-orm'
 
 export async function getDashboardData(userId: string, eventId?: number | null) {
   try {
@@ -189,6 +189,3 @@ export async function getGameActivityData(userId: string, eventId?: number | nul
     throw error
   }
 }
-
-// Import sql for window functions if needed
-import { sql } from 'drizzle-orm'
