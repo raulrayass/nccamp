@@ -1,7 +1,7 @@
 'use server'
 
 import { db } from '@/lib/db'
-import { games, gameScores, teams } from '@/lib/db/schema'
+import { games, gameScores, teams, events } from '@/lib/db/schema'
 import { eq, and, asc, desc, count } from 'drizzle-orm'
 
 const GAMES_PER_PAGE = 15
@@ -53,11 +53,29 @@ export async function createGame(
   if (!data.name.trim()) {
     throw new Error('El nombre del juego es requerido')
   }
+
+  // CRITICAL: Validate eventId is provided and exists
+  if (!data.eventId || data.eventId === null) {
+    throw new Error('INVALID_EVENT: Debe seleccionar un evento para crear un juego')
+  }
+
+  // Verify event exists and belongs to user
+  const eventExists = await db
+    .select()
+    .from(events)
+    .where(and(eq(events.id, data.eventId), eq(events.adminId, userId)))
+    .limit(1)
+    .then(r => r.length > 0)
+
+  if (!eventExists) {
+    throw new Error('INVALID_EVENT: El evento no existe o no tienes permisos para acceder')
+  }
+
   const [created] = await db
     .insert(games)
     .values({
       userId,
-      eventId: data.eventId ?? null,
+      eventId: data.eventId,
       name: data.name.trim(),
       description: data.description || '',
       gameDate: data.gameDate || null,
