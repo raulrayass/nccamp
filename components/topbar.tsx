@@ -63,8 +63,8 @@ export function Topbar() {
   const eventName = currentEvent?.name || 'Evento'
 
   return (
-    <header className="sticky top-0 z-40 bg-primary">
-      <div className="w-full px-4 sm:px-6 lg:px-8 py-3">
+    <header className="sticky top-0 z-40 bg-primary rounded-b-3xl">
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-3 pb-4">
         <div className="flex items-center justify-between gap-4">
           {/* Left: Logo + Greeting */}
           <div className="flex items-center gap-3 min-w-0 flex-1">

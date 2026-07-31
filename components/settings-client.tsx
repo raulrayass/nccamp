@@ -166,12 +166,17 @@ export function SettingsClient() {
       const updatedEvents = events.filter(e => e.id !== eventIdToDelete)
       setEvents(updatedEvents)
       
-      // Si se eliminó el evento actual, cambiar a otro
+      // Si se eliminó el evento actual, cambiar a otro o redirigir
       if (eventId === eventIdToDelete) {
         const remainingEvent = updatedEvents[0]
         if (remainingEvent) {
           setEventSession(remainingEvent.id)
           await setDefaultEvent(user.id, remainingEvent.id)
+        } else {
+          // No hay más eventos, redirigir a crear evento
+          setEventSession(null)
+          router.push('/select-event')
+          return
         }
       }
       
