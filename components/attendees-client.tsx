@@ -26,6 +26,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerClose } from '@/components/ui/drawer'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
@@ -714,31 +715,31 @@ export function AttendeesClient({ userId, eventId }: Props) {
 
       {/* Quick Stats - 3 column grid */}
       {!loading && attendeeList.length > 0 && (
-        <div className="grid grid-cols-3 gap-2">
-          <Card className="bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/30">
-            <CardContent className="p-3">
+        <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
+          <Card className="bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/30 shadow-none">
+            <CardContent className="p-2 sm:p-2.5">
               <div className="text-center">
-                <Users2 className="w-4 h-4 text-emerald-600 mx-auto mb-1" />
-                <p className="text-lg font-bold text-foreground">{attendeeList.length}</p>
-                <p className="text-xs text-muted-foreground">Camperos</p>
+                <Users2 className="w-3.5 h-3.5 text-emerald-600 mx-auto mb-0.5" />
+                <p className="text-base sm:text-lg font-bold text-foreground">{attendeeList.length}</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">Camperos</p>
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/30">
-            <CardContent className="p-3">
+          <Card className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/30 shadow-none">
+            <CardContent className="p-2 sm:p-2.5">
               <div className="text-center">
-                <CreditCard className="w-4 h-4 text-blue-600 mx-auto mb-1" />
-                <p className="text-lg font-bold text-foreground">{paidCount}</p>
-                <p className="text-xs text-muted-foreground">Pagados</p>
+                <CreditCard className="w-3.5 h-3.5 text-blue-600 mx-auto mb-0.5" />
+                <p className="text-base sm:text-lg font-bold text-foreground">{paidCount}</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">Pagados</p>
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-gradient-to-br from-amber-500/10 to-amber-600/5 border border-amber-500/30">
-            <CardContent className="p-3">
+          <Card className="bg-gradient-to-br from-amber-500/10 to-amber-600/5 border border-amber-500/30 shadow-none">
+            <CardContent className="p-2 sm:p-2.5">
               <div className="text-center">
-                <LogIn className="w-4 h-4 text-amber-600 mx-auto mb-1" />
-                <p className="text-lg font-bold text-foreground">{checkedInCount}</p>
-                <p className="text-xs text-muted-foreground">Check-in</p>
+                <LogIn className="w-3.5 h-3.5 text-amber-600 mx-auto mb-0.5" />
+                <p className="text-base sm:text-lg font-bold text-foreground">{checkedInCount}</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">Check-in</p>
               </div>
             </CardContent>
           </Card>
@@ -747,36 +748,36 @@ export function AttendeesClient({ userId, eventId }: Props) {
 
       {/* Main content cards - Finanzas and Check-in */}
       {!loading && attendeeList.length > 0 && (
-        <div className="grid grid-cols-2 gap-2 sm:gap-3">
+        <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
           {/* Finanzas Card */}
-          <Card className="bg-white/5 border border-border">
-            <CardContent className="p-2.5 sm:p-4">
-              <div className="flex items-start gap-2 sm:gap-3 mb-2 sm:mb-3">
-                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-green-500/20 flex items-center justify-center flex-shrink-0">
-                  <DollarSign className="w-4 sm:w-5 h-4 sm:h-5 text-green-600" />
+          <Card className="bg-white/5 border border-border shadow-none">
+            <CardContent className="p-2 sm:p-3">
+              <div className="flex items-start gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-green-500/20 flex items-center justify-center flex-shrink-0">
+                  <DollarSign className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-green-600" />
                 </div>
                 <h3 className="font-semibold text-xs sm:text-sm">Finanzas</h3>
               </div>
-              <div className="space-y-2 sm:space-y-3">
+              <div className="space-y-1.5 sm:space-y-2">
                 <div>
-                  <p className="text-xs text-muted-foreground mb-0.5">Esperado</p>
-                  <p className="text-sm sm:text-base font-bold text-foreground">{formatMXN(summary.expected)}</p>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5">Esperado</p>
+                  <p className="text-xs sm:text-sm font-bold text-foreground">{formatMXN(summary.expected)}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground mb-1">Recaudado</p>
-                  <p className="text-base sm:text-lg font-bold text-green-600">{formatMXN(summary.collected)}</p>
-                  <div className="flex items-center gap-2 mt-1.5">
-                    <Progress value={Math.min(100, (summary.collected / summary.expected) * 100)} className="h-2" />
-                    <span className="text-xs text-muted-foreground whitespace-nowrap">
+                  <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Recaudado</p>
+                  <p className="text-sm sm:text-base font-bold text-green-600">{formatMXN(summary.collected)}</p>
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <Progress value={Math.min(100, (summary.collected / summary.expected) * 100)} className="h-1.5" />
+                    <span className="text-[10px] text-muted-foreground whitespace-nowrap">
                       {Math.round((summary.collected / summary.expected) * 100)}%
                     </span>
                   </div>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground mb-0.5">Pendiente</p>
-                  <p className="text-sm sm:text-base font-bold text-red-600">{formatMXN(pendingAmount)}</p>
-                  <div className="flex items-center gap-2 mt-1.5">
-                    <Progress value={summary.expected > 0 ? Math.min(100, (pendingAmount / summary.expected) * 100) : 0} className="h-2" />
+                  <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5">Pendiente</p>
+                  <p className="text-xs sm:text-sm font-bold text-red-600">{formatMXN(pendingAmount)}</p>
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <Progress value={summary.expected > 0 ? Math.min(100, (pendingAmount / summary.expected) * 100) : 0} className="h-1.5" />
                     <span className="text-xs text-muted-foreground whitespace-nowrap">
                       {summary.expected > 0 ? Math.round((pendingAmount / summary.expected) * 100) : 0}%
                     </span>
@@ -1260,7 +1261,7 @@ export function AttendeesClient({ userId, eventId }: Props) {
       )}
 
       {/* Add/Edit Dialog */}
-      <Dialog
+      <Drawer
         open={dialogOpen}
         onOpenChange={(open) => {
           setDialogOpen(open)
@@ -1275,10 +1276,10 @@ export function AttendeesClient({ userId, eventId }: Props) {
           }
         }}
       >
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="text-xl">{editingId ? 'Editar campero' : 'Agregar campero'}</DialogTitle>
-          </DialogHeader>
+        <DrawerContent className="max-h-[90vh] overflow-y-auto">
+          <DrawerHeader className="text-left">
+            <DrawerTitle className="text-2xl font-bold">{editingId ? 'Editar campero' : 'Agregar campero'}</DrawerTitle>
+          </DrawerHeader>
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Información Personal */}
             <div className="bg-card border rounded-lg p-4 space-y-4">
@@ -1352,7 +1353,7 @@ export function AttendeesClient({ userId, eventId }: Props) {
                 />
               </div>
               <div>
-                <Label htmlFor="church" className="text-sm font-medium">Iglesia *</Label>
+                <Label htmlFor="church" className="text-sm font-medium">Iglesia</Label>
                 <select
                   id="church"
                   value={form.church}
@@ -1534,8 +1535,8 @@ export function AttendeesClient({ userId, eventId }: Props) {
               </Button>
             </div>
           </form>
-        </DialogContent>
-      </Dialog>
+        </DrawerContent>
+      </Drawer>
 
       {/* Payment Dialog */}
       <Dialog open={paymentDialogOpen} onOpenChange={setPaymentDialogOpen}>
