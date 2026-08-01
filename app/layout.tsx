@@ -76,7 +76,43 @@ export default function RootLayout({
             </EventSessionProvider>
           </UserProvider>
         </LoadingProvider>
-        <Toaster position="top-center" richColors closeButton />
+        <Toaster 
+          position="bottom-right" 
+          richColors 
+          closeButton 
+          expand
+          visibleToasts={3}
+          gap={12}
+          theme="system"
+          toastOptions={{
+            style: {
+              borderRadius: '0.5rem',
+              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
+              border: '1px solid rgba(0, 0, 0, 0.05)',
+              padding: '16px 20px',
+              fontWeight: '500',
+              fontSize: '0.95rem',
+            },
+            success: {
+              iconTheme: {
+                primary: '#10b981',
+                secondary: '#ecfdf5',
+              },
+            },
+            error: {
+              iconTheme: {
+                primary: '#ef4444',
+                secondary: '#fef2f2',
+              },
+            },
+            loading: {
+              iconTheme: {
+                primary: '#3b82f6',
+                secondary: '#eff6ff',
+              },
+            },
+          }}
+        />
       </body>
     </html>
   )

@@ -181,15 +181,21 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Consistent Card Styling */
+/* Consistent Card Styling - Enhanced with depth */
 [data-slot="card"] {
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  box-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.03),
+    0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+              border-color 0.2s ease, 
+              transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 [data-slot="card"]:hover {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-  transform: translateY(-1px);
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.05),
+    0 12px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
 }
 
 /* Card transitions */

@@ -35,8 +35,8 @@ export function StatCard({
   const colors = colorMap[color]
 
   return (
-    <Card className={cn('bg-card border border-border hover:shadow-md transition-shadow', className)}>
-      <CardContent className="p-1 sm:p-2">
+    <Card className={cn('bg-card border border-border shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300', className)}>
+      <CardContent className="p-2 sm:p-3">
         <div className="flex items-start justify-between gap-0.5">
           <div className="flex-1 min-w-0">
             <p className="text-xs text-muted-foreground font-medium uppercase tracking-tight truncate">
