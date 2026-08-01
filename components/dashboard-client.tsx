@@ -168,13 +168,9 @@ const itemVariants = {
                 {formatCurrency(balance)}
               </motion.p>
             </div>
-            <motion.div
-              className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-primary/20 flex items-center justify-center shrink-0 icon-glow"
-              animate={{ y: [0, -8, 0] }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-            >
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-primary/20 flex items-center justify-center shrink-0 icon-glow">
               <Wallet className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
-            </motion.div>
+            </div>
           </div>
         </Card>
       </motion.div>
@@ -191,13 +187,9 @@ const itemVariants = {
                 </p>
                 <p className="text-xs text-muted-foreground mt-0.5">Acumulado total</p>
               </div>
-              <motion.div
-                className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-emerald-600/20 flex items-center justify-center shrink-0 ml-2 icon-glow"
-                animate={{ rotate: [0, 5, 0] }}
-                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-              >
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-emerald-600/20 flex items-center justify-center shrink-0 ml-2 icon-glow">
                 <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600" />
-              </motion.div>
+              </div>
             </div>
           </Card>
         </motion.div>
@@ -211,13 +203,9 @@ const itemVariants = {
                 </p>
                 <p className="text-xs text-muted-foreground mt-0.5">Acumulado total</p>
               </div>
-              <motion.div
-                className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-orange-600/20 flex items-center justify-center shrink-0 ml-2 icon-glow"
-                animate={{ rotate: [0, -5, 0] }}
-                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-              >
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-orange-600/20 flex items-center justify-center shrink-0 ml-2 icon-glow">
                 <TrendingDown className="w-5 h-5 sm:w-6 sm:h-6 text-orange-600" />
-              </motion.div>
+              </div>
             </div>
           </Card>
         </motion.div>
@@ -261,12 +249,13 @@ const itemVariants = {
                       </div>
                     </div>
                     <div className="h-2.5 sm:h-3 rounded-full bg-muted overflow-hidden">
-                      <motion.div
+                      <div
                         className="h-full rounded-full progress-glow"
-                        initial={{ width: 0 }}
-                        animate={{ width: `${pctValue}%` }}
-                        transition={{ delay: 0.4 + idx * 0.1, duration: 1.5, type: 'spring', stiffness: 60, damping: 20 }}
-                        style={{ backgroundColor: m.value < 0 ? '#ef4455' : m.color }}
+                        style={{ 
+                          width: `${pctValue}%`,
+                          backgroundColor: m.value < 0 ? '#ef4455' : m.color,
+                          transition: 'width 0.2s ease-out'
+                        }}
                       />
                     </div>
                   </motion.div>
