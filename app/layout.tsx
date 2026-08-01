@@ -82,38 +82,49 @@ export default function RootLayout({
           </UserProvider>
         </LoadingProvider>
         <Toaster 
-          position="bottom-right" 
+          position="top-center" 
           richColors 
-          closeButton 
-          expand
-          visibleToasts={3}
-          gap={12}
+          closeButton={false}
+          visibleToasts={1}
+          gap={16}
           theme="system"
           toastOptions={{
             style: {
-              borderRadius: '0.5rem',
-              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
-              border: '1px solid rgba(0, 0, 0, 0.05)',
-              padding: '16px 20px',
+              borderRadius: '12px',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
+              border: 'none',
+              padding: '16px 24px',
               fontWeight: '500',
               fontSize: '0.95rem',
             },
             success: {
+              style: {
+                background: '#10b981',
+                color: '#ffffff',
+              },
               iconTheme: {
-                primary: '#10b981',
-                secondary: '#ecfdf5',
+                primary: '#ffffff',
+                secondary: '#10b981',
               },
             },
             error: {
+              style: {
+                background: '#ef4444',
+                color: '#ffffff',
+              },
               iconTheme: {
-                primary: '#ef4444',
-                secondary: '#fef2f2',
+                primary: '#ffffff',
+                secondary: '#ef4444',
               },
             },
             loading: {
+              style: {
+                background: '#3b82f6',
+                color: '#ffffff',
+              },
               iconTheme: {
-                primary: '#3b82f6',
-                secondary: '#eff6ff',
+                primary: '#ffffff',
+                secondary: '#3b82f6',
               },
             },
           }}

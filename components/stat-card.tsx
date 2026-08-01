@@ -36,10 +36,10 @@ export function StatCard({
 
   return (
     <Card className={cn('bg-card border border-border shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300', className)}>
-      <CardContent className="p-2 sm:p-3">
+      <CardContent className="p-1.5 sm:p-2">
         <div className="flex items-start justify-between gap-0.5">
           <div className="flex-1 min-w-0">
-            <p className="text-xs text-muted-foreground font-medium uppercase tracking-tight truncate">
+            <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-tight truncate">
               {label}
             </p>
 
@@ -48,14 +48,14 @@ export function StatCard({
             </p>
 
             {subtitle && (
-              <p className="text-xs text-muted-foreground mt-0.5 truncate">
+              <p className="text-[10px] text-muted-foreground mt-0.5 truncate">
                 {subtitle}
               </p>
             )}
 
             {trend && (
               <div
-                className={`text-xs mt-0.5 font-semibold ${
+                className={`text-[10px] mt-0.5 font-semibold ${
                   trend.direction === 'up'
                     ? 'text-emerald-600'
                     : 'text-red-600'
@@ -67,8 +67,8 @@ export function StatCard({
           </div>
 
           {Icon && (
-            <div className={`${colors.bg} p-1.5 sm:p-2 rounded-lg flex-shrink-0`}>
-              <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${colors.icon}`} />
+            <div className={`${colors.bg} p-1 sm:p-1.5 rounded-lg flex-shrink-0`}>
+              <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${colors.icon}`} />
             </div>
           )}
         </div>
