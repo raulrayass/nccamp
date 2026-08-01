@@ -12,27 +12,32 @@ interface ListItemCardProps {
   status?: 'paid' | 'partial' | 'pending' | 'checked' | 'unchecked'
 }
 
-export function ListItemCard({ 
-  children, 
-  className, 
-  onClick, 
+export function ListItemCard({
+  children,
+  className,
+  onClick,
   interactive = true,
   status,
 }: ListItemCardProps) {
   const getStatusColor = () => {
     switch (status) {
       case 'paid':
-        return 'border-emerald-200 dark:border-emerald-400/20 bg-emerald-20/10 dark:bg-muted/20'
+        return 'border-emerald-300/50 dark:border-emerald-500/20 bg-emerald-500/[0.025] dark:bg-emerald-500/[0.04]'
+
       case 'partial':
-        return 'border-amber-200 dark:border-amber-400/20 bg-amber-20/10 dark:bg-muted/20'
+        return 'border-amber-300/50 dark:border-amber-500/20 bg-amber-500/[0.025] dark:bg-amber-500/[0.04]'
+
       case 'pending':
-        return 'border-red-200 dark:border-red-400/20 bg-red-20/10 dark:bg-muted/20'
+        return 'border-red-300/50 dark:border-red-500/20 bg-red-500/[0.025] dark:bg-red-500/[0.04]'
+
       case 'checked':
-        return 'border-emerald-200 dark:border-emerald-400/20 bg-emerald-20/10 dark:bg-muted/20'
+        return 'border-emerald-300/50 dark:border-emerald-500/20 bg-emerald-500/[0.025] dark:bg-emerald-500/[0.04]'
+
       case 'unchecked':
-        return 'border-muted dark:border-muted/50'
+        return 'border-border bg-background'
+
       default:
-        return 'border-border dark:border-border/50'
+        return 'border-border bg-background'
     }
   }
 
@@ -40,8 +45,9 @@ export function ListItemCard({
     <Card
       onClick={onClick}
       className={cn(
-        'border transition-all duration-300 shadow-md',
-        interactive && 'hover:shadow-xl hover:border-foreground/50 cursor-pointer active:scale-95 sm:hover:scale-[1.01] sm:hover:-translate-y-1',
+        'relative overflow-hidden border shadow-sm transition-all duration-300',
+        interactive &&
+          'cursor-pointer hover:shadow-md hover:border-foreground/20 active:scale-[0.99] sm:hover:scale-[1.005] sm:hover:-translate-y-0.5',
         getStatusColor(),
         className
       )}
