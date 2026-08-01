@@ -1100,7 +1100,7 @@ export function AttendeesClient({ userId, eventId }: Props) {
                       <div className="flex items-start justify-between gap-1.5">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1 mb-0.5 flex-wrap">
-                            <h3 className="font-semibold text-[9px] sm:text-[10px] truncate text-foreground">{attendee.name}</h3>
+                            <h3 className="font-semibold text-[11px] sm:text-xs truncate text-foreground">{attendee.name}</h3>
                             {attendee.status === 'paid' ? (
                               <Badge className="shrink-0 text-[10px] py-0.5 px-1.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 font-medium">Pagado</Badge>
                             ) : attendee.status === 'partial' ? (
@@ -1123,30 +1123,30 @@ export function AttendeesClient({ userId, eventId }: Props) {
                               </span>
                             )}
                           </div>
-                          <div className="text-[6px] sm:text-[7px] text-muted-foreground space-y-0 leading-tight">
+                          <div className="text-xs sm:text-sm text-muted-foreground space-y-0 leading-tight">
                             {(attendee.age != null || attendee.shirtSize || attendee.sex) && (
-                              <p className="font-medium text-foreground text-[6px] sm:text-[7px]">
+                              <p className="font-medium text-foreground text-xs sm:text-sm">
                                 {[
                                   attendee.age != null ? `${attendee.age}` : null,
                                   attendee.sex,
-                                  attendee.shirtSize ? `T${attendee.shirtSize}` : null,
+                                  attendee.shirtSize ? `${attendee.shirtSize}` : null,
                                 ]
                                   .filter(Boolean)
                                   .join(' · ')}
                               </p>
                             )}
-                            {attendee.church && <p className="text-[6px] sm:text-[7px]">Iglesia: {attendee.church}</p>}
-                            {attendee.phone && <p className="text-[6px] sm:text-[7px]">Tel: {attendee.phone}</p>}
+                            {attendee.church && <p className="text-xs sm:text-sm">Iglesia: {attendee.church}</p>}
+                            {attendee.phone && <p className="text-xs sm:text-sm">Tel: {attendee.phone}</p>}
                             {attendee.roomId && roomMap.get(attendee.roomId) && (
-                              <p className="text-[6px] sm:text-[7px]">Habitación: {roomMap.get(attendee.roomId)!.name}</p>
+                              <p className="text-xs sm:text-sm">Habitación: {roomMap.get(attendee.roomId)!.name}</p>
                             )}
                             {attendee.emergencyContactName && (
-                              <p className="text-[6px] sm:text-[7px]">Emergencia: {attendee.emergencyContactName}</p>
+                              <p className="text-xs sm:text-sm">Emergencia: {attendee.emergencyContactName}</p>
                             )}
                             {attendee.emergencyContactName2 && (
-                              <p className="text-[6px] sm:text-[7px]">Emergencia 2: {attendee.emergencyContactName2}</p>
+                              <p className="text-xs sm:text-sm">Emergencia 2: {attendee.emergencyContactName2}</p>
                             )}
-                            {attendee.allergies && <p className="text-[6px] sm:text-[7px] text-amber-700 dark:text-amber-400">Alergias: {attendee.allergies}</p>}
+                            {attendee.allergies && <p className="text-xs sm:text-sm text-amber-700 dark:text-amber-400">Alergias: {attendee.allergies}</p>}
                           </div>
                         </div>
                         <div className="flex gap-0.5 shrink-0">
