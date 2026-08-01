@@ -704,6 +704,10 @@ export function AttendeesClient({ userId, eventId }: Props) {
           <Download className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
           <span>Exportar PDF</span>
         </Button>
+        <Button onClick={() => { setEditingId(null); setForm({ ...emptyForm }); setDialogOpen(true) }} size="sm" className="hidden sm:flex gap-1.5 text-xs sm:text-sm h-9 sm:h-10 px-2 sm:px-3 bg-green-600 hover:bg-green-700 text-white">
+          <Plus className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
+          <span>Agregar</span>
+        </Button>
       </PageHeader>
 
       {/* Tabs del grupo Personas */}
@@ -1091,22 +1095,22 @@ export function AttendeesClient({ userId, eventId }: Props) {
                   className="overflow-hidden cursor-pointer transition-all duration-200"
                   status={attendee.status}
                 >
-                  <CardContent className="p-1 sm:p-1.5">
-                    <div className="flex flex-col gap-0.5">
-                      <div className="flex items-start justify-between gap-1">
+                  <CardContent className="p-2.5 sm:p-3.5">
+                    <div className="flex flex-col gap-1.5">
+                      <div className="flex items-start justify-between gap-2">
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-1 mb-0.5 flex-wrap">
-                            <h3 className="font-semibold text-[10px] sm:text-xs truncate text-foreground">{attendee.name}</h3>
+                          <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                            <h3 className="font-bold text-xs sm:text-sm truncate text-foreground">{attendee.name}</h3>
                             {attendee.status === 'paid' ? (
-                              <Badge className="shrink-0 text-[10px] py-0.5 px-1.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 font-medium">Pagado</Badge>
+                              <Badge className="shrink-0 text-xs py-1 px-2 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 font-semibold">Pagado</Badge>
                             ) : attendee.status === 'partial' ? (
-                              <Badge className="shrink-0 text-[10px] py-0.5 px-1.5 bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 font-medium">Parcial</Badge>
+                              <Badge className="shrink-0 text-xs py-1 px-2 bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 font-semibold">Parcial</Badge>
                             ) : (
-                              <Badge className="shrink-0 text-[10px] py-0.5 px-1.5 bg-red-100 text-red-700 dark:bg-red-950/60 dark:text-red-300 font-medium">Pendiente</Badge>
+                              <Badge className="shrink-0 text-xs py-1 px-2 bg-red-100 text-red-700 dark:bg-red-950/60 dark:text-red-300 font-semibold">Pendiente</Badge>
                             )}
                             {attendee.checkedIn && (
-                              <Badge className="shrink-0 text-[10px] py-0.5 px-1.5 bg-emerald-600 hover:bg-emerald-600 text-white gap-0.5 font-medium">
-                                <CheckCircle2 className="w-2.5 h-2.5" />
+                              <Badge className="shrink-0 text-xs py-1 px-2 bg-emerald-600 hover:bg-emerald-600 text-white gap-1 font-semibold">
+                                <CheckCircle2 className="w-3.5 h-3.5" />
                                 Check-in
                               </Badge>
                             )}
@@ -1119,9 +1123,9 @@ export function AttendeesClient({ userId, eventId }: Props) {
                               </span>
                             )}
                           </div>
-                          <div className="text-[10px] text-muted-foreground space-y-0">
+                          <div className="text-xs text-muted-foreground space-y-0.5">
                             {(attendee.age != null || attendee.shirtSize || attendee.sex) && (
-                              <p>
+                              <p className="font-medium text-foreground">
                                 {[
                                   attendee.age != null ? `${attendee.age}a` : null,
                                   attendee.sex,
@@ -1131,32 +1135,32 @@ export function AttendeesClient({ userId, eventId }: Props) {
                                   .join(' · ')}
                               </p>
                             )}
-                            {attendee.church && <p>Igl: {attendee.church}</p>}
+                            {attendee.church && <p>Iglesia: {attendee.church}</p>}
                             {attendee.phone && <p>Tel: {attendee.phone}</p>}
                             {attendee.roomId && roomMap.get(attendee.roomId) && (
-                              <p>Hab: {roomMap.get(attendee.roomId)!.name}</p>
+                              <p>Habitación: {roomMap.get(attendee.roomId)!.name}</p>
                             )}
                             {attendee.emergencyContactName && (
-                              <p>Eme: {attendee.emergencyContactName}</p>
+                              <p>Emergencia: {attendee.emergencyContactName}</p>
                             )}
                             {attendee.emergencyContactName2 && (
-                              <p>Eme2: {attendee.emergencyContactName2}</p>
+                              <p>Emergencia 2: {attendee.emergencyContactName2}</p>
                             )}
-                            {attendee.allergies && <p className="text-amber-700 dark:text-amber-400">Alg: {attendee.allergies}</p>}
+                            {attendee.allergies && <p className="text-amber-700 dark:text-amber-400">Alergias: {attendee.allergies}</p>}
                           </div>
                         </div>
-                        <div className="flex gap-0.5 sm:gap-1 shrink-0">
+                        <div className="flex gap-1 sm:gap-1.5 shrink-0">
                           <Button
                             onClick={() => handleToggleCheckIn(attendee)}
                             size="sm"
                             variant="ghost"
                             className={cn(
-                              'h-6 w-6 p-0',
+                              'h-8 w-8 p-0',
                               attendee.checkedIn ? 'text-green-600 hover:bg-green-100' : 'hover:bg-muted'
                             )}
                             title={attendee.checkedIn ? 'Cancelar check-in' : 'Registrar check-in'}
                           >
-                            {attendee.checkedIn ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Circle className="w-3.5 h-3.5" />}
+                            {attendee.checkedIn ? <CheckCircle2 className="w-4 h-4" /> : <Circle className="w-4 h-4" />}
                           </Button>
                           <Button
                             onClick={() => {
@@ -1165,19 +1169,19 @@ export function AttendeesClient({ userId, eventId }: Props) {
                             }}
                             size="sm"
                             variant="outline"
-                            className="h-6 w-6 p-0"
+                            className="h-8 w-8 p-0"
                             title="Registrar pago"
                           >
-                            <DollarSign className="w-3.5 h-3.5" />
+                            <DollarSign className="w-4 h-4" />
                           </Button>
                           <Button
                             onClick={() => openHistory(attendee.id)}
                             size="sm"
                             variant="ghost"
-                            className="h-6 w-6 p-0 hover:bg-accent/15"
+                            className="h-8 w-8 p-0 hover:bg-accent/15"
                             title="Ver historial de pagos"
                           >
-                            <History className="w-3.5 h-3.5 text-accent" />
+                            <History className="w-4 h-4 text-accent" />
                           </Button>
                           <Button
                             onClick={() => {
@@ -1204,10 +1208,10 @@ export function AttendeesClient({ userId, eventId }: Props) {
                             }}
                             size="sm"
                             variant="ghost"
-                            className="h-6 w-6 p-0 hover:bg-blue-100"
+                            className="h-8 w-8 p-0 hover:bg-blue-100"
                             title="Editar campero"
                           >
-                            <Edit2 className="w-3 h-3 text-blue-600" />
+                            <Edit2 className="w-4 h-4 text-blue-600" />
                           </Button>
                           <Button
                             onClick={() => {
@@ -1216,10 +1220,10 @@ export function AttendeesClient({ userId, eventId }: Props) {
                             }}
                             size="sm"
                             variant="ghost"
-                            className="h-6 w-6 p-0 hover:bg-red-100"
+                            className="h-8 w-8 p-0 hover:bg-red-100"
                             title="Eliminar campero"
                           >
-                            <Trash2 className="w-3 h-3 text-red-600" />
+                            <Trash2 className="w-4 h-4 text-red-600" />
                           </Button>
                         </div>
                       </div>
@@ -1272,11 +1276,11 @@ export function AttendeesClient({ userId, eventId }: Props) {
           }
         }}
       >
-        <DrawerContent className="max-h-[90vh] overflow-y-auto">
+        <DrawerContent className="max-h-[90vh] overflow-y-auto mx-auto sm:max-w-2xl">
           <DrawerHeader className="text-left">
             <DrawerTitle className="text-2xl font-bold">{editingId ? 'Editar campero' : 'Agregar campero'}</DrawerTitle>
           </DrawerHeader>
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-5 px-4 sm:px-6">
             {/* Información Personal */}
             <div className="bg-card border rounded-lg p-4 space-y-4">
               <h3 className="text-sm font-semibold text-foreground">Información Personal</h3>
