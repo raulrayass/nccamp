@@ -40,8 +40,8 @@ export function ListItemCard({
     <Card
       onClick={onClick}
       className={cn(
-        'border transition-all duration-200',
-        interactive && 'hover:shadow-lg hover:border-foreground/40 cursor-pointer active:scale-95 sm:hover:scale-[1.02]',
+        'border transition-all duration-300 shadow-md',
+        interactive && 'hover:shadow-xl hover:border-foreground/50 cursor-pointer active:scale-95 sm:hover:scale-[1.01] sm:hover:-translate-y-1',
         getStatusColor(),
         className
       )}
