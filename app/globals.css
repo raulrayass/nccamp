@@ -168,34 +168,44 @@
     @apply bg-background text-foreground;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-heading);
-    font-weight: 600;
-    letter-spacing: -0.02em;
+    font-family: var(--font-inter);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
   }
-  h1 { @apply text-3xl sm:text-4xl; }
-  h2 { @apply text-2xl sm:text-3xl; }
-  h3 { @apply text-xl sm:text-2xl; }
-  h4 { @apply text-lg sm:text-xl; }
+  h1 { @apply text-4xl sm:text-5xl font-black; }
+  h2 { @apply text-3xl sm:text-4xl font-extrabold; }
+  h3 { @apply text-2xl sm:text-3xl font-bold; }
+  h4 { @apply text-xl sm:text-2xl font-bold; }
+  h5 { @apply text-lg sm:text-xl font-semibold; }
+  h6 { @apply text-base sm:text-lg font-semibold; }
+  
+  p { @apply text-base sm:text-lg leading-relaxed; }
 
 html {
   scroll-behavior: smooth;
 }
 
-/* Consistent Card Styling - Enhanced with depth */
-[data-slot="card"] {
+/* Consistent Card Styling - Enhanced with playful depth */
+[data-slot="card"],
+.rounded-lg.border,
+.rounded-xl.border {
   box-shadow: 
-    0 1px 2px rgba(0, 0, 0, 0.03),
-    0 4px 12px rgba(0, 0, 0, 0.08);
-  transition: box-shadow 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
-              border-color 0.2s ease, 
-              transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    0 2px 4px rgba(0, 0, 0, 0.04),
+    0 8px 20px rgba(0, 0, 0, 0.1),
+    0 1px 2px rgba(0, 0, 0, 0.02);
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  border-radius: 1rem;
 }
 
-[data-slot="card"]:hover {
+[data-slot="card"]:hover,
+.rounded-lg.border:hover,
+.rounded-xl.border:hover {
   box-shadow: 
-    0 2px 4px rgba(0, 0, 0, 0.05),
-    0 12px 24px rgba(0, 0, 0, 0.12);
-  transform: translateY(-2px);
+    0 4px 8px rgba(0, 0, 0, 0.06),
+    0 16px 40px rgba(0, 0, 0, 0.15),
+    0 0 1px rgba(0, 0, 0, 0.02);
+  transform: translateY(-4px);
 }
 
 /* Card transitions */
