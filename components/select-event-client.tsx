@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { useEventSession } from '@/lib/contexts/event-session-context'
 import { createEvent, setDefaultEvent } from '@/app/actions/events'
+import { signOut } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { toast } from 'sonner'
@@ -41,8 +42,14 @@ export function SelectEventClient({
     router.push('/')
   }
 
-  const handleSwitchAccount = () => {
-    router.push('/auth/signin')
+  const handleSwitchAccount = async () => {
+    try {
+      await signOut()
+      router.push('/auth/signin')
+    } catch (error) {
+      console.error('Error switching account:', error)
+      router.push('/auth/signin')
+    }
   }
 
   const handleSetDefault = async (eventId: number) => {
