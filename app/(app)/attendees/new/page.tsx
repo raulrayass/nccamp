@@ -1,28 +1,33 @@
 'use client'
 
-import { AttendeeFormPage } from '@/components/attendee-form-page'
 import { useUser } from '@/components/user-provider'
 import { useEventSession } from '@/lib/contexts/event-session-context'
 import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 export default function NewAttendeePage() {
   const { user } = useUser()
   const { eventId, isInitialized } = useEventSession()
   const router = useRouter()
 
-  if (!user?.id) {
-    router.push('/sign-in')
-    return null
-  }
+  useEffect(() => {
+    if (!user?.id) {
+      router.push('/sign-in')
+      return
+    }
 
-  if (!isInitialized) {
-    return null
-  }
+    if (!isInitialized) {
+      return
+    }
 
-  if (!eventId) {
-    router.push('/select-event')
-    return null
-  }
+    if (!eventId) {
+      router.push('/select-event')
+      return
+    }
 
-  return <AttendeeFormPage userId={user.id} eventId={eventId} mode="create" />
+    // Redirect to attendees with new parameter to open add drawer
+    router.push('/attendees?new=1')
+  }, [user?.id, isInitialized, eventId, router])
+
+  return null
 }
