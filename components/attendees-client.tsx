@@ -1123,9 +1123,9 @@ export function AttendeesClient({ userId, eventId }: Props) {
                               </span>
                             )}
                           </div>
-                          <div className="text-[8px] sm:text-[9px] text-muted-foreground space-y-0">
+                          <div className="text-[6px] sm:text-[7px] text-muted-foreground space-y-0 leading-tight">
                             {(attendee.age != null || attendee.shirtSize || attendee.sex) && (
-                              <p className="font-medium text-foreground">
+                              <p className="font-medium text-foreground text-[6px] sm:text-[7px]">
                                 {[
                                   attendee.age != null ? `${attendee.age}` : null,
                                   attendee.sex,
@@ -1135,18 +1135,18 @@ export function AttendeesClient({ userId, eventId }: Props) {
                                   .join(' · ')}
                               </p>
                             )}
-                            {attendee.church && <p>Iglesia: {attendee.church}</p>}
-                            {attendee.phone && <p>Tel: {attendee.phone}</p>}
+                            {attendee.church && <p className="text-[6px] sm:text-[7px]">Iglesia: {attendee.church}</p>}
+                            {attendee.phone && <p className="text-[6px] sm:text-[7px]">Tel: {attendee.phone}</p>}
                             {attendee.roomId && roomMap.get(attendee.roomId) && (
-                              <p>Habitación: {roomMap.get(attendee.roomId)!.name}</p>
+                              <p className="text-[6px] sm:text-[7px]">Habitación: {roomMap.get(attendee.roomId)!.name}</p>
                             )}
                             {attendee.emergencyContactName && (
-                              <p>Emergencia: {attendee.emergencyContactName}</p>
+                              <p className="text-[6px] sm:text-[7px]">Emergencia: {attendee.emergencyContactName}</p>
                             )}
                             {attendee.emergencyContactName2 && (
-                              <p>Emergencia 2: {attendee.emergencyContactName2}</p>
+                              <p className="text-[6px] sm:text-[7px]">Emergencia 2: {attendee.emergencyContactName2}</p>
                             )}
-                            {attendee.allergies && <p className="text-amber-700 dark:text-amber-400">Alergias: {attendee.allergies}</p>}
+                            {attendee.allergies && <p className="text-[6px] sm:text-[7px] text-amber-700 dark:text-amber-400">Alergias: {attendee.allergies}</p>}
                           </div>
                         </div>
                         <div className="flex gap-0.5 shrink-0">
