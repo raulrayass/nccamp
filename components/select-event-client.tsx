@@ -3,12 +3,13 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { useEventSession } from '@/lib/contexts/event-session-context'
+import { useUser } from '@/components/user-provider'
 import { createEvent, setDefaultEvent } from '@/app/actions/events'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
-import { Plus, Star, Calendar, MapPin, ChevronRight } from 'lucide-react'
+import { Plus, Star, Calendar, MapPin, ChevronRight, LogOut } from 'lucide-react'
 import { SettingSection } from '@/components/setting-section'
 import { SettingRow } from '@/components/setting-row'
 
@@ -26,7 +27,9 @@ export function SelectEventClient({
 }) {
   const router = useRouter()
   const { setEventSession } = useEventSession()
+  const { signOut } = useUser()
   const [isPending, startTransition] = useTransition()
+  const [isSigningOut, setIsSigningOut] = useState(false)
   const [showCreateForm, setShowCreateForm] = useState(initialEvents.length === 0)
   const [settingDefault, setSettingDefault] = useState<number | null>(null)
   const [formData, setFormData] = useState({
@@ -39,6 +42,19 @@ export function SelectEventClient({
   const handleSelectEvent = (eventId: number) => {
     setEventSession(eventId)
     router.push('/')
+  }
+
+  const handleSignOut = async () => {
+    setIsSigningOut(true)
+    try {
+      await signOut()
+      router.push('/auth/signin')
+      toast.success('Sesión cerrada')
+    } catch (error) {
+      toast.error('Error al cerrar sesión')
+      console.error(error)
+      setIsSigningOut(false)
+    }
   }
 
   const handleSetDefault = async (eventId: number) => {
@@ -88,10 +104,42 @@ export function SelectEventClient({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-foreground mb-2">Selecciona Evento</h1>
-        <p className="text-foreground/60">Elige uno de tus eventos o crea uno nuevo</p>
+      <div className="flex justify-between items-start mb-8">
+        <div>
+          <h1 className="text-4xl font-bold text-foreground mb-2">Selecciona Evento</h1>
+          <p className="text-foreground/60">Elige uno de tus eventos o crea uno nuevo</p>
+        </div>
+        <motion.button
+          onClick={handleSignOut}
+          disabled={isSigningOut || isPending}
+          className="p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-950/30 text-red-600 dark:text-red-400 transition-colors disabled:opacity-50"
+          whileTap={{ scale: 0.95 }}
+          title="Cambiar cuenta"
+        >
+          <LogOut className="w-5 h-5" />
+        </motion.button>
       </div>
+
+      {/* Mostrar mensaje cuando no hay eventos */}
+      {initialEvents.length === 0 && !showCreateForm && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+          className="text-center py-8 mb-4"
+        >
+          <Calendar className="w-12 h-12 mx-auto text-foreground/30 mb-3" />
+          <p className="text-foreground/60 mb-4">No tienes eventos creados</p>
+          <Button
+            onClick={() => setShowCreateForm(true)}
+            disabled={isPending}
+            className="bg-green-600 hover:bg-green-700 text-white"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Crear Primer Evento
+          </Button>
+        </motion.div>
+      )}
 
       {/* Mostrar eventos existentes */}
       {initialEvents.length > 0 && !showCreateForm && (
