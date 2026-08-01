@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Geist, Geist_Mono, Poppins } from 'next/font/google'
+import { Geist, Geist_Mono, Poppins, Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
 import { UserProvider } from '@/components/user-provider'
 import { EventSessionProvider } from '@/lib/contexts/event-session-context'
@@ -14,7 +14,12 @@ const geistMono = Geist_Mono({
 const poppins = Poppins({
   variable: '--font-heading',
   subsets: ['latin'],
-  weight: ['500', '600', '700'],
+  weight: ['500', '600', '700', '800'],
+})
+const inter = Inter({
+  variable: '--font-inter',
+  subsets: ['latin'],
+  weight: ['500', '600', '700', '800', '900'],
 })
 
 export const metadata: Metadata = {
@@ -59,7 +64,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es" className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} bg-background`}>
+    <html lang="es" className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} ${inter.variable} bg-background`}>
       <head>
         {/* Banderas nítidas (flag-icons) para los proyectores FIFA */}
         <link
