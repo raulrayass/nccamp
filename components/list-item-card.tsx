@@ -41,7 +41,7 @@ export function ListItemCard({
       onClick={onClick}
       className={cn(
         'border transition-all duration-200',
-        interactive && 'hover:shadow-md hover:border-foreground/30 cursor-pointer',
+        interactive && 'hover:shadow-lg hover:border-foreground/40 cursor-pointer active:scale-95 sm:hover:scale-[1.02]',
         getStatusColor(),
         className
       )}
