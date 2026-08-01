@@ -86,16 +86,18 @@ export default function RootLayout({
           richColors 
           closeButton={false}
           visibleToasts={1}
-          gap={16}
+          gap={20}
+          duration={3500}
           theme="system"
           toastOptions={{
             style: {
-              borderRadius: '12px',
+              borderRadius: '24px',
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
               border: 'none',
-              padding: '16px 24px',
+              padding: '14px 32px',
               fontWeight: '500',
               fontSize: '0.95rem',
+              animation: 'slideDown 0.4s ease-out',
             },
             success: {
               style: {
@@ -106,6 +108,7 @@ export default function RootLayout({
                 primary: '#ffffff',
                 secondary: '#10b981',
               },
+              duration: 3000,
             },
             error: {
               style: {
@@ -116,6 +119,7 @@ export default function RootLayout({
                 primary: '#ffffff',
                 secondary: '#ef4444',
               },
+              duration: 4000,
             },
             loading: {
               style: {
@@ -126,6 +130,7 @@ export default function RootLayout({
                 primary: '#ffffff',
                 secondary: '#3b82f6',
               },
+              duration: Infinity,
             },
           }}
         />

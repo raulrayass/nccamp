@@ -153,7 +153,7 @@ function DockItem({
             'flex items-center justify-center w-11 h-11 rounded-full transition-all duration-200',
             active
               ? 'bg-green-600 text-white shadow-md shadow-green-600/30'
-              : 'bg-green-50 text-green-600'
+              : 'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400'
           )}
         >
           <Icon className="w-5 h-5" />
@@ -169,7 +169,7 @@ function DockItem({
       className={cn(
         'flex flex-1 flex-col items-center justify-center gap-0.5 py-1.5 rounded-2xl transition-colors duration-200 focus:outline-none',
         active 
-          ? 'text-green-600' 
+          ? 'text-green-600 dark:text-green-400' 
           : 'text-gray-700 dark:text-white hover:text-gray-800 dark:hover:text-white'
       )}
     >

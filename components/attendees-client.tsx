@@ -1091,22 +1091,22 @@ export function AttendeesClient({ userId, eventId }: Props) {
                   className="overflow-hidden cursor-pointer transition-all duration-200"
                   status={attendee.status}
                 >
-                  <CardContent className="p-1.5 sm:p-2.5">
-                    <div className="flex flex-col gap-1">
-                      <div className="flex items-start justify-between gap-1.5">
+                  <CardContent className="p-1 sm:p-1.5">
+                    <div className="flex flex-col gap-0.5">
+                      <div className="flex items-start justify-between gap-1">
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-1.5 mb-1 flex-wrap">
-                            <h3 className="font-semibold text-xs sm:text-sm truncate text-foreground">{attendee.name}</h3>
+                          <div className="flex items-center gap-1 mb-0.5 flex-wrap">
+                            <h3 className="font-semibold text-[10px] sm:text-xs truncate text-foreground">{attendee.name}</h3>
                             {attendee.status === 'paid' ? (
-                              <Badge className="shrink-0 text-xs py-0.5 px-2 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 font-medium">Pagado</Badge>
+                              <Badge className="shrink-0 text-[10px] py-0.5 px-1.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 font-medium">Pagado</Badge>
                             ) : attendee.status === 'partial' ? (
-                              <Badge className="shrink-0 text-xs py-0.5 px-2 bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 font-medium">Parcial</Badge>
+                              <Badge className="shrink-0 text-[10px] py-0.5 px-1.5 bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 font-medium">Parcial</Badge>
                             ) : (
-                              <Badge className="shrink-0 text-xs py-0.5 px-2 bg-red-100 text-red-700 dark:bg-red-950/60 dark:text-red-300 font-medium">Pendiente</Badge>
+                              <Badge className="shrink-0 text-[10px] py-0.5 px-1.5 bg-red-100 text-red-700 dark:bg-red-950/60 dark:text-red-300 font-medium">Pendiente</Badge>
                             )}
                             {attendee.checkedIn && (
-                              <Badge className="shrink-0 text-xs py-0.5 px-2 bg-emerald-600 hover:bg-emerald-600 text-white gap-1 font-medium">
-                                <CheckCircle2 className="w-3 h-3" />
+                              <Badge className="shrink-0 text-[10px] py-0.5 px-1.5 bg-emerald-600 hover:bg-emerald-600 text-white gap-0.5 font-medium">
+                                <CheckCircle2 className="w-2.5 h-2.5" />
                                 Check-in
                               </Badge>
                             )}
@@ -1119,44 +1119,44 @@ export function AttendeesClient({ userId, eventId }: Props) {
                               </span>
                             )}
                           </div>
-                          <div className="text-xs text-muted-foreground space-y-0">
+                          <div className="text-[10px] text-muted-foreground space-y-0">
                             {(attendee.age != null || attendee.shirtSize || attendee.sex) && (
                               <p>
                                 {[
-                                  attendee.age != null ? `${attendee.age} años` : null,
+                                  attendee.age != null ? `${attendee.age}a` : null,
                                   attendee.sex,
-                                  attendee.shirtSize ? `Talla ${attendee.shirtSize}` : null,
+                                  attendee.shirtSize ? `T${attendee.shirtSize}` : null,
                                 ]
                                   .filter(Boolean)
                                   .join(' · ')}
                               </p>
                             )}
-                            {attendee.church && <p>Iglesia: {attendee.church}</p>}
+                            {attendee.church && <p>Igl: {attendee.church}</p>}
                             {attendee.phone && <p>Tel: {attendee.phone}</p>}
                             {attendee.roomId && roomMap.get(attendee.roomId) && (
-                              <p>Habitación: {roomMap.get(attendee.roomId)!.name}</p>
+                              <p>Hab: {roomMap.get(attendee.roomId)!.name}</p>
                             )}
                             {attendee.emergencyContactName && (
-                              <p>Emergencia: {attendee.emergencyContactName} ({attendee.emergencyContactPhone})</p>
+                              <p>Eme: {attendee.emergencyContactName}</p>
                             )}
                             {attendee.emergencyContactName2 && (
-                              <p>Emergencia 2: {attendee.emergencyContactName2} ({attendee.emergencyContactPhone2})</p>
+                              <p>Eme2: {attendee.emergencyContactName2}</p>
                             )}
-                            {attendee.allergies && <p className="text-amber-700">Alergias: {attendee.allergies}</p>}
+                            {attendee.allergies && <p className="text-amber-700 dark:text-amber-400">Alg: {attendee.allergies}</p>}
                           </div>
                         </div>
-                        <div className="flex gap-1 sm:gap-1.5 shrink-0">
+                        <div className="flex gap-0.5 sm:gap-1 shrink-0">
                           <Button
                             onClick={() => handleToggleCheckIn(attendee)}
                             size="sm"
                             variant="ghost"
                             className={cn(
-                              'h-7 w-7 p-0.5',
+                              'h-6 w-6 p-0',
                               attendee.checkedIn ? 'text-green-600 hover:bg-green-100' : 'hover:bg-muted'
                             )}
                             title={attendee.checkedIn ? 'Cancelar check-in' : 'Registrar check-in'}
                           >
-                            {attendee.checkedIn ? <CheckCircle2 className="w-4 h-4" /> : <Circle className="w-4 h-4" />}
+                            {attendee.checkedIn ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Circle className="w-3.5 h-3.5" />}
                           </Button>
                           <Button
                             onClick={() => {
@@ -1165,19 +1165,19 @@ export function AttendeesClient({ userId, eventId }: Props) {
                             }}
                             size="sm"
                             variant="outline"
-                            className="h-7 w-7 p-0.5"
+                            className="h-6 w-6 p-0"
                             title="Registrar pago"
                           >
-                            <DollarSign className="w-4 h-4" />
+                            <DollarSign className="w-3.5 h-3.5" />
                           </Button>
                           <Button
                             onClick={() => openHistory(attendee.id)}
                             size="sm"
                             variant="ghost"
-                            className="h-7 w-7 p-0.5 hover:bg-accent/15"
+                            className="h-6 w-6 p-0 hover:bg-accent/15"
                             title="Ver historial de pagos"
                           >
-                            <History className="w-4 h-4 text-accent" />
+                            <History className="w-3.5 h-3.5 text-accent" />
                           </Button>
                           <Button
                             onClick={() => {
