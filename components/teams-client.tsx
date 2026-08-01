@@ -192,7 +192,7 @@ export function TeamsClient({ userId, eventId }: Props) {
                   <div className="flex items-center justify-between gap-3">
                     <button
                       onClick={() => toggleTeamMembers(team.id)}
-                      className="flex items-center gap-3 min-w-0 flex-1 text-left hover:opacity-80 transition-opacity"
+                      className="flex items-center gap-3 min-w-0 flex-1 text-left hover:opacity-90 transition-all active:scale-95"
                     >
                       <TeamFlag
                         country={team.country}

@@ -1098,17 +1098,18 @@ export function AttendeesClient({ userId, eventId }: Props) {
                     <div className="flex flex-col gap-1.5">
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-1.5 mb-1 flex-wrap">
+                          <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                             <h3 className="font-semibold text-sm truncate text-foreground">{attendee.name}</h3>
-                            <Badge
-                              variant={attendee.status === 'paid' ? 'default' : attendee.status === 'partial' ? 'secondary' : 'outline'}
-                              className="shrink-0 text-xs py-0"
-                            >
-                              {attendee.status === 'paid' ? 'Pagado' : attendee.status === 'partial' ? 'Parcial' : 'Pendiente'}
-                            </Badge>
+                            {attendee.status === 'paid' ? (
+                              <Badge className="shrink-0 text-xs py-0.5 px-2 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 font-medium">Pagado</Badge>
+                            ) : attendee.status === 'partial' ? (
+                              <Badge className="shrink-0 text-xs py-0.5 px-2 bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 font-medium">Parcial</Badge>
+                            ) : (
+                              <Badge className="shrink-0 text-xs py-0.5 px-2 bg-red-100 text-red-700 dark:bg-red-950/60 dark:text-red-300 font-medium">Pendiente</Badge>
+                            )}
                             {attendee.checkedIn && (
-                              <Badge className="shrink-0 text-xs py-0 bg-green-600 hover:bg-green-600 text-white gap-0.5">
-                                <CheckCircle2 className="w-2.5 h-2.5" />
+                              <Badge className="shrink-0 text-xs py-0.5 px-2 bg-emerald-600 hover:bg-emerald-600 text-white gap-1 font-medium">
+                                <CheckCircle2 className="w-3 h-3" />
                                 Check-in
                               </Badge>
                             )}

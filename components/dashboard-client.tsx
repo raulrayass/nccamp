@@ -111,7 +111,11 @@ export function DashboardClient({ userId, eventId }: { userId: string; eventId: 
   const cashAvailable = paymentMethodBreakdown?.cash?.available ?? 0
   const bancaMovil = (paymentMethodBreakdown?.transfer?.available ?? 0) + (paymentMethodBreakdown?.deposit?.available ?? 0)
   const totalAvailable = cashAvailable + bancaMovil
-  const pct = (v: number) => (totalAvailable > 0 ? Math.round((v / totalAvailable) * 100) : 0)
+  const totalAbsolute = Math.abs(cashAvailable) + Math.abs(bancaMovil)
+  const pct = (v: number) => {
+    if (totalAbsolute === 0) return 0
+    return Math.round((Math.abs(v) / totalAbsolute) * 100)
+  }
 
   const methodBars = [
     { label: 'Efectivo', value: cashAvailable, color: INCOME_COLOR, icon: Banknote },
@@ -220,7 +224,7 @@ const itemVariants = {
       </motion.div>
 
       {/* ===== 3. Disponible por método ===== */}
-      {totalAvailable > 0 && (
+      {(totalAbsolute > 0) && (
         <motion.div variants={itemVariants}>
           <motion.h2 className="font-semibold text-lg text-foreground mb-4 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
             Disponible por método
@@ -241,14 +245,14 @@ const itemVariants = {
                       <div className="flex items-center gap-3">
                         <div
                           className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl flex items-center justify-center shrink-0 icon-glow"
-                          style={{ backgroundColor: m.color + '15' }}
+                          style={{ backgroundColor: m.value < 0 ? '#ef445515' : m.color + '15' }}
                         >
-                          <Icon className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: m.color }} />
+                          <Icon className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: m.value < 0 ? '#ef4455' : m.color }} />
                         </div>
                         <span className="text-sm sm:text-base font-medium text-foreground">{m.label}</span>
                       </div>
                       <div className="flex items-center gap-2 sm:gap-3">
-                        <span className="text-sm sm:text-base font-bold text-foreground tabular-nums">
+                        <span className={`text-sm sm:text-base font-bold tabular-nums ${m.value < 0 ? 'text-red-600 dark:text-red-400' : 'text-foreground'}`}>
                           {formatCurrency(m.value)}
                         </span>
                         <span className="text-xs text-muted-foreground w-10 text-right font-medium tabular-nums">
@@ -262,7 +266,7 @@ const itemVariants = {
                         initial={{ width: 0 }}
                         animate={{ width: `${pctValue}%` }}
                         transition={{ delay: 0.4 + idx * 0.1, duration: 1.5, type: 'spring', stiffness: 60, damping: 20 }}
-                        style={{ backgroundColor: m.color }}
+                        style={{ backgroundColor: m.value < 0 ? '#ef4455' : m.color }}
                       />
                     </div>
                   </motion.div>
