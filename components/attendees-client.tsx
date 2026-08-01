@@ -1095,12 +1095,12 @@ export function AttendeesClient({ userId, eventId }: Props) {
                   className="overflow-hidden cursor-pointer transition-all duration-200"
                   status={attendee.status}
                 >
-                  <CardContent className="p-1.5 sm:p-2">
-                    <div className="flex flex-col gap-1">
+                  <CardContent className="p-1 sm:p-1.5">
+                    <div className="flex flex-col gap-0.5">
                       <div className="flex items-start justify-between gap-1.5">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1 mb-0.5 flex-wrap">
-                            <h3 className="font-semibold text-[10px] sm:text-xs truncate text-foreground">{attendee.name}</h3>
+                            <h3 className="font-semibold text-[9px] sm:text-[10px] truncate text-foreground">{attendee.name}</h3>
                             {attendee.status === 'paid' ? (
                               <Badge className="shrink-0 text-[10px] py-0.5 px-1.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 font-medium">Pagado</Badge>
                             ) : attendee.status === 'partial' ? (
@@ -1123,11 +1123,11 @@ export function AttendeesClient({ userId, eventId }: Props) {
                               </span>
                             )}
                           </div>
-                          <div className="text-[10px] text-muted-foreground space-y-0">
+                          <div className="text-[8px] sm:text-[9px] text-muted-foreground space-y-0">
                             {(attendee.age != null || attendee.shirtSize || attendee.sex) && (
                               <p className="font-medium text-foreground">
                                 {[
-                                  attendee.age != null ? `${attendee.age}a` : null,
+                                  attendee.age != null ? `${attendee.age}` : null,
                                   attendee.sex,
                                   attendee.shirtSize ? `T${attendee.shirtSize}` : null,
                                 ]
