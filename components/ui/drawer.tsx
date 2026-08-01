@@ -26,7 +26,7 @@ function DrawerOverlay({ className, ...props }: DialogPrimitive.Backdrop.Props) 
     <DialogPrimitive.Backdrop
       data-slot="drawer-overlay"
       className={cn(
-        "fixed inset-0 isolate z-50 bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
+        "fixed inset-0 isolate z-50 bg-black/10 duration-75 supports-backdrop-filter:backdrop-blur-xs",
         className
       )}
       {...props}
@@ -45,7 +45,7 @@ function DrawerContent({
       <DialogPrimitive.Popup
         data-slot="drawer-content"
         className={cn(
-          "fixed bottom-0 left-0 z-50 w-full rounded-t-2xl bg-popover p-4 pt-2 text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none data-open:animate-in data-open:slide-in-from-bottom data-closed:animate-out data-closed:slide-out-to-bottom max-h-[90vh] overflow-y-auto touch-none",
+          "fixed bottom-0 left-0 z-50 w-full rounded-t-2xl bg-popover p-4 pt-2 text-popover-foreground ring-1 ring-foreground/10 duration-75 outline-none max-h-[90vh] overflow-y-auto touch-none",
           className
         )}
         {...props}

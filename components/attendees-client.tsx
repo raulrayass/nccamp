@@ -704,6 +704,10 @@ export function AttendeesClient({ userId, eventId }: Props) {
           <Download className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
           <span>Exportar PDF</span>
         </Button>
+        <Button onClick={() => { setEditingId(null); setForm({ ...emptyForm }); setDialogOpen(true) }} size="sm" className="hidden sm:flex gap-1.5 text-xs sm:text-sm h-9 sm:h-10 px-2 sm:px-3 bg-green-600 hover:bg-green-700 text-white">
+          <Plus className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
+          <span>Agregar</span>
+        </Button>
       </PageHeader>
 
       {/* Tabs del grupo Personas */}
@@ -1093,10 +1097,10 @@ export function AttendeesClient({ userId, eventId }: Props) {
                 >
                   <CardContent className="p-1 sm:p-1.5">
                     <div className="flex flex-col gap-0.5">
-                      <div className="flex items-start justify-between gap-1">
+                      <div className="flex items-start justify-between gap-1.5">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1 mb-0.5 flex-wrap">
-                            <h3 className="font-semibold text-[10px] sm:text-xs truncate text-foreground">{attendee.name}</h3>
+                            <h3 className="font-bold text-[10px] sm:text-xs truncate text-foreground">{attendee.name}</h3>
                             {attendee.status === 'paid' ? (
                               <Badge className="shrink-0 text-[10px] py-0.5 px-1.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 font-medium">Pagado</Badge>
                             ) : attendee.status === 'partial' ? (
@@ -1106,7 +1110,7 @@ export function AttendeesClient({ userId, eventId }: Props) {
                             )}
                             {attendee.checkedIn && (
                               <Badge className="shrink-0 text-[10px] py-0.5 px-1.5 bg-emerald-600 hover:bg-emerald-600 text-white gap-0.5 font-medium">
-                                <CheckCircle2 className="w-2.5 h-2.5" />
+                                <CheckCircle2 className="w-3 h-3" />
                                 Check-in
                               </Badge>
                             )}
@@ -1121,7 +1125,7 @@ export function AttendeesClient({ userId, eventId }: Props) {
                           </div>
                           <div className="text-[10px] text-muted-foreground space-y-0">
                             {(attendee.age != null || attendee.shirtSize || attendee.sex) && (
-                              <p>
+                              <p className="font-medium text-foreground text-[10px]">
                                 {[
                                   attendee.age != null ? `${attendee.age}a` : null,
                                   attendee.sex,
@@ -1131,21 +1135,21 @@ export function AttendeesClient({ userId, eventId }: Props) {
                                   .join(' · ')}
                               </p>
                             )}
-                            {attendee.church && <p>Igl: {attendee.church}</p>}
+                            {attendee.church && <p>Iglesia: {attendee.church}</p>}
                             {attendee.phone && <p>Tel: {attendee.phone}</p>}
                             {attendee.roomId && roomMap.get(attendee.roomId) && (
-                              <p>Hab: {roomMap.get(attendee.roomId)!.name}</p>
+                              <p>Habitación: {roomMap.get(attendee.roomId)!.name}</p>
                             )}
                             {attendee.emergencyContactName && (
-                              <p>Eme: {attendee.emergencyContactName}</p>
+                              <p>Emergencia: {attendee.emergencyContactName}</p>
                             )}
                             {attendee.emergencyContactName2 && (
-                              <p>Eme2: {attendee.emergencyContactName2}</p>
+                              <p>Emergencia 2: {attendee.emergencyContactName2}</p>
                             )}
-                            {attendee.allergies && <p className="text-amber-700 dark:text-amber-400">Alg: {attendee.allergies}</p>}
+                            {attendee.allergies && <p className="text-amber-700 dark:text-amber-400">Alergias: {attendee.allergies}</p>}
                           </div>
                         </div>
-                        <div className="flex gap-0.5 sm:gap-1 shrink-0">
+                        <div className="flex gap-0.5 shrink-0">
                           <Button
                             onClick={() => handleToggleCheckIn(attendee)}
                             size="sm"
@@ -1207,7 +1211,7 @@ export function AttendeesClient({ userId, eventId }: Props) {
                             className="h-6 w-6 p-0 hover:bg-blue-100"
                             title="Editar campero"
                           >
-                            <Edit2 className="w-3 h-3 text-blue-600" />
+                            <Edit2 className="w-3.5 h-3.5 text-blue-600" />
                           </Button>
                           <Button
                             onClick={() => {
@@ -1219,7 +1223,7 @@ export function AttendeesClient({ userId, eventId }: Props) {
                             className="h-6 w-6 p-0 hover:bg-red-100"
                             title="Eliminar campero"
                           >
-                            <Trash2 className="w-3 h-3 text-red-600" />
+                            <Trash2 className="w-3.5 h-3.5 text-red-600" />
                           </Button>
                         </div>
                       </div>
@@ -1272,11 +1276,11 @@ export function AttendeesClient({ userId, eventId }: Props) {
           }
         }}
       >
-        <DrawerContent className="max-h-[90vh] overflow-y-auto">
+        <DrawerContent className="max-h-[90vh] overflow-y-auto mx-auto sm:max-w-2xl">
           <DrawerHeader className="text-left">
             <DrawerTitle className="text-2xl font-bold">{editingId ? 'Editar campero' : 'Agregar campero'}</DrawerTitle>
           </DrawerHeader>
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-5 px-4 sm:px-6">
             {/* Información Personal */}
             <div className="bg-card border rounded-lg p-4 space-y-4">
               <h3 className="text-sm font-semibold text-foreground">Información Personal</h3>
