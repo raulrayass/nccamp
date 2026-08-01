@@ -22,21 +22,31 @@ export function SelectEventPageWrapper() {
       return
     }
 
+    let isMounted = true
+
     async function loadEvents() {
       try {
-        setLoading(true)
-        setError(null)
+        if (!isMounted) return
         const userEvents = await getUserEvents(user.id)
-        setEvents(userEvents || [])
+        if (isMounted) {
+          setEvents(userEvents || [])
+          setError(null)
+          setLoading(false)
+        }
       } catch (err) {
-        console.error('Error loading events:', err)
-        setError(err instanceof Error ? err.message : String(err))
-      } finally {
-        setLoading(false)
+        if (isMounted) {
+          console.error('Error loading events:', err)
+          setError(err instanceof Error ? err.message : String(err))
+          setLoading(false)
+        }
       }
     }
 
     loadEvents()
+
+    return () => {
+      isMounted = false
+    }
   }, [user?.id])
 
   if (loading) {
