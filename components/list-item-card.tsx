@@ -22,17 +22,17 @@ export function ListItemCard({
   const getStatusColor = () => {
     switch (status) {
       case 'paid':
-        return 'border-emerald-200 dark:border-emerald-900/50 bg-emerald-50/40 dark:bg-card'
+        return 'border-emerald-200 dark:border-emerald-800/30 bg-emerald-50/40 dark:bg-muted/20'
       case 'partial':
-        return 'border-amber-200 dark:border-amber-900/50 bg-amber-50/40 dark:bg-card'
+        return 'border-amber-200 dark:border-amber-800/30 bg-amber-50/40 dark:bg-muted/20'
       case 'pending':
-        return 'border-red-200 dark:border-red-900/50 bg-red-50/40 dark:bg-card'
+        return 'border-red-200 dark:border-red-800/30 bg-red-50/40 dark:bg-muted/20'
       case 'checked':
-        return 'border-emerald-200 dark:border-emerald-900/50 bg-emerald-50/40 dark:bg-card'
+        return 'border-emerald-200 dark:border-emerald-800/30 bg-emerald-50/40 dark:bg-muted/20'
       case 'unchecked':
-        return 'border-muted dark:border-muted'
+        return 'border-muted dark:border-muted/50'
       default:
-        return 'border-border dark:border-border'
+        return 'border-border dark:border-border/50'
     }
   }
 
