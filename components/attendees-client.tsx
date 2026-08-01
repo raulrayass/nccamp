@@ -704,10 +704,6 @@ export function AttendeesClient({ userId, eventId }: Props) {
           <Download className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
           <span>Exportar PDF</span>
         </Button>
-        <Button onClick={() => { setEditingId(null); setForm({ ...emptyForm }); setDialogOpen(true) }} size="sm" className="gap-1.5 text-xs sm:text-sm h-9 sm:h-10 px-2 sm:px-3 bg-green-600 hover:bg-green-700 text-white">
-          <Plus className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
-          <span>Agregar</span>
-        </Button>
       </PageHeader>
 
       {/* Tabs del grupo Personas */}
@@ -1095,12 +1091,12 @@ export function AttendeesClient({ userId, eventId }: Props) {
                   className="overflow-hidden cursor-pointer transition-all duration-200"
                   status={attendee.status}
                 >
-                  <CardContent className="p-2 sm:p-3.5">
-                    <div className="flex flex-col gap-1.5">
-                      <div className="flex items-start justify-between gap-2">
+                  <CardContent className="p-1.5 sm:p-2.5">
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-start justify-between gap-1.5">
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                            <h3 className="font-semibold text-sm truncate text-foreground">{attendee.name}</h3>
+                          <div className="flex items-center gap-1.5 mb-1 flex-wrap">
+                            <h3 className="font-semibold text-xs sm:text-sm truncate text-foreground">{attendee.name}</h3>
                             {attendee.status === 'paid' ? (
                               <Badge className="shrink-0 text-xs py-0.5 px-2 bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 font-medium">Pagado</Badge>
                             ) : attendee.status === 'partial' ? (
