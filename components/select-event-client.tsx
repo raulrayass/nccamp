@@ -3,13 +3,12 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { useEventSession } from '@/lib/contexts/event-session-context'
-import { useUser } from '@/components/user-provider'
 import { createEvent, setDefaultEvent } from '@/app/actions/events'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
-import { Plus, Star, Calendar, MapPin, ChevronRight, LogOut } from 'lucide-react'
+import { Plus, Star, Calendar, MapPin, ChevronRight, LogIn } from 'lucide-react'
 import { SettingSection } from '@/components/setting-section'
 import { SettingRow } from '@/components/setting-row'
 
@@ -27,9 +26,7 @@ export function SelectEventClient({
 }) {
   const router = useRouter()
   const { setEventSession } = useEventSession()
-  const { signOut } = useUser()
   const [isPending, startTransition] = useTransition()
-  const [isSigningOut, setIsSigningOut] = useState(false)
   const [showCreateForm, setShowCreateForm] = useState(initialEvents.length === 0)
   const [settingDefault, setSettingDefault] = useState<number | null>(null)
   const [formData, setFormData] = useState({
@@ -44,17 +41,8 @@ export function SelectEventClient({
     router.push('/')
   }
 
-  const handleSignOut = async () => {
-    setIsSigningOut(true)
-    try {
-      await signOut()
-      router.push('/auth/signin')
-      toast.success('Sesión cerrada')
-    } catch (error) {
-      toast.error('Error al cerrar sesión')
-      console.error(error)
-      setIsSigningOut(false)
-    }
+  const handleSwitchAccount = () => {
+    router.push('/auth/signin')
   }
 
   const handleSetDefault = async (eventId: number) => {
@@ -110,13 +98,12 @@ export function SelectEventClient({
           <p className="text-foreground/60">Elige uno de tus eventos o crea uno nuevo</p>
         </div>
         <motion.button
-          onClick={handleSignOut}
-          disabled={isSigningOut || isPending}
-          className="p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-950/30 text-red-600 dark:text-red-400 transition-colors disabled:opacity-50"
+          onClick={handleSwitchAccount}
+          className="p-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-950/30 text-blue-600 dark:text-blue-400 transition-colors"
           whileTap={{ scale: 0.95 }}
-          title="Cambiar cuenta"
+          title="Iniciar sesión con otra cuenta"
         >
-          <LogOut className="w-5 h-5" />
+          <LogIn className="w-5 h-5" />
         </motion.button>
       </div>
 
