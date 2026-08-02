@@ -102,8 +102,8 @@ export function DashboardClient({ userId, eventId }: { userId: string; eventId: 
 
   const {
     totalIncome, totalExpense, balance,
-    monthlyData, dailyData, expenseByCategory, incomeByCategory,
-    categoryComparison, recentTransactions, paymentMethodBreakdown,
+    monthlyData, expenseByCategory, incomeByCategory,
+    categoryComparison, recentTransactions, paymentMethodBreakdown, shirtSizes,
   } = data
 
   const hasAnyData = totalIncome > 0 || totalExpense > 0
@@ -405,39 +405,37 @@ const itemVariants = {
         </Card>
       </motion.div>
 
-      {/* ===== 6B. Resumen del día (acumulativo) ===== */}
+      {/* ===== 6B. Distribución de tallas ===== */}
       <motion.div variants={itemVariants}>
         <motion.h2 className="font-semibold text-lg text-foreground mb-4 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.95 }}>
-          Resumen del día (Acumulativo)
+          Distribución de tallas
         </motion.h2>
-        <Card className="clay-card p-5 sm:p-6 rounded-2xl overflow-hidden w-full">
-          {dailyData && dailyData.length > 0 ? (
+        <Card className="p-5 sm:p-6 rounded-2xl overflow-hidden w-full">
+          {shirtSizes && shirtSizes.length > 0 ? (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.0 }} className="w-full">
               <ResponsiveContainer width="100%" height={280}>
-                <BarChart data={dailyData} barGap={6}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} opacity={0.5} />
-                  <XAxis dataKey="date" tick={{ fontSize: 12, fill: 'var(--muted-foreground)' }} axisLine={false} tickLine={false} />
-                  <YAxis
-                    tick={{ fontSize: 12, fill: 'var(--muted-foreground)' }}
-                    tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
-                    axisLine={false}
-                    tickLine={false}
-                    width={50}
-                  />
-                  <Tooltip
-                    formatter={(value: number) => formatCurrency(value)}
-                    cursor={{ fill: 'var(--muted)', opacity: 0.4 }}
-                    contentStyle={{ borderRadius: '12px', fontSize: '13px', border: '1px solid var(--border)', background: 'var(--card)', boxShadow: '0 8px 16px rgba(0,0,0,0.1)' }}
-                  />
-                  <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: '12px', paddingTop: '16px' }} />
-                  <Bar dataKey="income" name="Ingresos" fill={INCOME_COLOR} radius={[8, 8, 0, 0]} />
-                  <Bar dataKey="expense" name="Egresos" fill={EXPENSE_COLOR} radius={[8, 8, 0, 0]} />
-                  <Bar dataKey="balance" name="Saldo Acumulado" fill="#8b5cf6" radius={[8, 8, 0, 0]} />
-                </BarChart>
+                <PieChart>
+                  <Pie
+                    data={shirtSizes}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={100}
+                    paddingAngle={2}
+                    dataKey="value"
+                    label={({ name, value }) => `${name}: ${value}`}
+                    labelLine={true}
+                  >
+                    {shirtSizes.map((_, index) => (
+                      <Cell key={`cell-${index}`} fill={['#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899'][index % 6]} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value: number) => `${value} persona${value > 1 ? 's' : ''}`} />
+                </PieChart>
               </ResponsiveContainer>
             </motion.div>
           ) : (
-            <EmptyChart text="No hay datos aun. Agrega transacciones para ver la grafica." />
+            <EmptyChart text="No hay datos de tallas aun. Agrega camperos para ver la distribucion." />
           )}
         </Card>
       </motion.div>

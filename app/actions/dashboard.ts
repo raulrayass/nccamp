@@ -74,42 +74,6 @@ export async function getDashboardData(userId: string, eventId?: number | null) 
       }))
       .slice(-12)
 
-    // Calculate daily data with cumulative balance
-    const dailyData: Record<string, { income: number; expense: number; balance: number }> = {}
-    let cumulativeBalance = 0
-
-    // Sort transactions by date ascending to calculate cumulative balance
-    const sortedTransactions = [...allTransactions].reverse()
-    
-    for (const tx of sortedTransactions) {
-      const date = new Date(tx.date)
-      const dateKey = date.toISOString().split('T')[0] // YYYY-MM-DD format
-      
-      if (!dailyData[dateKey]) {
-        dailyData[dateKey] = { income: 0, expense: 0, balance: 0 }
-      }
-      
-      const amount = Number(tx.amount)
-      if (tx.type === 'income') {
-        dailyData[dateKey].income += amount
-      } else {
-        dailyData[dateKey].expense += amount
-      }
-    }
-
-    // Calculate cumulative balance for each day
-    const dailyChartData = Object.entries(dailyData)
-      .sort(([dateA], [dateB]) => dateA.localeCompare(dateB))
-      .map(([date, data]) => {
-        cumulativeBalance = cumulativeBalance + data.income - data.expense
-        return {
-          date,
-          income: data.income,
-          expense: data.expense,
-          balance: cumulativeBalance,
-        }
-      })
-
     // Calculate category breakdown
     const expenseByCategoryMap: Record<string, { total: number; color: string }> = {}
     const incomeByCategoryMap: Record<string, { total: number; color: string }> = {}
@@ -155,6 +119,43 @@ export async function getDashboardData(userId: string, eventId?: number | null) 
       })
     }
 
+    // Get shirt sizes from attendees and staff
+    const shirtSizeData: Record<string, { count: number; label: string }> = {}
+    
+    // Get attendees with shirt sizes for this user/event
+    const attendeeConditions = [eq(attendees.userId, userId)]
+    if (eventId !== undefined && eventId !== null) {
+      attendeeConditions.push(eq(attendees.eventId, eventId))
+    }
+
+    const attendeeData = await db
+      .select({
+        shirtSize: attendees.shirtSize,
+      })
+      .from(attendees)
+      .where(and(...(attendeeConditions as any)))
+
+    // Count shirt sizes
+    for (const attendee of attendeeData) {
+      if (attendee.shirtSize) {
+        const size = attendee.shirtSize
+        if (!shirtSizeData[size]) {
+          shirtSizeData[size] = { count: 0, label: size }
+        }
+        shirtSizeData[size].count += 1
+      }
+    }
+
+    const shirtSizes = Object.values(shirtSizeData)
+      .map(item => ({
+        name: item.label,
+        value: item.count,
+      }))
+      .sort((a, b) => {
+        const order: Record<string, number> = { 'XS': 1, 'S': 2, 'M': 3, 'L': 4, 'XL': 5, 'XXL': 6 }
+        return (order[a.name] || 999) - (order[b.name] || 999)
+      })
+
     // Payment method breakdown (income - expenses = available)
     const paymentMethodBreakdown: Record<string, { available: number }> = {
       cash: { available: 0 },
@@ -181,12 +182,12 @@ export async function getDashboardData(userId: string, eventId?: number | null) 
       totalExpense,
       balance,
       monthlyData: monthlyChartData,
-      dailyData: dailyChartData,
       expenseByCategory,
       incomeByCategory,
       categoryComparison,
       recentTransactions,
       paymentMethodBreakdown,
+      shirtSizes,
     }
   } catch (error) {
     console.error('[v0] Error in getDashboardData:', error)
