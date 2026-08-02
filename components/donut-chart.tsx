@@ -1,6 +1,6 @@
 'use client'
 
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Label } from 'recharts'
 
 export interface DonutSlice {
   name: string
@@ -24,6 +24,13 @@ export function DonutChart({
   const total = data.reduce((sum, d) => sum + d.value, 0)
   const sorted = [...data].sort((a, b) => b.value - a.value)
 
+  // Custom label renderer with lines
+  const renderCustomLabel = (entry: any) => {
+    const pct = total > 0 ? Math.round((entry.value / total) * 100) : 0
+    const label = `${entry.name}: ${formatValue(entry.value)}`
+    return label
+  }
+
   return (
     <div className="flex flex-col items-center gap-4 w-full">
       {/* Donut con total al centro */}
@@ -43,6 +50,18 @@ export function DonutChart({
               stroke="none"
               startAngle={90}
               endAngle={-270}
+              label={{
+                fill: 'var(--foreground)',
+                fontSize: 12,
+                fontWeight: 500,
+                offset: 30,
+                formatter: renderCustomLabel,
+              }}
+              labelLine={{
+                stroke: 'var(--muted-foreground)',
+                strokeWidth: 1,
+                opacity: 0.6,
+              }}
             >
               {sorted.map((entry, i) => (
                 <Cell key={i} fill={entry.color} />
