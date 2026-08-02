@@ -74,6 +74,42 @@ export async function getDashboardData(userId: string, eventId?: number | null) 
       }))
       .slice(-12)
 
+    // Calculate daily data with cumulative balance
+    const dailyData: Record<string, { income: number; expense: number; balance: number }> = {}
+    let cumulativeBalance = 0
+
+    // Sort transactions by date ascending to calculate cumulative balance
+    const sortedTransactions = [...allTransactions].reverse()
+    
+    for (const tx of sortedTransactions) {
+      const date = new Date(tx.date)
+      const dateKey = date.toISOString().split('T')[0] // YYYY-MM-DD format
+      
+      if (!dailyData[dateKey]) {
+        dailyData[dateKey] = { income: 0, expense: 0, balance: 0 }
+      }
+      
+      const amount = Number(tx.amount)
+      if (tx.type === 'income') {
+        dailyData[dateKey].income += amount
+      } else {
+        dailyData[dateKey].expense += amount
+      }
+    }
+
+    // Calculate cumulative balance for each day
+    const dailyChartData = Object.entries(dailyData)
+      .sort(([dateA], [dateB]) => dateA.localeCompare(dateB))
+      .map(([date, data]) => {
+        cumulativeBalance = cumulativeBalance + data.income - data.expense
+        return {
+          date,
+          income: data.income,
+          expense: data.expense,
+          balance: cumulativeBalance,
+        }
+      })
+
     // Calculate category breakdown
     const expenseByCategoryMap: Record<string, { total: number; color: string }> = {}
     const incomeByCategoryMap: Record<string, { total: number; color: string }> = {}
@@ -145,6 +181,7 @@ export async function getDashboardData(userId: string, eventId?: number | null) 
       totalExpense,
       balance,
       monthlyData: monthlyChartData,
+      dailyData: dailyChartData,
       expenseByCategory,
       incomeByCategory,
       categoryComparison,
