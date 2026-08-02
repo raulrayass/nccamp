@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { getDashboardData, getGameActivityData } from '@/app/actions/dashboard'
 import { getChurchDistribution } from '@/app/actions/attendees'
@@ -29,6 +30,7 @@ const INCOME_COLOR = '#22c55e'
 const EXPENSE_COLOR = '#f97316'
 
 export function DashboardClient({ userId, eventId }: { userId: string; eventId: number | null }) {
+  const router = useRouter()
   const [data, setData] = useState<DashboardData | null>(null)
   const [churchData, setChurchData] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -286,7 +288,8 @@ const itemVariants = {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.7 + idx * 0.05, type: 'spring', stiffness: 100, damping: 15 }}
                   whileTap={{ scale: 0.98, backgroundColor: 'rgba(0,0,0,0.02)' }}
-                  className="flex items-center justify-between gap-2 py-3 sm:py-4 min-w-0 cursor-pointer px-2 -mx-2 rounded"
+                  onClick={() => router.push(`/finances?transactionId=${t.id}`)}
+                  className="flex items-center justify-between gap-2 py-3 sm:py-4 min-w-0 cursor-pointer px-2 -mx-2 rounded transition-colors hover:bg-muted/50"
                 >
                   <div className="flex items-center gap-3 min-w-0 flex-1">
                     <motion.div

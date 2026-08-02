@@ -264,6 +264,24 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
     }
   }, [searchParams])
 
+  // Busca y resalta transacción cuando se accede desde dashboard con ?transactionId=
+  useEffect(() => {
+    const transactionId = searchParams.get('transactionId')
+    if (transactionId) {
+      const txn = transactions.find(t => t.id === transactionId)
+      if (txn) {
+        // Scroll a la transacción y destaca
+        const element = document.getElementById(`transaction-${transactionId}`)
+        if (element) {
+          setTimeout(() => {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+            element.classList.add('highlight-transaction')
+          }, 100)
+        }
+      }
+    }
+  }, [searchParams, transactions])
+
   function clearNewParam() {
     if (searchParams.get('new') === '1') {
       router.replace(pathname, { scroll: false })
@@ -691,7 +709,11 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
                     else if (t.paymentMethod === 'deposit') borderColor = 'border-l-purple-600'
 
                     return (
-                      <div key={t.id} className={`p-1.5 sm:p-2.5 border border-l-4 border-border ${borderColor} rounded-lg flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 hover:bg-muted/50 transition-colors`}>
+                      <div 
+                        key={t.id} 
+                        id={`transaction-${t.id}`}
+                        className={`p-1.5 sm:p-2.5 border border-l-4 border-border ${borderColor} rounded-lg flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 hover:bg-muted/50 transition-colors`}
+                      >
                         <div className="flex items-center gap-1.5 flex-1 min-w-0">
                           <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-muted flex items-center justify-center flex-shrink-0">
                             {t.type === 'income' ? (
