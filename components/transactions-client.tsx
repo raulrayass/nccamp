@@ -84,95 +84,120 @@ function exportarRecibo(transaction: TransactionRow) {
     const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
     const width = doc.internal.pageSize.getWidth()
     const height = doc.internal.pageSize.getHeight()
-    let y = 15
+    let y = 12
 
-    // Encabezado
-    doc.setFontSize(18)
+    // Logo y encabezado
+    const logoWidth = 20
+    const logoHeight = 20
+    doc.addImage('/permanece-camp-logo.png', 'PNG', (width - logoWidth) / 2, y, logoWidth, logoHeight)
+    y += logoHeight + 3
+
+    // Nombre empresa
+    doc.setFontSize(16)
     doc.setFont('', 'bold')
-    doc.text('RECIBO DE TRANSACCIÓN', width / 2, y, { align: 'center' })
+    doc.setTextColor(16, 185, 129) // verde
+    doc.text('PERMANECE CAMP', width / 2, y, { align: 'center' })
     
-    y += 10
-    doc.setFontSize(8)
+    y += 6
+    doc.setFontSize(10)
     doc.setFont('', 'normal')
     doc.setTextColor(100)
-    doc.text(`Permanece Camp - Sistema de Finanzas`, width / 2, y, { align: 'center' })
-    
-    y += 7
-    const dividerY = y
-    doc.setDrawColor(200)
-    doc.line(15, dividerY, width - 15, dividerY)
+    doc.text('Sistema de Finanzas', width / 2, y, { align: 'center' })
 
-    // Información principal
+    // Línea divisora superior
+    y += 6
+    doc.setDrawColor(16, 185, 129)
+    doc.setLineWidth(0.5)
+    doc.line(15, y, width - 15, y)
+
+    // Tipo de transacción destacado
     y += 8
-    doc.setFontSize(11)
-    doc.setFont('', 'bold')
-    doc.setTextColor(0)
-    
     const typeText = transaction.type === 'income' ? 'INGRESO' : 'EGRESO'
     const typeColor = transaction.type === 'income' ? [34, 197, 94] : [234, 88, 12]
+    const bgColor = transaction.type === 'income' ? [220, 252, 231] : [254, 245, 235]
+    
+    // Fondo de color para el tipo
+    doc.setFillColor(...bgColor)
     doc.setTextColor(...typeColor)
-    doc.text(typeText, 15, y)
-    
-    y += 8
-    doc.setTextColor(0)
-    doc.setFont('', 'normal')
-    doc.setFontSize(10)
-    
-    // Datos de la transacción
-    const data = [
-      ['Descripción:', transaction.description],
-      ['Categoría:', transaction.categoryName ?? 'Sin categoría'],
-      ['Monto:', formatCurrency(parseFloat(transaction.amount as string))],
-      ['Tipo de pago:', !transaction.paymentMethod || transaction.paymentMethod === 'cash' ? 'Efectivo' : transaction.paymentMethod === 'transfer' ? 'Transferencia' : 'Depósito'],
-      ['Fecha de transacción:', transaction.date],
-      ['Hora de registro:', new Date(transaction.createdAt).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: true })],
-    ]
-
-    const maxLabelWidth = 50
-    const maxValueWidth = width - 80
-    
-    data.forEach(([label, value]) => {
-      doc.setFont('', 'bold')
-      doc.text(label, 15, y)
-      doc.setFont('', 'normal')
-      
-      // Quebrar texto largo
-      const wrappedText = doc.splitTextToSize(value, maxValueWidth)
-      doc.text(wrappedText, 65, y)
-      y += wrappedText.length * 5 + 3
-    })
-
-    // Sección de monto destacado
-    y += 5
-    doc.setDrawColor(200)
-    doc.line(15, y, width - 15, y)
-    
-    y += 10
     doc.setFontSize(14)
+    doc.setFont('', 'bold')
+    doc.rect(15, y - 5, width - 30, 8, 'F')
+    doc.text(typeText, width / 2, y, { align: 'center' })
+
+    // Monto principal destacado
+    y += 12
+    doc.setFontSize(24)
     doc.setFont('', 'bold')
     doc.setTextColor(...typeColor)
     const montoText = `${transaction.type === 'income' ? '+' : '-'}${formatCurrency(parseFloat(transaction.amount as string))}`
-    doc.text('Monto Total:', 15, y)
-    doc.text(montoText, width - 15, y, { align: 'right' })
+    doc.text(montoText, width / 2, y, { align: 'center' })
 
-    // Pie de página
-    y = height - 20
+    // Línea divisora
+    y += 10
+    doc.setDrawColor(200)
+    doc.setLineWidth(0.3)
+    doc.line(15, y, width - 15, y)
+
+    // Detalles de transacción
+    y += 8
+    doc.setFontSize(10)
+    doc.setFont('', 'bold')
+    doc.setTextColor(0)
+    
+    const details = [
+      { label: 'Descripción', value: transaction.description },
+      { label: 'Categoría', value: transaction.categoryName ?? 'Sin categoría' },
+      { label: 'Método de pago', value: !transaction.paymentMethod || transaction.paymentMethod === 'cash' ? 'Efectivo' : transaction.paymentMethod === 'transfer' ? 'Transferencia' : 'Depósito' },
+      { label: 'Fecha', value: transaction.date },
+      { label: 'Hora', value: new Date(transaction.createdAt).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: true }) },
+    ]
+
+    const labelWidth = 40
+    const valueWidth = width - 70
+    
+    details.forEach(({ label, value }) => {
+      doc.setFont('', 'bold')
+      doc.setTextColor(80)
+      doc.setFontSize(9)
+      doc.text(label + ':', 15, y)
+      
+      doc.setFont('', 'normal')
+      doc.setTextColor(0)
+      const wrappedText = doc.splitTextToSize(String(value), valueWidth)
+      doc.text(wrappedText, 55, y)
+      y += Math.max(wrappedText.length * 4, 5) + 2
+    })
+
+    // Línea divisora inferior
+    y += 3
+    doc.setDrawColor(200)
+    doc.setLineWidth(0.3)
+    doc.line(15, y, width - 15, y)
+
+    // Pie de página con info
+    y = height - 25
     doc.setFontSize(8)
-    doc.setTextColor(100)
+    doc.setTextColor(120)
     doc.setFont('', 'normal')
+    
     doc.text(
-      `Recibo generado: ${new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}`,
+      `ID Transacción: ${transaction.id}`,
+      15,
+      y
+    )
+    
+    doc.text(
+      `Generado: ${new Date().toLocaleDateString('es-MX', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}`,
       width / 2,
       y,
       { align: 'center' }
     )
-    
-    doc.text(
-      `ID Transacción: ${transaction.id}`,
-      width / 2,
-      y + 5,
-      { align: 'center' }
-    )
+
+    // Línea final decorativa
+    y = height - 8
+    doc.setDrawColor(16, 185, 129)
+    doc.setLineWidth(0.5)
+    doc.line(15, y, width - 15, y)
 
     // Descargar
     const filename = `Recibo_${transaction.type === 'income' ? 'Ingreso' : 'Egreso'}_${transaction.id}_${new Date().toISOString().split('T')[0]}.pdf`
