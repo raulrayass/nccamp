@@ -7,6 +7,7 @@ import { getChurchDistribution } from '@/app/actions/attendees'
 import { Card } from '@/components/ui/card'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
+  PieChart, Pie, Cell,
 } from 'recharts'
 import { TrendingUp, TrendingDown, Wallet, ArrowUpRight, ArrowDownRight, Banknote, Smartphone } from 'lucide-react'
 import { DonutChart } from '@/components/donut-chart'
