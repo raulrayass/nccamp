@@ -179,7 +179,7 @@ const itemVariants = {
       {/* ===== 2. Ingresos + Egresos — animated stat cards ===== */}
       <motion.div className="grid grid-cols-2 gap-3 sm:gap-4" variants={itemVariants}>
         <motion.div variants={itemVariants} whileTap={{ scale: 0.95 }} className="cursor-pointer">
-          <Card className="stat-card p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-gradient-to-br from-emerald-500/5 to-emerald-600/10 border-emerald-200/30">
+          <Card className="stat-card p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-gradient-to-br from-emerald-500/5 to-emerald-600/10 border-emerald-200/30 shadow-lg shadow-black/10 dark:shadow-black/30">
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <p className="text-xs sm:text-sm text-muted-foreground font-medium mb-1">Total Ingresos</p>
@@ -195,7 +195,7 @@ const itemVariants = {
           </Card>
         </motion.div>
         <motion.div variants={itemVariants} whileTap={{ scale: 0.95 }} className="cursor-pointer">
-          <Card className="stat-card p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-gradient-to-br from-orange-500/5 to-orange-600/10 border-orange-200/30">
+          <Card className="stat-card p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-gradient-to-br from-orange-500/5 to-orange-600/10 border-orange-200/30 shadow-lg shadow-black/10 dark:shadow-black/30">
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <p className="text-xs sm:text-sm text-muted-foreground font-medium mb-1">Total Egresos</p>
@@ -335,7 +335,7 @@ const itemVariants = {
           <motion.h2 className="font-semibold text-lg text-foreground mb-3 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}>
             Ingresos
           </motion.h2>
-          <Card className="p-5 sm:p-6 rounded-2xl">
+          <Card className="p-5 sm:p-6 rounded-2xl shadow-lg shadow-black/10 dark:shadow-black/30">
             {incomeByCategory.length > 0 ? (
               <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.75, type: 'spring', stiffness: 100, damping: 15 }}>
                 <DonutChart
@@ -354,7 +354,7 @@ const itemVariants = {
           <motion.h2 className="font-semibold text-lg text-foreground mb-3 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}>
             Egresos
           </motion.h2>
-          <Card className="p-5 sm:p-6 rounded-2xl">
+          <Card className="p-5 sm:p-6 rounded-2xl shadow-lg shadow-black/10 dark:shadow-black/30">
             {expenseByCategory.length > 0 ? (
               <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.85, type: 'spring', stiffness: 100, damping: 15 }}>
                 <DonutChart
@@ -411,29 +411,19 @@ const itemVariants = {
         <motion.h2 className="font-semibold text-lg text-foreground mb-4 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.95 }}>
           Distribución de tallas
         </motion.h2>
-        <Card className="p-5 sm:p-6 rounded-2xl overflow-hidden w-full">
+        <Card className="p-5 sm:p-6 rounded-2xl shadow-lg shadow-black/10 dark:shadow-black/30">
           {shirtSizes && shirtSizes.length > 0 ? (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.0 }} className="w-full">
-              <ResponsiveContainer width="100%" height={280}>
-                <PieChart>
-                  <Pie
-                    data={shirtSizes}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={100}
-                    paddingAngle={2}
-                    dataKey="value"
-                    label={({ name, value }) => `${name}: ${value}`}
-                    labelLine={true}
-                  >
-                    {shirtSizes.map((_, index) => (
-                      <Cell key={`cell-${index}`} fill={['#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899'][index % 6]} />
-                    ))}
-                  </Pie>
-                  <Tooltip formatter={(value: number) => `${value} persona${value > 1 ? 's' : ''}`} />
-                </PieChart>
-              </ResponsiveContainer>
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 1.0, type: 'spring', stiffness: 100, damping: 15 }}>
+              <DonutChart
+                data={shirtSizes.map((s, i) => ({
+                  name: s.name,
+                  value: s.value,
+                  color: ['#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899'][i % 6],
+                }))}
+                formatValue={(v) => `${v} persona${v > 1 ? 's' : ''}`}
+                centerLabel="Tallas"
+                height={200}
+              />
             </motion.div>
           ) : (
             <EmptyChart text="No hay datos de tallas aun. Agrega camperos para ver la distribucion." />
