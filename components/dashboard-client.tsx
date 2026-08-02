@@ -103,7 +103,7 @@ export function DashboardClient({ userId, eventId }: { userId: string; eventId: 
   const {
     totalIncome, totalExpense, balance,
     monthlyData, expenseByCategory, incomeByCategory,
-    categoryComparison, recentTransactions, paymentMethodBreakdown,
+    categoryComparison, recentTransactions, paymentMethodBreakdown, shirtSizes,
   } = data
 
   const hasAnyData = totalIncome > 0 || totalExpense > 0
@@ -401,6 +401,41 @@ const itemVariants = {
             </motion.div>
           ) : (
             <EmptyChart text="No hay datos aun. Agrega transacciones para ver la grafica." />
+          )}
+        </Card>
+      </motion.div>
+
+      {/* ===== 6B. Distribución de tallas ===== */}
+      <motion.div variants={itemVariants}>
+        <motion.h2 className="font-semibold text-lg text-foreground mb-4 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.95 }}>
+          Distribución de tallas
+        </motion.h2>
+        <Card className="p-5 sm:p-6 rounded-2xl overflow-hidden w-full">
+          {shirtSizes && shirtSizes.length > 0 ? (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.0 }} className="w-full">
+              <ResponsiveContainer width="100%" height={280}>
+                <PieChart>
+                  <Pie
+                    data={shirtSizes}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={100}
+                    paddingAngle={2}
+                    dataKey="value"
+                    label={({ name, value }) => `${name}: ${value}`}
+                    labelLine={true}
+                  >
+                    {shirtSizes.map((_, index) => (
+                      <Cell key={`cell-${index}`} fill={['#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899'][index % 6]} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value: number) => `${value} persona${value > 1 ? 's' : ''}`} />
+                </PieChart>
+              </ResponsiveContainer>
+            </motion.div>
+          ) : (
+            <EmptyChart text="No hay datos de tallas aun. Agrega camperos para ver la distribucion." />
           )}
         </Card>
       </motion.div>

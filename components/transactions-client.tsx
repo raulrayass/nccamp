@@ -43,16 +43,17 @@ function formatDateTime(dateStr: string, createdAt: any) {
   return `${dateStr} · ${hora}`
 }
 
-// Group transactions by date and calculate daily balance
+// Group transactions by date and calculate cumulative daily balance
 function groupTransactionsByDate(transactions: TransactionRow[]) {
   const groups: Record<string, { transactions: TransactionRow[]; dailyBalance: number }> = {}
   
-  // Sort by date descending (newest first)
-  const sorted = [...transactions].sort((a, b) => {
-    return new Date(b.date).getTime() - new Date(a.date).getTime()
+  // Sort by date ascending (oldest first) for cumulative calculation
+  const sortedAscending = [...transactions].sort((a, b) => {
+    return new Date(a.date).getTime() - new Date(b.date).getTime()
   })
 
-  sorted.forEach((t) => {
+  // Group transactions by date
+  sortedAscending.forEach((t) => {
     const date = t.date
     if (!groups[date]) {
       groups[date] = { transactions: [], dailyBalance: 0 }
@@ -60,13 +61,18 @@ function groupTransactionsByDate(transactions: TransactionRow[]) {
     groups[date].transactions.push(t)
   })
 
-  // Calculate daily balance for each group
-  Object.entries(groups).forEach(([_, group]) => {
-    group.dailyBalance = group.transactions.reduce((sum, t) => {
-      const amount = parseFloat(t.amount as string)
-      return sum + (t.type === 'income' ? amount : -amount)
-    }, 0)
-  })
+  // Calculate cumulative balance for each day
+  let cumulativeBalance = 0
+  Object.entries(groups)
+    .sort(([dateA], [dateB]) => new Date(dateA).getTime() - new Date(dateB).getTime())
+    .forEach(([_, group]) => {
+      const dayTotal = group.transactions.reduce((sum, t) => {
+        const amount = parseFloat(t.amount as string)
+        return sum + (t.type === 'income' ? amount : -amount)
+      }, 0)
+      cumulativeBalance += dayTotal
+      group.dailyBalance = cumulativeBalance
+    })
 
   return groups
 }

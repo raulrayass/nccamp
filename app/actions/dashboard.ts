@@ -119,6 +119,43 @@ export async function getDashboardData(userId: string, eventId?: number | null) 
       })
     }
 
+    // Get shirt sizes from attendees and staff
+    const shirtSizeData: Record<string, { count: number; label: string }> = {}
+    
+    // Get attendees with shirt sizes for this user/event
+    const attendeeConditions = [eq(attendees.userId, userId)]
+    if (eventId !== undefined && eventId !== null) {
+      attendeeConditions.push(eq(attendees.eventId, eventId))
+    }
+
+    const attendeeData = await db
+      .select({
+        shirtSize: attendees.shirtSize,
+      })
+      .from(attendees)
+      .where(and(...(attendeeConditions as any)))
+
+    // Count shirt sizes
+    for (const attendee of attendeeData) {
+      if (attendee.shirtSize) {
+        const size = attendee.shirtSize
+        if (!shirtSizeData[size]) {
+          shirtSizeData[size] = { count: 0, label: size }
+        }
+        shirtSizeData[size].count += 1
+      }
+    }
+
+    const shirtSizes = Object.values(shirtSizeData)
+      .map(item => ({
+        name: item.label,
+        value: item.count,
+      }))
+      .sort((a, b) => {
+        const order: Record<string, number> = { 'XS': 1, 'S': 2, 'M': 3, 'L': 4, 'XL': 5, 'XXL': 6 }
+        return (order[a.name] || 999) - (order[b.name] || 999)
+      })
+
     // Payment method breakdown (income - expenses = available)
     const paymentMethodBreakdown: Record<string, { available: number }> = {
       cash: { available: 0 },
@@ -150,6 +187,7 @@ export async function getDashboardData(userId: string, eventId?: number | null) 
       categoryComparison,
       recentTransactions,
       paymentMethodBreakdown,
+      shirtSizes,
     }
   } catch (error) {
     console.error('[v0] Error in getDashboardData:', error)
