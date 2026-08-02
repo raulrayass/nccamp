@@ -413,7 +413,7 @@ const itemVariants = {
         </motion.h2>
         <Card className="p-5 sm:p-6 rounded-2xl overflow-hidden w-full">
           {shirtSizes && shirtSizes.length > 0 ? (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.0 }} className="w-full">
+            <div className="w-full">
               <ResponsiveContainer width="100%" height={280}>
                 <PieChart>
                   <Pie
@@ -434,7 +434,7 @@ const itemVariants = {
                   <Tooltip formatter={(value: number) => `${value} persona${value > 1 ? 's' : ''}`} />
                 </PieChart>
               </ResponsiveContainer>
-            </motion.div>
+            </div>
           ) : (
             <EmptyChart text="No hay datos de tallas aun. Agrega camperos para ver la distribucion." />
           )}

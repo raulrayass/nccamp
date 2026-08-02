@@ -61,19 +61,21 @@ function groupTransactionsByDate(transactions: TransactionRow[]) {
     groups[date].transactions.push(t)
   })
 
-  // Calculate cumulative balance for each day
+  // Calculate cumulative balance for each day in chronological order
   let cumulativeBalance = 0
-  Object.entries(groups)
+  const sortedEntries = Object.entries(groups)
     .sort(([dateA], [dateB]) => new Date(dateA).getTime() - new Date(dateB).getTime())
-    .forEach(([_, group]) => {
-      const dayTotal = group.transactions.reduce((sum, t) => {
-        const amount = parseFloat(t.amount as string)
-        return sum + (t.type === 'income' ? amount : -amount)
-      }, 0)
-      cumulativeBalance += dayTotal
-      group.dailyBalance = cumulativeBalance
-    })
 
+  sortedEntries.forEach(([_, group]) => {
+    const dayTotal = group.transactions.reduce((sum, t) => {
+      const amount = parseFloat(t.amount as string)
+      return sum + (t.type === 'income' ? amount : -amount)
+    }, 0)
+    cumulativeBalance += dayTotal
+    group.dailyBalance = cumulativeBalance
+  })
+
+  // Return groups but also update the display order to be newest first for UI
   return groups
 }
 
@@ -635,7 +637,9 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
         </Card>
       ) : (
         <div className="space-y-4">
-          {Object.entries(groupTransactionsByDate(filtered)).map(([date, group]) => {
+          {Object.entries(groupTransactionsByDate(filtered))
+            .sort(([dateA], [dateB]) => new Date(dateB).getTime() - new Date(dateA).getTime())
+            .map(([date, group]) => {
             const displayDate = new Date(date).toLocaleDateString('es-MX', {
               weekday: 'long',
               year: 'numeric',
