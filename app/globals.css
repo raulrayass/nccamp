@@ -756,16 +756,3 @@ input:focus, textarea:focus, select:focus {
 [role="dialog"] {
   animation: scaleIn 300ms cubic-bezier(0.16, 1, 0.3, 1);
 }
-
-/* Highlight transaction when navigated from dashboard */
-.highlight-transaction {
-  background-color: hsl(from var(--primary) h s calc(l + 45%)) !important;
-  border-color: var(--primary) !important;
-  box-shadow: 0 0 0 3px hsl(from var(--primary) h s calc(l + 40%)), 0 0 20px -4px var(--primary) !important;
-  animation: pulse 2s ease-in-out infinite;
-}
-
-.dark .highlight-transaction {
-  background-color: hsl(from var(--primary) h s calc(l + 15%)) !important;
-  box-shadow: 0 0 0 3px hsl(from var(--primary) h s calc(l + 10%)), 0 0 20px -4px var(--primary) !important;
-}
