@@ -1,9 +1,7 @@
 'use client'
 
-import { useState, useEffect, useTransition, useCallback } from 'react'
+import { useState, useEffect, useTransition } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
-import { useEventSession } from '@/lib/contexts/event-session-context'
-import { useCachedData, CACHE_KEYS } from '@/lib/hooks/use-cached-data'
 import { GroupTabs, PERSONAS_TABS } from '@/components/group-tabs'
 import {
   getAllStaff,
@@ -72,25 +70,10 @@ const emptyForm = {
 const SHIRT_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
 
 export function StaffClient({ userId, eventId }: Props) {
-  // Cached data across navigation
-  const { data: staffList, mutate: mutateStaff, isLoading: staffLoading } = useCachedData(
-    CACHE_KEYS.staff(userId, eventId),
-    () => getAllStaff(userId, eventId),
-  )
-  const { data: churches, mutate: mutateChurches, isLoading: churchesLoading } = useCachedData(
-    CACHE_KEYS.churches(userId),
-    () => getChurches(userId),
-  )
-  const { data: teams, mutate: mutateTeams, isLoading: teamsLoading } = useCachedData(
-    CACHE_KEYS.teams(userId, eventId),
-    () => getTeams(userId, eventId),
-  )
-  const { data: rooms, mutate: mutateRooms, isLoading: roomsLoading } = useCachedData(
-    CACHE_KEYS.rooms(userId, eventId),
-    () => getRooms(userId, eventId),
-  )
-
-  // UI state
+  const [staffList, setStaffList] = useState<Staff[]>([])
+  const [churches, setChurches] = useState<Church[]>([])
+  const [teams, setTeams] = useState<Team[]>([])
+  const [rooms, setRooms] = useState<Room[]>([])
   const [isPending, startTransition] = useTransition()
   const [dialogOpen, setDialogOpen] = useState(false)
   const [paymentDialogOpen, setPaymentDialogOpen] = useState(false)
@@ -109,6 +92,7 @@ export function StaffClient({ userId, eventId }: Props) {
   const [historyStaffId, setHistoryStaffId] = useState<number | null>(null)
   const [paymentHistory, setPaymentHistory] = useState<StaffPayment[]>([])
   const [loadingHistory, setLoadingHistory] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [churchFilter, setChurchFilter] = useState('')
@@ -118,7 +102,6 @@ export function StaffClient({ userId, eventId }: Props) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const loading = staffLoading || churchesLoading || teamsLoading || roomsLoading
 
   useEffect(() => {
     initializeDefaults()
@@ -137,6 +120,39 @@ export function StaffClient({ userId, eventId }: Props) {
     if (searchParams.get('new') === '1') {
       router.replace(pathname, { scroll: false })
     }
+  }
+
+  async function initializeDefaults() {
+    setLoading(true)
+    try {
+      await loadStaff()
+      await loadChurches()
+      await loadTeams()
+      await loadRooms()
+    } catch (error) {
+      console.error('Error loading data:', error)
+    }
+    setLoading(false)
+  }
+
+  async function loadStaff() {
+    const allData = await getAllStaff(userId, eventId)
+    setStaffList(allData)
+  }
+
+  async function loadChurches() {
+    const data = await getChurches(userId)
+    setChurches(data)
+  }
+
+  async function loadTeams() {
+    const data = await getTeams(userId)
+    setTeams(data)
+  }
+
+  async function loadRooms() {
+    const data = await getRooms(userId)
+    setRooms(data)
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -181,7 +197,7 @@ export function StaffClient({ userId, eventId }: Props) {
         setForm({ ...emptyForm })
         setEditingId(null)
         clearNewParam()
-        mutateStaff()
+        await loadStaff()
       } catch (error) {
         toast.error('Error al guardar el staff')
         console.error(error)
@@ -225,7 +241,7 @@ export function StaffClient({ userId, eventId }: Props) {
           notes: '',
         })
         setSelectedStaffId(null)
-        mutateStaff()
+        await loadStaff()
       } catch (error) {
         toast.error('Error al registrar el pago')
         console.error(error)
@@ -238,7 +254,7 @@ export function StaffClient({ userId, eventId }: Props) {
       try {
         await deleteStaff(userId, id, eventId)
         toast.success('Staff eliminado')
-        mutateStaff()
+        await loadStaff()
       } catch (error) {
         toast.error('Error al eliminar el staff')
         console.error(error)
@@ -252,7 +268,7 @@ export function StaffClient({ userId, eventId }: Props) {
       try {
         await toggleCheckIn(userId, member.id, next)
         toast.success(next ? `${member.name} registró Check-in` : `Check-in cancelado para ${member.name}`)
-        mutateStaff()
+        await loadStaff()
       } catch (error) {
         toast.error('Error al actualizar el check-in')
         console.error(error)
@@ -284,7 +300,7 @@ export function StaffClient({ userId, eventId }: Props) {
           const data = await getStaffPayments(userId, historyStaffId)
           setPaymentHistory(data)
         }
-        mutateStaff()
+        await loadStaff()
       } catch (error) {
         toast.error('Error al eliminar el pago')
         console.error(error)
@@ -364,7 +380,7 @@ export function StaffClient({ userId, eventId }: Props) {
         ) {
           await bulkCreateStaff(userId, staffToImport, eventId)
           toast.success(`${staffToImport.length} staff importados correctamente`)
-          mutateStaff()
+          await loadStaff()
         } else {
           toast.error('Verifica que todos los registros tengan Nombre y Monto Total válidos.')
         }
