@@ -28,7 +28,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import { Plus, Trash2, DollarSign, Upload, Download, Edit2, Users, History, Search, CheckCircle2, Circle, CreditCard, UserCheck, Users2, LogIn } from 'lucide-react'
+import { Plus, Trash2, DollarSign, Upload, Download, Edit2, Users, History, Search, CheckCircle2, Circle, CreditCard, UserCheck, Users2, LogIn, Filter, ChevronDown as ChevronDownIcon, X } from 'lucide-react'
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerClose } from '@/components/ui/drawer'
+import { jsPDF } from 'jspdf'
+import autoTable from 'jspdf-autotable'
 import * as XLSX from 'xlsx'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
@@ -74,6 +77,8 @@ export function StaffClient({ userId, eventId }: Props) {
   const [churches, setChurches] = useState<Church[]>([])
   const [teams, setTeams] = useState<Team[]>([])
   const [rooms, setRooms] = useState<Room[]>([])
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false)
+  const [fullscreenStats, setFullscreenStats] = useState(false)
   const [isPending, startTransition] = useTransition()
   const [dialogOpen, setDialogOpen] = useState(false)
   const [paymentDialogOpen, setPaymentDialogOpen] = useState(false)
@@ -95,6 +100,7 @@ export function StaffClient({ userId, eventId }: Props) {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
+  const [checkInFilter, setCheckInFilter] = useState('all')
   const [churchFilter, setChurchFilter] = useState('')
   const [teamFilter, setTeamFilter] = useState('')
   const [roomFilter, setRoomFilter] = useState('')
@@ -435,9 +441,14 @@ export function StaffClient({ userId, eventId }: Props) {
 
     const matchesStatus = statusFilter === 'all' || a.status === statusFilter
     const matchesChurch = !churchFilter || a.church === churches.find(c => c.id === parseInt(churchFilter))?.name
+    const matchesCheckIn = checkInFilter === 'all' ||
+      (checkInFilter === 'checked' && a.checkedIn) ||
+      (checkInFilter === 'unchecked' && !a.checkedIn)
 
-    return matchesSearch && matchesStatus && matchesChurch
+    return matchesSearch && matchesStatus && matchesChurch && matchesCheckIn
   })
+
+  const hasActiveFilters = search || statusFilter !== 'all' || churchFilter || teamFilter || roomFilter || checkInFilter !== 'all'
 
   const summary = staffList.reduce(
     (acc, a) => {
@@ -533,30 +544,132 @@ export function StaffClient({ userId, eventId }: Props) {
         </div>
       )}
 
-      {/* Smart filter system */}
+      {/* Search input */}
       {!loading && staffList.length > 0 && (
-        <SmartFilter
-          search={search}
-          onSearchChange={setSearch}
-          statusFilter={statusFilter}
-          onStatusChange={setStatusFilter}
-          churchFilter={churchFilter}
-          onChurchChange={setChurchFilter}
-          churches={churches}
-          teamFilter={teamFilter}
-          onTeamChange={setTeamFilter}
-          teams={teams}
-          roomFilter={roomFilter}
-          onRoomChange={setRoomFilter}
-          rooms={rooms}
-          onClearFilters={() => {
-            setSearch('')
-            setStatusFilter('all')
-            setChurchFilter('')
-            setTeamFilter('')
-            setRoomFilter('')
-          }}
-        />
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Buscar staff..."
+            className="pl-10 h-9"
+          />
+        </div>
+      )}
+
+      {/* Filter chips - Status and other filters */}
+      {!loading && staffList.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => setStatusFilter('all')}
+            className={cn(
+              'px-3 py-1.5 rounded-full text-sm font-medium transition-colors border',
+              statusFilter === 'all'
+                ? 'bg-green-600 text-white border-green-600'
+                : 'bg-white/5 text-foreground border-border hover:bg-white/10'
+            )}
+          >
+            Todos
+          </button>
+          <button
+            onClick={() => setStatusFilter('paid')}
+            className={cn(
+              'px-3 py-1.5 rounded-full text-sm font-medium transition-colors border',
+              statusFilter === 'paid'
+                ? 'bg-green-600 text-white border-green-600'
+                : 'bg-white/5 text-foreground border-border hover:bg-white/10'
+            )}
+          >
+            Pagados
+          </button>
+          <button
+            onClick={() => setStatusFilter('partial')}
+            className={cn(
+              'px-3 py-1.5 rounded-full text-sm font-medium transition-colors border',
+              statusFilter === 'partial'
+                ? 'bg-green-600 text-white border-green-600'
+                : 'bg-white/5 text-foreground border-border hover:bg-white/10'
+            )}
+          >
+            Parciales
+          </button>
+          <button
+            onClick={() => setStatusFilter('pending')}
+            className={cn(
+              'px-3 py-1.5 rounded-full text-sm font-medium transition-colors border',
+              statusFilter === 'pending'
+                ? 'bg-green-600 text-white border-green-600'
+                : 'bg-white/5 text-foreground border-border hover:bg-white/10'
+            )}
+          >
+            Pendientes
+          </button>
+          {/* Check-in chips */}
+          <span className="w-px h-6 bg-border self-center mx-1" />
+          <button
+            onClick={() => setCheckInFilter(checkInFilter === 'checked' ? 'all' : 'checked')}
+            className={cn(
+              'px-3 py-1.5 rounded-full text-sm font-medium transition-colors border inline-flex items-center gap-1.5',
+              checkInFilter === 'checked'
+                ? 'bg-blue-600 text-white border-blue-600'
+                : 'bg-white/5 text-foreground border-border hover:bg-white/10'
+            )}
+          >
+            <CheckCircle2 className="w-3.5 h-3.5" />
+            Con check-in
+          </button>
+          <button
+            onClick={() => setCheckInFilter(checkInFilter === 'unchecked' ? 'all' : 'unchecked')}
+            className={cn(
+              'px-3 py-1.5 rounded-full text-sm font-medium transition-colors border inline-flex items-center gap-1.5',
+              checkInFilter === 'unchecked'
+                ? 'bg-blue-600 text-white border-blue-600'
+                : 'bg-white/5 text-foreground border-border hover:bg-white/10'
+            )}
+          >
+            <Circle className="w-3.5 h-3.5" />
+            Sin check-in
+          </button>
+          {/* Advanced filters toggle */}
+          {(churches.length > 0 || teams.length > 0) && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+              className="gap-1.5 text-xs h-9 ml-auto"
+            >
+              <Filter className="w-3.5 h-3.5" />
+              <span>Más filtros</span>
+              <ChevronDownIcon className={`w-3.5 h-3.5 transition-transform ${showAdvancedFilters ? 'rotate-180' : ''}`} />
+            </Button>
+          )}
+        </div>
+      )}
+
+      {/* Results count */}
+      {!loading && staffList.length > 0 && (
+        <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
+          <span>
+            Mostrando <span className="font-semibold text-foreground">{filteredStaff.length}</span> de{' '}
+            <span className="font-semibold text-foreground">{staffList.length}</span> staff
+          </span>
+          {hasActiveFilters && (
+            <button
+              onClick={() => {
+                setSearch('')
+                setStatusFilter('all')
+                setCheckInFilter('all')
+                setChurchFilter('')
+                setTeamFilter('')
+                setRoomFilter('')
+              }}
+              className="inline-flex items-center gap-1 text-primary hover:underline"
+            >
+              <X className="w-3.5 h-3.5" />
+              Limpiar filtros
+            </button>
+          )}
+        </div>
       )}
 
 
