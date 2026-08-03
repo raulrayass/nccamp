@@ -665,7 +665,9 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
           {Object.entries(groupTransactionsByDate(filtered))
             .sort(([dateA], [dateB]) => new Date(dateB).getTime() - new Date(dateA).getTime())
             .map(([date, group]) => {
-            const displayDate = new Date(date).toLocaleDateString('es-MX', {
+            // Parse date string (YYYY-MM-DD) in local timezone to avoid UTC offset issues
+            const [year, month, day] = date.split('-').map(Number)
+            const displayDate = new Date(year, month - 1, day).toLocaleDateString('es-MX', {
               weekday: 'long',
               year: 'numeric',
               month: 'long',
