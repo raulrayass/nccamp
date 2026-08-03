@@ -71,7 +71,7 @@ export function useCachedStaff(
 /**
  * Generic cache hook for any data
  */
-export function useCachedData<T>(
+export function useCachedData<T extends any[] = any[]>(
   key: string,
   fetcher: () => Promise<T>,
   options?: any
@@ -83,7 +83,7 @@ export function useCachedData<T>(
   )
 
   return {
-    data: data as T,
+    data: (data || []) as T,
     error,
     isLoading,
     mutate,
