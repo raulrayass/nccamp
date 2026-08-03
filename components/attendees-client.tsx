@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect, useTransition } from 'react'
+import { useState, useEffect, useTransition, useCallback } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { useEventSession } from '@/lib/contexts/event-session-context'
+import { useCachedData, CACHE_KEYS } from '@/lib/hooks/use-cached-data'
 import { GroupTabs, PERSONAS_TABS } from '@/components/group-tabs'
 import {
   getAllAttendees,
@@ -71,10 +72,25 @@ const emptyForm = {
 const SHIRT_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
 
 export function AttendeesClient({ userId, eventId }: Props) {
-  const [attendeeList, setAttendeeList] = useState<Attendee[]>([])
-  const [churches, setChurches] = useState<Church[]>([])
-  const [teams, setTeams] = useState<Team[]>([])
-  const [rooms, setRooms] = useState<Room[]>([])
+  // Cached data across navigation
+  const { data: attendeeList, mutate: mutateAttendees, isLoading: attendeesLoading } = useCachedData(
+    CACHE_KEYS.attendees(userId, eventId),
+    () => getAllAttendees(userId, eventId),
+  )
+  const { data: churches, mutate: mutateChurches, isLoading: churchesLoading } = useCachedData(
+    CACHE_KEYS.churches(userId),
+    () => getChurches(userId),
+  )
+  const { data: teams, mutate: mutateTeams, isLoading: teamsLoading } = useCachedData(
+    CACHE_KEYS.teams(userId, eventId),
+    () => getTeams(userId, eventId),
+  )
+  const { data: rooms, mutate: mutateRooms, isLoading: roomsLoading } = useCachedData(
+    CACHE_KEYS.rooms(userId, eventId),
+    () => getRooms(userId, eventId),
+  )
+
+  // UI state
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false)
   const [fullscreenStats, setFullscreenStats] = useState(false)
   const [isPending, startTransition] = useTransition()
@@ -95,7 +111,6 @@ export function AttendeesClient({ userId, eventId }: Props) {
   const [historyAttendeeId, setHistoryAttendeeId] = useState<number | null>(null)
   const [paymentHistory, setPaymentHistory] = useState<AttendeePayment[]>([])
   const [loadingHistory, setLoadingHistory] = useState(false)
-  const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [checkInFilter, setCheckInFilter] = useState('all')
@@ -106,6 +121,7 @@ export function AttendeesClient({ userId, eventId }: Props) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const loading = attendeesLoading || churchesLoading || teamsLoading || roomsLoading
 
   // Abre el modal de agregar cuando el FAB del dock navega con ?new=1
   useEffect(() => {
@@ -121,44 +137,6 @@ export function AttendeesClient({ userId, eventId }: Props) {
     if (searchParams.get('new') === '1') {
       router.replace(pathname, { scroll: false })
     }
-  }
-
-  useEffect(() => {
-    initializeDefaults()
-  }, [userId])
-
-  async function initializeDefaults() {
-    setLoading(true)
-    try {
-      await loadAttendees()
-      await loadChurches()
-      await loadTeams()
-      await loadRooms()
-    } catch (error) {
-      console.error('Error loading data:', error)
-    }
-    setLoading(false)
-  }
-
-  async function loadAttendees() {
-    // Load all attendees for calculations and metrics (not paginated)
-    const allData = await getAllAttendees(userId, eventId)
-    setAttendeeList(allData)
-  }
-
-  async function loadChurches() {
-    const data = await getChurches(userId)
-    setChurches(data)
-  }
-
-  async function loadTeams() {
-    const data = await getTeams(userId)
-    setTeams(data)
-  }
-
-  async function loadRooms() {
-    const data = await getRooms(userId)
-    setRooms(data)
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -214,7 +192,7 @@ export function AttendeesClient({ userId, eventId }: Props) {
         setForm({ ...emptyForm })
         setEditingId(null)
         clearNewParam()
-        await loadAttendees()
+        mutateAttendees()
       } catch (error) {
         toast.error('Error al guardar el campero')
         console.error(error)
@@ -258,22 +236,9 @@ export function AttendeesClient({ userId, eventId }: Props) {
           notes: '',
         })
         setSelectedAttendeeId(null)
-        await loadAttendees()
+        mutateAttendees()
       } catch (error) {
         toast.error('Error al registrar el pago')
-        console.error(error)
-      }
-    })
-  }
-
-  async function handleDelete(id: number) {
-    startTransition(async () => {
-      try {
-        await deleteAttendee(userId, id)
-        toast.success('Campero eliminado')
-        await loadAttendees()
-      } catch (error) {
-        toast.error('Error al eliminar el campero')
         console.error(error)
       }
     })
@@ -284,8 +249,8 @@ export function AttendeesClient({ userId, eventId }: Props) {
     startTransition(async () => {
       try {
         await toggleCheckIn(userId, attendee.id, next)
-        toast.success(next ? `${attendee.name} registró Check-in` : `Check-in cancelado para ${attendee.name}`)
-        await loadAttendees()
+        toast.success(next ? 'Entrada registrada' : 'Entrada cancelada')
+        mutateAttendees()
       } catch (error) {
         toast.error('Error al actualizar el check-in')
         console.error(error)
@@ -317,7 +282,7 @@ export function AttendeesClient({ userId, eventId }: Props) {
           const data = await getAttendeePayments(userId, historyAttendeeId)
           setPaymentHistory(data)
         }
-        await loadAttendees()
+        mutateAttendees()
       } catch (error) {
         toast.error('Error al eliminar el pago')
         console.error(error)
@@ -419,7 +384,7 @@ export function AttendeesClient({ userId, eventId }: Props) {
         ) {
           await bulkCreateAttendees(userId, attendeesToImport, eventId)
           toast.success(`${attendeesToImport.length} camperos importados correctamente`)
-          await loadAttendees()
+          mutateAttendees()
         } else {
           toast.error('Verifica que todos los registros tengan Nombre y Monto Total válidos.')
         }
