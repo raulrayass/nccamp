@@ -502,15 +502,37 @@ export function StaffClient({ userId, eventId }: Props) {
       {/* Tabs del grupo Personas */}
       <GroupTabs tabs={PERSONAS_TABS} />
 
-      {/* Stats Bar */}
+      {/* Quick Stats - 3 column grid (same as Attendees) */}
       {!loading && staffList.length > 0 && (
-        <StatsBar
-          items={[
-            { label: 'Total Staff', value: staffList.length, icon: <Users2 className="w-3 sm:w-4 h-3 sm:h-4" />, color: 'primary' },
-            { label: 'Pagados', value: paidCount, icon: <CreditCard className="w-3 sm:w-4 h-3 sm:h-4" />, color: 'success' },
-            { label: 'Check-in', value: checkedInCount, icon: <LogIn className="w-3 sm:w-4 h-3 sm:h-4" />, color: 'primary' },
-          ]}
-        />
+        <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
+          <Card className="bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/30 shadow-none">
+            <CardContent className="p-2 sm:p-2.5">
+              <div className="text-center">
+                <Users2 className="w-3.5 h-3.5 text-emerald-600 mx-auto mb-0.5" />
+                <p className="text-base sm:text-lg font-bold text-foreground">{staffList.length}</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">Total</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/30 shadow-none">
+            <CardContent className="p-2 sm:p-2.5">
+              <div className="text-center">
+                <CreditCard className="w-3.5 h-3.5 text-blue-600 mx-auto mb-0.5" />
+                <p className="text-base sm:text-lg font-bold text-foreground">{paidCount}</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">Pagados</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="bg-gradient-to-br from-amber-500/10 to-amber-600/5 border border-amber-500/30 shadow-none">
+            <CardContent className="p-2 sm:p-2.5">
+              <div className="text-center">
+                <LogIn className="w-3.5 h-3.5 text-amber-600 mx-auto mb-0.5" />
+                <p className="text-base sm:text-lg font-bold text-foreground">{checkedInCount}</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">Check-in</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       )}
 
       {/* Main content cards - Finanzas and Check-in */}
