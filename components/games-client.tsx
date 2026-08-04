@@ -233,14 +233,28 @@ export function GamesClient({ userId, eventId }: Props) {
         </div>
       </PageHeader>
 
-      {/* Stats Bar */}
+      {/* Quick Stats - 2 column grid (matches Staff/Attendees style) */}
       {!loading && gameList.length > 0 && (
-        <StatsBar
-          items={[
-            { label: 'Juegos Creados', value: gameList.length, icon: <Gamepad2 className="w-5 h-5" />, color: 'primary' },
-            { label: 'Equipos Participando', value: teams.length, icon: <Users2 className="w-5 h-5" />, color: 'success' },
-          ]}
-        />
+        <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
+          <Card className="bg-gradient-to-br from-indigo-500/10 to-indigo-600/5 border border-indigo-500/30 shadow-none">
+            <CardContent className="p-2 sm:p-2.5">
+              <div className="text-center">
+                <Gamepad2 className="w-3.5 h-3.5 text-indigo-600 mx-auto mb-0.5" />
+                <p className="text-base sm:text-lg font-bold text-foreground">{gameList.length}</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">Juegos Creados</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/30 shadow-none">
+            <CardContent className="p-2 sm:p-2.5">
+              <div className="text-center">
+                <Users2 className="w-3.5 h-3.5 text-emerald-600 mx-auto mb-0.5" />
+                <p className="text-base sm:text-lg font-bold text-foreground">{teams.length}</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">Equipos Participando</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       )}
 
       {/* Leaderboard */}
