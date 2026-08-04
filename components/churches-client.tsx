@@ -110,13 +110,19 @@ export function ChurchesClient({ userId, eventId }: Props) {
       {/* Tabs del grupo Logística */}
       <GroupTabs tabs={LOGISTICA_TABS} />
 
-      {/* Stats Bar */}
+      {/* Quick Stat - Iglesias Totales */}
       {churches.length > 0 && (
-        <StatsBar
-          items={[
-            { label: 'Iglesias Totales', value: churches.length, icon: <MapPin className="w-5 h-5" />, color: 'primary' },
-          ]}
-        />
+        <div className="w-full">
+          <Card className="bg-gradient-to-br from-purple-500/10 to-purple-600/5 border border-purple-500/30 shadow-none">
+            <CardContent className="p-2 sm:p-2.5">
+              <div className="text-center">
+                <MapPin className="w-3.5 h-3.5 text-purple-600 mx-auto mb-0.5" />
+                <p className="text-base sm:text-lg font-bold text-foreground">{churches.length}</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">Iglesias Totales</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       )}
 
       {/* Churches Grid */}

@@ -146,13 +146,19 @@ export function RoomsClient({ userId, eventId }: Props) {
       {/* Tabs del grupo Logística */}
       <GroupTabs tabs={LOGISTICA_TABS} />
 
-      {/* Stats Bar */}
+      {/* Quick Stat - Habitaciones Totales */}
       {!loading && roomList.length > 0 && (
-        <StatsBar
-          items={[
-            { label: 'Habitaciones Totales', value: roomList.length, icon: <Home className="w-5 h-5" />, color: 'primary' },
-          ]}
-        />
+        <div className="w-full">
+          <Card className="bg-gradient-to-br from-cyan-500/10 to-cyan-600/5 border border-cyan-500/30 shadow-none">
+            <CardContent className="p-2 sm:p-2.5">
+              <div className="text-center">
+                <Home className="w-3.5 h-3.5 text-cyan-600 mx-auto mb-0.5" />
+                <p className="text-base sm:text-lg font-bold text-foreground">{roomList.length}</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">Habitaciones Totales</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       )}
 
       {loading ? (
