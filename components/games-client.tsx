@@ -168,9 +168,9 @@ export function GamesClient({ userId, eventId }: Props) {
     })
   }
 
-  const openScoring = (gameId: number) => {
+  const openScoring = async (gameId: number) => {
     setSelectedGameId(gameId)
-    loadScoresForGame(gameId)
+    await loadScoresForGame(gameId)
     setScoringDialogOpen(true)
   }
 
