@@ -28,8 +28,7 @@ export function GameStatsCard() {
       label: 'Juegos Totales',
       value: totalGames,
       icon: Gamepad2,
-      color: 'text-indigo-600',
-      bgColor: 'bg-indigo-50 dark:bg-indigo-950/30',
+      color: 'indigo',
       href: '/games',
       action: 'Ver juegos',
     },
@@ -37,8 +36,7 @@ export function GameStatsCard() {
       label: 'Equipos',
       value: totalTeams,
       icon: Users2,
-      color: 'text-emerald-600',
-      bgColor: 'bg-emerald-50 dark:bg-emerald-950/30',
+      color: 'emerald',
       href: '/teams',
       action: 'Ver equipos',
     },
@@ -46,8 +44,7 @@ export function GameStatsCard() {
       label: 'Esta Semana',
       value: gamesThisWeek,
       icon: Target,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-50 dark:bg-orange-950/30',
+      color: 'amber',
       href: '/games',
       action: 'Ver más',
     },
@@ -56,36 +53,55 @@ export function GameStatsCard() {
       value: topTeamByPoints?.name || '-',
       subvalue: topTeamByPoints?.points ? `${topTeamByPoints.points} pts` : undefined,
       icon: Trophy,
-      color: 'text-yellow-600',
-      bgColor: 'bg-yellow-50 dark:bg-yellow-950/30',
+      color: 'yellow',
       href: '/ranking',
       action: 'Ver ranking',
     },
   ]
+
+  const colorClasses: Record<string, { gradient: string; border: string; icon: string }> = {
+    indigo: {
+      gradient: 'from-indigo-500/10 to-indigo-600/5',
+      border: 'border-indigo-500/30',
+      icon: 'text-indigo-600',
+    },
+    emerald: {
+      gradient: 'from-emerald-500/10 to-emerald-600/5',
+      border: 'border-emerald-500/30',
+      icon: 'text-emerald-600',
+    },
+    amber: {
+      gradient: 'from-amber-500/10 to-amber-600/5',
+      border: 'border-amber-500/30',
+      icon: 'text-amber-600',
+    },
+    yellow: {
+      gradient: 'from-yellow-500/10 to-yellow-600/5',
+      border: 'border-yellow-500/30',
+      icon: 'text-yellow-600',
+    },
+  }
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
       {stats.map((stat, idx) => {
         const Icon = stat.icon
         const isText = typeof stat.value === 'string'
+        const colors = colorClasses[stat.color]
         return (
           <Card 
             key={idx} 
-            className="p-4 sm:p-5 cursor-pointer hover:shadow-lg hover:scale-105 transition-all group"
+            className={`bg-gradient-to-br ${colors.gradient} border ${colors.border} shadow-none p-3 sm:p-4 cursor-pointer hover:shadow-md transition-all group`}
             onClick={() => router.push(stat.href)}
           >
-            <div className={`w-10 h-10 rounded-lg ${stat.bgColor} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
-              <Icon className={`w-5 h-5 ${stat.color}`} />
+            <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center mb-2 sm:mb-3 group-hover:scale-110 transition-transform`}>
+              <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${colors.icon}`} />
             </div>
-            <p className="text-xs sm:text-sm text-muted-foreground font-medium">{stat.label}</p>
-            <p className={`text-lg sm:text-2xl font-bold mt-1 ${isText ? 'text-sm' : ''}`}>
+            <p className="text-[10px] sm:text-xs text-muted-foreground font-medium line-clamp-1">{stat.label}</p>
+            <p className={`text-base sm:text-lg font-bold mt-0.5 sm:mt-1 ${isText ? 'text-xs sm:text-sm' : ''}`}>
               {isText ? stat.value : stat.value}
             </p>
-            {stat.subvalue && <p className="text-xs text-muted-foreground mt-1">{stat.subvalue}</p>}
-            <div className="flex items-center gap-1 mt-3 text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-              <span>{stat.action}</span>
-              <ArrowRight className="w-3 h-3" />
-            </div>
+            {stat.subvalue && <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">{stat.subvalue}</p>}
           </Card>
         )
       })}
