@@ -513,34 +513,83 @@ export function StaffClient({ userId, eventId }: Props) {
         />
       )}
 
-      {/* Summary Cards */}
+      {/* Main content cards - Finanzas and Check-in */}
       {!loading && staffList.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-1 sm:gap-1.5">
-          <StatCard
-            label="Esperado"
-            value={formatMXN(summary.expected)}
-            color="blue"
-            icon={DollarSign}
-          />
-          <StatCard
-            label="Recaudado"
-            value={formatMXN(summary.collected)}
-            color="green"
-            icon={CreditCard}
-          />
-          <StatCard
-            label="Pendiente"
-            value={formatMXN(pendingAmount)}
-            color="red"
-            icon={History}
-          />
-          <StatCard
-            label="Check-in"
-            value={`${checkedInCount}/${staffList.length}`}
-            color="primary"
-            icon={UserCheck}
-            subtitle={`${paidCount} pagados • ${partialCount} parciales`}
-          />
+        <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
+          {/* Finanzas Card */}
+          <Card className="bg-white/5 border border-border shadow-none">
+            <CardContent className="p-2 sm:p-3">
+              <div className="flex items-start gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-green-500/20 flex items-center justify-center flex-shrink-0">
+                  <DollarSign className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-green-600" />
+                </div>
+                <h3 className="font-semibold text-xs sm:text-sm">Finanzas</h3>
+              </div>
+              <div className="space-y-1.5 sm:space-y-2">
+                <div>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5">Esperado</p>
+                  <p className="text-xs sm:text-sm font-bold text-foreground">{formatMXN(summary.expected)}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground mb-1">Recaudado</p>
+                  <p className="text-sm sm:text-base font-bold text-green-600">{formatMXN(summary.collected)}</p>
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <Progress value={Math.min(100, (summary.collected / summary.expected) * 100)} className="h-1.5" />
+                    <span className="text-[10px] text-muted-foreground whitespace-nowrap">
+                      {Math.round((summary.collected / summary.expected) * 100)}%
+                    </span>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5">Pendiente</p>
+                  <p className="text-xs sm:text-sm font-bold text-red-600">{formatMXN(pendingAmount)}</p>
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <Progress value={summary.expected > 0 ? Math.min(100, (pendingAmount / summary.expected) * 100) : 0} className="h-1.5" />
+                    <span className="text-xs text-muted-foreground whitespace-nowrap">
+                      {summary.expected > 0 ? Math.round((pendingAmount / summary.expected) * 100) : 0}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Check-in Card */}
+          <Card className="bg-white/5 border border-border">
+            <CardContent className="p-2.5 sm:p-4">
+              <div className="flex items-start gap-2 sm:gap-3 mb-2 sm:mb-3">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                  <UserCheck className="w-4 sm:w-5 h-4 sm:h-5 text-blue-600" />
+                </div>
+                <h3 className="font-semibold text-xs sm:text-sm">Check-in</h3>
+              </div>
+              <div className="space-y-2 sm:space-y-3">
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs sm:text-sm text-foreground">{checkedInCount} / {staffList.length}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {Math.round((checkedInCount / staffList.length) * 100)}%
+                    </span>
+                  </div>
+                  <Progress value={Math.min(100, (checkedInCount / staffList.length) * 100)} className="h-2" />
+                </div>
+                <div className="space-y-1 sm:space-y-1.5 text-xs">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-green-600" />
+                    <span className="text-muted-foreground">{paidCount} Pagados</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-amber-500" />
+                    <span className="text-muted-foreground">{partialCount} Parciales</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-red-600" />
+                    <span className="text-muted-foreground">{pendingCount} Pendientes</span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       )}
 
