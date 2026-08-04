@@ -188,6 +188,61 @@ export async function deleteGameScore(userId: string, scoreId: number) {
 }
 
 // Leaderboard: total points per team across all games
+export async function getRankingTimeline(userId: string, eventId?: number | null) {
+  const gameConditions = [eq(games.userId, userId)]
+  const scoreConditions = [eq(gameScores.userId, userId)]
+  const teamConditions = [eq(teams.userId, userId)]
+
+  if (eventId !== undefined && eventId !== null) {
+    gameConditions.push(eq(games.eventId, eventId))
+    scoreConditions.push(eq(gameScores.eventId, eventId))
+    teamConditions.push(eq(teams.eventId, eventId))
+  }
+
+  const [allGames, allScores, allTeams] = await Promise.all([
+    db.select().from(games).where(and(...(gameConditions as any))),
+    db.select().from(gameScores).where(and(...(scoreConditions as any))),
+    db.select().from(teams).where(and(...(teamConditions as any))),
+  ])
+
+  const gameDates = new Map(allGames.map((game) => [game.id, game.gameDate]))
+  const teamNames = new Map(allTeams.map((team) => [team.id, team.name]))
+  const teamColors = new Map(allTeams.map((team) => [team.id, team.color]))
+  const scoresByDate = new Map<string, Map<number, number>>()
+
+  for (const score of allScores) {
+    const date = gameDates.get(score.gameId)
+    if (!date) continue
+    if (!scoresByDate.has(date)) scoresByDate.set(date, new Map())
+    const dateScores = scoresByDate.get(date)!
+    dateScores.set(score.teamId, (dateScores.get(score.teamId) || 0) + score.points)
+  }
+
+  const totals = new Map<number, number>()
+  return Array.from(scoresByDate.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([date, dateScores]) => {
+      for (const [teamId, points] of dateScores) {
+        totals.set(teamId, (totals.get(teamId) || 0) + points)
+      }
+      const orderedTeams = Array.from(totals.entries()).sort((a, b) => b[1] - a[1])
+      const row: Record<string, string | number> = { date }
+      for (const [teamId, points] of orderedTeams) {
+        row[`team_${teamId}`] = points
+      }
+      return {
+        date,
+        teams: orderedTeams.map(([teamId, points]) => ({
+          id: teamId,
+          name: teamNames.get(teamId) || 'Equipo',
+          color: teamColors.get(teamId) || '#4a9d67',
+          points,
+        })),
+        values: row,
+      }
+    })
+}
+
 export async function getLeaderboard(userId: string, eventId?: number | null) {
   const teamConditions = [eq(teams.userId, userId)]
   if (eventId !== undefined && eventId !== null) {

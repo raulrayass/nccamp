@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useTransition } from 'react'
+import { useState, useEffect, useMemo, useTransition } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -21,6 +21,7 @@ import { PodiumFullscreen } from '@/components/podium-fullscreen'
 import { useGames, useTeams, useGameScores } from '@/lib/hooks'
 import { MobileSheet } from '@/components/mobile'
 import { ListSkeleton } from '@/components/list-skeleton'
+import { RankingHistoryChart } from '@/components/ranking-history-chart'
 
 interface Props {
   userId: string
@@ -199,6 +200,37 @@ export function GamesClient({ userId, eventId }: Props) {
       pointsPerGame: getTeamPointsPerGame(team.id),
     }))
     .sort((a, b) => b.totalPoints - a.totalPoints)
+
+  const rankingTimeline = useMemo(() => {
+    const datedGames = gameList
+      .filter((game) => game.gameDate)
+      .sort((a, b) => (a.gameDate || '').localeCompare(b.gameDate || ''))
+    const totals = new Map<number, number>()
+    const byDate = new Map<string, Map<number, number>>()
+
+    for (const game of datedGames) {
+      const scoresForGame = allGameScores.filter((score) => score.gameId === game.id)
+      if (!byDate.has(game.gameDate!)) byDate.set(game.gameDate!, new Map())
+      const day = byDate.get(game.gameDate!)!
+      for (const score of scoresForGame) {
+        day.set(score.teamId, (day.get(score.teamId) || 0) + score.points)
+      }
+    }
+
+    return Array.from(byDate.entries()).map(([date, dayScores]) => {
+      for (const [teamId, points] of dayScores) totals.set(teamId, (totals.get(teamId) || 0) + points)
+      const values: Record<string, string | number> = { date }
+      for (const [teamId, points] of totals) values[`team_${teamId}`] = points
+      return {
+        date,
+        values,
+        teams: Array.from(totals.entries()).map(([teamId, points]) => {
+          const team = teamMap.get(teamId)
+          return { id: teamId, name: team?.name || 'Equipo', color: team?.color || '#4a9d67', points }
+        }),
+      }
+    })
+  }, [allGameScores, gameList, teamMap])
 
   // Show skeleton while loading
   if (gamesLoading || teamsLoading || scoresLoading) {
