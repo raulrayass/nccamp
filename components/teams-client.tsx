@@ -13,7 +13,6 @@ import { Plus, Edit2, Trash2, ChevronDown, Users } from 'lucide-react'
 import { toast } from 'sonner'
 import { createTeam, updateTeam, deleteTeam, getTeams, getTeamMembers, getTeamMemberCounts } from '@/app/actions/teams'
 import { Team, Attendee } from '@/lib/db/schema'
-import { StatsBar } from '@/components/stats-bar'
 import { PageHeader } from '@/components/page-header'
 import { COUNTRIES } from '@/lib/countries'
 import { CountryFlagSvg } from '@/lib/country-flags-svg'
@@ -50,6 +49,12 @@ export function TeamsClient({ userId, eventId }: Props) {
 
   const emptyForm = { name: '', color: '#4a9d67', country: null as string | null, useCountry: false }
   const loading = teamsLoading
+  const teamPoints = allGameScores.reduce<Record<number, number>>((totals, score) => {
+    totals[score.teamId] = (totals[score.teamId] || 0) + score.points
+    return totals
+  }, {})
+  const rankedTeams = [...teamList].sort((a, b) => (teamPoints[b.id] || 0) - (teamPoints[a.id] || 0))
+  const teamRank = new Map(rankedTeams.map((team, index) => [team.id, index + 1]))
 
   const PRESET_COLORS = [
     { name: 'Verde', value: '#4a9d67' },
@@ -161,13 +166,32 @@ export function TeamsClient({ userId, eventId }: Props) {
       {/* Tabs del grupo Personas */}
       <GroupTabs tabs={PERSONAS_TABS} />
 
-      {/* Stats Bar */}
+      {/* Quick Stats - same compact visual language as Camperos */}
       {!loading && teamList.length > 0 && (
-        <StatsBar
-          items={[
-            { label: 'Equipos Totales', value: teamList.length, icon: <Users className="w-5 h-5" />, color: 'primary' },
-          ]}
-        />
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <Card className="border-emerald-500/40 bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 shadow-none dark:from-emerald-500/15 dark:to-emerald-600/5">
+            <CardContent className="p-2.5 sm:p-3">
+              <div className="flex items-center justify-center gap-2 text-center">
+                <Users className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                <div>
+                  <p className="text-lg font-bold leading-none text-foreground">{teamList.length}</p>
+                  <p className="mt-1 text-[10px] text-muted-foreground sm:text-xs">Equipos Totales</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="border-blue-500/40 bg-gradient-to-br from-blue-500/20 to-blue-600/10 shadow-none dark:from-blue-500/15 dark:to-blue-600/5">
+            <CardContent className="p-2.5 sm:p-3">
+              <div className="flex items-center justify-center gap-2 text-center">
+                <Trophy className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                <div>
+                  <p className="text-lg font-bold leading-none text-foreground">{allGameScores.reduce((total, score) => total + score.points, 0)}</p>
+                  <p className="mt-1 text-[10px] text-muted-foreground sm:text-xs">Puntos acumulados</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       )}
 
       {loading ? (
@@ -187,7 +211,10 @@ export function TeamsClient({ userId, eventId }: Props) {
         <div className="space-y-2">
           {teamList.map((team) => (
             <div key={team.id}>
-              <ListItemCard className="overflow-hidden">
+              <ListItemCard
+                className="overflow-hidden border-2 border-border/70 bg-gradient-to-r from-card via-card to-muted/30 shadow-sm transition-shadow hover:shadow-md dark:to-muted/10"
+                style={{ borderLeftColor: team.color || '#4a9d67' }}
+              >
                 <CardContent className="p-3 sm:p-4">
                   <div className="flex items-center justify-between gap-3">
                     <button
@@ -202,10 +229,15 @@ export function TeamsClient({ userId, eventId }: Props) {
                       />
                       <div className="min-w-0 flex-1">
                         <h3 className="font-semibold text-sm truncate text-foreground">{team.name}</h3>
-                        <p className="text-xs text-muted-foreground flex items-center gap-1">
-                          <Users className="w-3.5 h-3.5" />
-                          {memberCounts[team.id] || 0} integrante{(memberCounts[team.id] || 0) !== 1 ? 's' : ''}
-                        </p>
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                          <span className="flex items-center gap-1">
+                            <Users className="h-3.5 w-3.5" />
+                            {memberCounts[team.id] || 0} integrante{(memberCounts[team.id] || 0) !== 1 ? 's' : ''}
+                          </span>
+                          <span className="font-semibold text-foreground/80">
+                            #{teamRank.get(team.id) || '-'} · {teamPoints[team.id] || 0} pts
+                          </span>
+                        </div>
                       </div>
                     </button>
                     <div className="flex gap-1 shrink-0">

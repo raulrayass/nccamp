@@ -13,7 +13,6 @@ import { toast } from 'sonner'
 import { createGame, updateGame, deleteGame, addGameScore, deleteGameScore, getGameScores } from '@/app/actions/games'
 import { Game, GameScore, Team } from '@/lib/db/schema'
 import { cn } from '@/lib/utils'
-import { StatsBar } from '@/components/stats-bar'
 import { PageHeader } from '@/components/page-header'
 import { TeamFlag } from '@/components/team-flag'
 import { ScoreboardFullscreen } from '@/components/scoreboard-fullscreen'
@@ -81,7 +80,6 @@ export function GamesClient({ userId, eventId }: Props) {
     try {
       const gameScoresData = await getGameScores(userId, gameId, eventId)
       setGameScores(gameScoresData)
-      await refetchScores()
     } catch (error) {
       toast.error('Error al cargar puntuaciones')
       console.error(error)
@@ -268,7 +266,10 @@ export function GamesClient({ userId, eventId }: Props) {
       {/* Quick Stats - 2 column grid (matches Staff/Attendees style) */}
       {!loading && gameList.length > 0 && (
         <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
-          <Card className="bg-gradient-to-br from-indigo-500/10 to-indigo-600/5 border border-indigo-500/30 shadow-none">
+          <Card
+            className="border-chart-1/40 shadow-none"
+            style={{ background: 'linear-gradient(135deg, color-mix(in srgb, var(--chart-1) 18%, var(--card)), color-mix(in srgb, var(--chart-1) 6%, var(--card)))' }}
+          >
             <CardContent className="p-2 sm:p-2.5">
               <div className="text-center">
                 <Gamepad2 className="w-3.5 h-3.5 text-indigo-600 mx-auto mb-0.5" />
@@ -277,7 +278,10 @@ export function GamesClient({ userId, eventId }: Props) {
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/30 shadow-none">
+          <Card
+            className="border-chart-2/40 shadow-none"
+            style={{ background: 'linear-gradient(135deg, color-mix(in srgb, var(--chart-2) 18%, var(--card)), color-mix(in srgb, var(--chart-2) 6%, var(--card)))' }}
+          >
             <CardContent className="p-2 sm:p-2.5">
               <div className="text-center">
                 <Users2 className="w-3.5 h-3.5 text-emerald-600 mx-auto mb-0.5" />
@@ -288,6 +292,9 @@ export function GamesClient({ userId, eventId }: Props) {
           </Card>
         </div>
       )}
+
+      {/* Daily ranking progression */}
+      {rankingTimeline.length > 0 && <RankingHistoryChart timeline={rankingTimeline} />}
 
       {/* Leaderboard */}
       {teams.length > 0 && (
