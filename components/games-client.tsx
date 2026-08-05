@@ -266,9 +266,7 @@ export function GamesClient({ userId, eventId }: Props) {
       {/* Quick Stats - 2 column grid (matches Staff/Attendees style) */}
       {!loading && gameList.length > 0 && (
         <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
-          <Card
-            className="border-indigo-500/40 bg-indigo-500/10 shadow-none dark:bg-indigo-500/15"
-          >
+          <Card className="bg-gradient-to-br from-indigo-500/10 to-indigo-600/5 border border-indigo-500/30 shadow-none dark:from-indigo-500/15 dark:to-indigo-600/5">
             <CardContent className="p-2 sm:p-2.5">
               <div className="text-center">
                 <Gamepad2 className="w-3.5 h-3.5 text-indigo-600 mx-auto mb-0.5" />
