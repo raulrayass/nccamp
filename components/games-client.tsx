@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo, useTransition } from 'react'
+import { useState, useEffect, useTransition } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -20,7 +20,6 @@ import { PodiumFullscreen } from '@/components/podium-fullscreen'
 import { useGames, useTeams, useGameScores } from '@/lib/hooks'
 import { MobileSheet } from '@/components/mobile'
 import { ListSkeleton } from '@/components/list-skeleton'
-import { RankingHistoryChart } from '@/components/ranking-history-chart'
 
 interface Props {
   userId: string
@@ -199,37 +198,6 @@ export function GamesClient({ userId, eventId }: Props) {
     }))
     .sort((a, b) => b.totalPoints - a.totalPoints)
 
-  const rankingTimeline = useMemo(() => {
-    const datedGames = gameList
-      .filter((game) => game.gameDate)
-      .sort((a, b) => (a.gameDate || '').localeCompare(b.gameDate || ''))
-    const totals = new Map<number, number>()
-    const byDate = new Map<string, Map<number, number>>()
-
-    for (const game of datedGames) {
-      const scoresForGame = allGameScores.filter((score) => score.gameId === game.id)
-      if (!byDate.has(game.gameDate!)) byDate.set(game.gameDate!, new Map())
-      const day = byDate.get(game.gameDate!)!
-      for (const score of scoresForGame) {
-        day.set(score.teamId, (day.get(score.teamId) || 0) + score.points)
-      }
-    }
-
-    return Array.from(byDate.entries()).map(([date, dayScores]) => {
-      for (const [teamId, points] of dayScores) totals.set(teamId, (totals.get(teamId) || 0) + points)
-      const values: Record<string, string | number> = { date }
-      for (const [teamId, points] of totals) values[`team_${teamId}`] = points
-      return {
-        date,
-        values,
-        teams: Array.from(totals.entries()).map(([teamId, points]) => {
-          const team = teamMap.get(teamId)
-          return { id: teamId, name: team?.name || 'Equipo', color: team?.color || '#4a9d67', points }
-        }),
-      }
-    })
-  }, [allGameScores, gameList, teamMap])
-
   // Show skeleton while loading
   if (gamesLoading || teamsLoading || scoresLoading) {
     return (
@@ -275,10 +243,7 @@ export function GamesClient({ userId, eventId }: Props) {
               </div>
             </CardContent>
           </Card>
-          <Card
-            className="border-chart-2/40 shadow-none"
-            style={{ background: 'linear-gradient(135deg, color-mix(in srgb, var(--chart-2) 18%, var(--card)), color-mix(in srgb, var(--chart-2) 6%, var(--card)))' }}
-          >
+          <Card className="border-emerald-500/30 bg-emerald-500/10 shadow-none dark:bg-emerald-500/15">
             <CardContent className="p-2 sm:p-2.5">
               <div className="text-center">
                 <Users2 className="w-3.5 h-3.5 text-emerald-600 mx-auto mb-0.5" />
@@ -290,78 +255,25 @@ export function GamesClient({ userId, eventId }: Props) {
         </div>
       )}
 
-      {/* Daily ranking progression */}
-      {rankingTimeline.length > 0 && <RankingHistoryChart timeline={rankingTimeline} />}
-
-      {/* Leaderboard */}
+      {/* Ranking projection entry point */}
       {teams.length > 0 && (
-        <Card className="card-vibrant">
-          <CardContent className="p-4 md:p-6">
-            <h2 className="font-bold text-base md:text-lg mb-3 md:mb-6 text-foreground">Ranking Actual</h2>
-            <div className="space-y-2 md:space-y-3">
-              {leaderboard.map((entry, idx) => (
-                <div
-                  key={entry.team.id}
-                  className="rounded-lg border p-2.5 md:p-4 transition-all hover:shadow-lg"
-                  style={{
-                    background: `linear-gradient(135deg, color-mix(in srgb, ${entry.team.color} 8%, var(--card)) 0%, var(--card) 100%)`,
-                    borderColor: entry.team.color,
-                    borderWidth: '2px',
-                    boxShadow: `0 8px 24px -4px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.1), 0 0 40px -12px ${entry.team.color}40`,
-                  }}
-                >
-                  <div className="flex items-center gap-2 md:gap-4">
-                    <div className="text-lg md:text-2xl font-black w-8 md:w-10 text-center shrink-0 leading-none" style={{ color: entry.team.color }}>
-                      {idx === 0 && '🥇'}
-                      {idx === 1 && '🥈'}
-                      {idx === 2 && '🥉'}
-                      {idx > 2 && `${idx + 1}.`}
-                    </div>
-                    <TeamFlag
-                      country={entry.team.country}
-                      color={entry.team.color}
-                      shape="rect"
-                      className="w-7 h-5 md:w-10 md:h-7 rounded border border-white/30 shrink-0"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <p className="font-bold text-xs md:text-base truncate leading-tight">{entry.team.name}</p>
-                      {Object.keys(entry.pointsPerGame).length > 0 && (
-                        <p className="text-xs text-muted-foreground mt-0.5">
-                          {Object.keys(entry.pointsPerGame).length}J
-                        </p>
-                      )}
-                    </div>
-                    <div className="text-right shrink-0">
-                      <div className="text-lg md:text-2xl font-black tabular-nums leading-none" style={{ color: entry.team.color }}>
-                        {entry.totalPoints}
-                      </div>
-                      <p className="text-xs text-muted-foreground">pts</p>
-                    </div>
-                  </div>
-                  {Object.keys(entry.pointsPerGame).length > 0 && (
-                    <div className="mt-2 pt-2 border-t border-border/50">
-                      <div className="flex flex-wrap gap-1">
-                        {gameList
-                          .filter((g) => entry.pointsPerGame[g.id])
-                          .slice(0, 3)
-                          .map((game) => (
-                            <div key={game.id} className="text-xs px-1.5 py-0.5 rounded bg-muted/60">
-                              <span className="font-semibold tabular-nums" style={{ color: entry.team.color }}>
-                                {entry.pointsPerGame[game.id]}
-                              </span>
-                            </div>
-                          ))}
-                        {Object.keys(entry.pointsPerGame).length > 3 && (
-                          <div className="text-xs px-1.5 py-0.5 rounded bg-muted/60 text-muted-foreground">
-                            +{Object.keys(entry.pointsPerGame).length - 3}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
+        <Card className="border-primary/25 bg-card shadow-sm">
+          <CardContent className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <Trophy className="h-5 w-5" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-bold text-foreground">Ranking listo para proyectar</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  {leaderboard[0]?.team.name ? `Lidera ${leaderboard[0].team.name} con ${leaderboard[0].totalPoints} pts` : 'Registra puntos para ver la evolución'}
+                </p>
+              </div>
             </div>
+            <Button onClick={() => setFullscreenMode(true)} size="sm" className="w-full gap-2 sm:w-auto">
+              <Maximize2 className="h-4 w-4" />
+              Proyectar ranking
+            </Button>
           </CardContent>
         </Card>
       )}
@@ -390,7 +302,7 @@ export function GamesClient({ userId, eventId }: Props) {
       ) : (
         <div className="space-y-2 md:space-y-3">
           {gameList.map((game, index) => (
-            <Card key={game.id} className="card-vibrant overflow-hidden border-2 md:border" style={{ animationDelay: `${index * 0.05}s` }}>
+            <Card key={game.id} className="overflow-hidden border border-border bg-card shadow-sm transition-colors hover:border-primary/40" style={{ animationDelay: `${index * 0.05}s` }}>
               <CardContent className="p-3 md:p-5">
                 <div className="flex items-center justify-between gap-2 md:gap-4">
                   <div className="min-w-0 flex-1">

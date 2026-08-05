@@ -54,8 +54,8 @@ export function ScoreboardFullscreen({ leaderboard, onClose, gameList }: Scorebo
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="beam beam-1" />
         <div className="beam beam-2" />
-        <div className="absolute -top-24 left-1/4 w-[600px] h-[600px] bg-white/10 rounded-full blur-3xl animate-glow" />
-        <div className="absolute -top-24 right-1/4 w-[600px] h-[600px] bg-emerald-300/10 rounded-full blur-3xl animate-glow" style={{ animationDelay: '1.4s' }} />
+        <div className="absolute -top-24 left-1/4 h-[600px] w-[600px] rounded-full bg-emerald-200/5 blur-3xl" />
+        <div className="absolute -top-24 right-1/4 h-[600px] w-[600px] rounded-full bg-emerald-300/5 blur-3xl" />
         <div className="absolute inset-0 vignette" />
       </div>
 
@@ -76,7 +76,7 @@ export function ScoreboardFullscreen({ leaderboard, onClose, gameList }: Scorebo
             <span className="text-white text-xs md:text-sm font-black tracking-[0.25em]">EN VIVO</span>
           </div>
           <h1 className="text-3xl md:text-6xl lg:text-7xl font-black text-white title-shine tracking-tight leading-none">
-            TABLA DE POSICIONES
+            PROYECCIÓN DE RANKING
           </h1>
           <p className="text-yellow-300 text-sm md:text-xl font-bold tracking-[0.3em] mt-2 drop-shadow">PERMANECE 2026</p>
         </div>
@@ -161,7 +161,7 @@ function ScoreRow({
 
   return (
     <div
-      className={`relative rounded-xl md:rounded-2xl overflow-hidden border bg-white/10 backdrop-blur-md shadow-[0_10px_35px_rgba(0,0,0,0.45)] ${isLeader ? 'border-yellow-300/70 leader-sweep' : 'border-white/15'}`}
+      className={`relative overflow-hidden rounded-xl border bg-black/45 shadow-[0_10px_35px_rgba(0,0,0,0.45)] md:rounded-2xl ${isLeader ? 'border-yellow-300/70' : 'border-white/15'}`}
       style={{ animation: `rowIn 0.7s cubic-bezier(0.34,1.56,0.64,1) ${idx * 0.1}s both` }}
     >
       {/* barra de progreso de fondo */}

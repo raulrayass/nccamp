@@ -95,7 +95,7 @@ export function FloatingDock() {
             onClick={focusPageSearch}
             title="Buscar"
             aria-label="Buscar"
-            className="flex items-center justify-center w-14 h-14 rounded-full bg-card border border-border text-foreground shadow-lg transition-all duration-200 hover:bg-muted active:scale-95"
+            className="flex items-center justify-center w-14 h-14 rounded-full bg-card border-2 border-border text-foreground shadow-lg transition-all duration-200 hover:bg-secondary active:scale-95"
           >
             <Search className="w-6 h-6" strokeWidth={2.25} />
           </button>
@@ -114,7 +114,7 @@ export function FloatingDock() {
 
       {/* Píldora con los 5 ítems — Inicio centrado, solo ícono */}
       <nav>
-        <div className="flex items-center justify-between px-1.5 py-1.5 rounded-3xl bg-card/95 border border-border shadow-[0_8px_30px_rgba(0,0,0,0.12)] backdrop-blur-md">
+        <div className="flex items-center justify-between rounded-3xl border-2 border-border bg-card px-1.5 py-1.5 text-foreground shadow-[0_8px_30px_rgba(0,0,0,0.24)]">
           {navItems.map((item) => (
             <DockItem key={item.href} item={item} active={item.match(pathname)} />
           ))}
@@ -169,8 +169,8 @@ function DockItem({
       className={cn(
         'flex flex-1 flex-col items-center justify-center gap-0.5 py-1.5 rounded-2xl transition-colors duration-200 focus:outline-none',
         active 
-          ? 'text-green-600 dark:text-green-400' 
-          : 'text-gray-700 dark:text-white hover:text-gray-800 dark:hover:text-white'
+          ? 'text-primary' 
+          : 'text-muted-foreground hover:text-foreground'
       )}
     >
       <Icon className="w-5 h-5" />
