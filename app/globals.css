@@ -360,59 +360,24 @@ input:focus, textarea:focus, select:focus {
 
   /* ===== TARJETAS CON PROFUNDIDAD Y GRADIENTES ===== */
 
-  /* Card vibrante - para juegos y equipos */
+  /* Stable themed cards for Games and Teams. No white overlay or hover lift. */
   .card-vibrant {
+    position: relative;
+    overflow: hidden;
     background: var(--card);
     border: 1px solid var(--border);
-    transition: all 0.2s ease;
-  }
-
-  .card-vibrant:hover {
-    border-color: hsl(from var(--primary) h s calc(l - 5%));
-  }
-
-  :is(html:not(.dark)) .card-vibrant {
-    background: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.98) 0%,
-      var(--card) 50%,
-      rgba(255, 255, 255, 0.92) 100%
-    );
-    border-color: hsl(from var(--primary) h s calc(l - 20%));
+    box-shadow: 0 2px 10px color-mix(in srgb, var(--foreground) 8%, transparent);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
   .card-vibrant::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(
-      circle at 20% 50%,
-      hsl(from var(--primary) h calc(s + 15%) calc(l + 8%)) 0%,
-      transparent 50%
-    );
-    opacity: 0.1;
-    pointer-events: none;
-  }
-
-  :is(html:not(.dark)) .card-vibrant::before {
-    opacity: 0.08;
+    content: none;
   }
 
   .card-vibrant:hover {
-    transform: translateY(-6px);
-    border-color: hsl(from var(--primary) h s calc(l - 5%));
-    box-shadow:
-      0 20px 60px -4px rgba(0, 0, 0, 0.20),
-      inset 0 1px 0 rgba(255, 255, 255, 0.15),
-      0 0 80px -6px hsl(from var(--primary) h s calc(l - 8%));
-  }
-
-  :is(html:not(.dark)) .card-vibrant:hover {
-    border-color: hsl(from var(--primary) h s calc(l - 15%));
-    box-shadow:
-      0 20px 60px -4px rgba(0, 0, 0, 0.12),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2),
-      0 0 80px -6px hsl(from var(--primary) h s calc(l - 15%));
+    border-color: color-mix(in srgb, var(--primary) 45%, var(--border));
+    box-shadow: 0 5px 18px color-mix(in srgb, var(--foreground) 12%, transparent);
+    transform: none;
   }
 
   /* Destacado en tarjeta */

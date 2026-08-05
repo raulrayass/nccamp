@@ -14,12 +14,7 @@ export function TeamRankItem({ team, position, pointsPerGame = {}, gameCount = 0
 
   return (
     <div
-      className="rounded-lg border-2 p-2.5 md:p-4 transition-all hover:shadow-lg"
-      style={{
-        background: `linear-gradient(135deg, color-mix(in srgb, ${team.color || '#6366f1'} 8%, var(--card)) 0%, var(--card) 100%)`,
-        borderColor: team.color || '#6366f1',
-        boxShadow: `0 8px 24px -4px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.1), 0 0 40px -12px ${team.color || '#6366f1'}40`,
-      }}
+      className="rounded-lg border border-border bg-card p-2.5 shadow-sm transition-colors hover:border-primary/40 md:p-4"
     >
       <div className="flex items-center gap-2 md:gap-4">
         <div className="text-lg md:text-2xl font-black w-8 md:w-10 text-center shrink-0 leading-none" style={{ color: team.color || '#6366f1' }}>
