@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
 
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
-import { Plus, Edit2, Trash2, ChevronDown, Users } from 'lucide-react'
+import { Plus, Edit2, Trash2, ChevronDown, Users, Trophy } from 'lucide-react'
 import { toast } from 'sonner'
 import { createTeam, updateTeam, deleteTeam, getTeams, getTeamMembers, getTeamMemberCounts } from '@/app/actions/teams'
 import { Team, Attendee } from '@/lib/db/schema'
@@ -30,7 +30,7 @@ interface Props {
 export function TeamsClient({ userId, eventId }: Props) {
   // Hooks centralizados para sincronización
   const { teams: teamList, isLoading: teamsLoading, refetch: refetchTeams } = useTeams(eventId)
-  const { scores: allGameScores } = useGameScores()
+  const { scores: allGameScores } = useGameScores(eventId)
 
   // Local UI state
   const [memberCounts, setMemberCounts] = useState<Record<number, number>>({})

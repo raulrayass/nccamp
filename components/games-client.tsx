@@ -267,8 +267,7 @@ export function GamesClient({ userId, eventId }: Props) {
       {!loading && gameList.length > 0 && (
         <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
           <Card
-            className="border-chart-1/40 shadow-none"
-            style={{ background: 'linear-gradient(135deg, color-mix(in srgb, var(--chart-1) 18%, var(--card)), color-mix(in srgb, var(--chart-1) 6%, var(--card)))' }}
+            className="border-indigo-500/40 bg-indigo-500/10 shadow-none dark:bg-indigo-500/15"
           >
             <CardContent className="p-2 sm:p-2.5">
               <div className="text-center">
