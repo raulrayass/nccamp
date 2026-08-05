@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useTransition } from 'react'
+import { useState, useEffect, useMemo, useTransition } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -13,7 +13,6 @@ import { toast } from 'sonner'
 import { createGame, updateGame, deleteGame, addGameScore, deleteGameScore, getGameScores } from '@/app/actions/games'
 import { Game, GameScore, Team } from '@/lib/db/schema'
 import { cn } from '@/lib/utils'
-import { StatsBar } from '@/components/stats-bar'
 import { PageHeader } from '@/components/page-header'
 import { TeamFlag } from '@/components/team-flag'
 import { ScoreboardFullscreen } from '@/components/scoreboard-fullscreen'
@@ -21,6 +20,7 @@ import { PodiumFullscreen } from '@/components/podium-fullscreen'
 import { useGames, useTeams, useGameScores } from '@/lib/hooks'
 import { MobileSheet } from '@/components/mobile'
 import { ListSkeleton } from '@/components/list-skeleton'
+import { RankingHistoryChart } from '@/components/ranking-history-chart'
 
 interface Props {
   userId: string
@@ -80,7 +80,6 @@ export function GamesClient({ userId, eventId }: Props) {
     try {
       const gameScoresData = await getGameScores(userId, gameId, eventId)
       setGameScores(gameScoresData)
-      await refetchScores()
     } catch (error) {
       toast.error('Error al cargar puntuaciones')
       console.error(error)
@@ -200,6 +199,37 @@ export function GamesClient({ userId, eventId }: Props) {
     }))
     .sort((a, b) => b.totalPoints - a.totalPoints)
 
+  const rankingTimeline = useMemo(() => {
+    const datedGames = gameList
+      .filter((game) => game.gameDate)
+      .sort((a, b) => (a.gameDate || '').localeCompare(b.gameDate || ''))
+    const totals = new Map<number, number>()
+    const byDate = new Map<string, Map<number, number>>()
+
+    for (const game of datedGames) {
+      const scoresForGame = allGameScores.filter((score) => score.gameId === game.id)
+      if (!byDate.has(game.gameDate!)) byDate.set(game.gameDate!, new Map())
+      const day = byDate.get(game.gameDate!)!
+      for (const score of scoresForGame) {
+        day.set(score.teamId, (day.get(score.teamId) || 0) + score.points)
+      }
+    }
+
+    return Array.from(byDate.entries()).map(([date, dayScores]) => {
+      for (const [teamId, points] of dayScores) totals.set(teamId, (totals.get(teamId) || 0) + points)
+      const values: Record<string, string | number> = { date }
+      for (const [teamId, points] of totals) values[`team_${teamId}`] = points
+      return {
+        date,
+        values,
+        teams: Array.from(totals.entries()).map(([teamId, points]) => {
+          const team = teamMap.get(teamId)
+          return { id: teamId, name: team?.name || 'Equipo', color: team?.color || '#4a9d67', points }
+        }),
+      }
+    })
+  }, [allGameScores, gameList, teamMap])
+
   // Show skeleton while loading
   if (gamesLoading || teamsLoading || scoresLoading) {
     return (
@@ -236,7 +266,7 @@ export function GamesClient({ userId, eventId }: Props) {
       {/* Quick Stats - 2 column grid (matches Staff/Attendees style) */}
       {!loading && gameList.length > 0 && (
         <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
-          <Card className="bg-gradient-to-br from-indigo-500/10 to-indigo-600/5 border border-indigo-500/30 shadow-none">
+          <Card className="bg-gradient-to-br from-indigo-500/10 to-indigo-600/5 border border-indigo-500/30 shadow-none dark:from-indigo-500/15 dark:to-indigo-600/5">
             <CardContent className="p-2 sm:p-2.5">
               <div className="text-center">
                 <Gamepad2 className="w-3.5 h-3.5 text-indigo-600 mx-auto mb-0.5" />
@@ -245,7 +275,10 @@ export function GamesClient({ userId, eventId }: Props) {
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/30 shadow-none">
+          <Card
+            className="border-chart-2/40 shadow-none"
+            style={{ background: 'linear-gradient(135deg, color-mix(in srgb, var(--chart-2) 18%, var(--card)), color-mix(in srgb, var(--chart-2) 6%, var(--card)))' }}
+          >
             <CardContent className="p-2 sm:p-2.5">
               <div className="text-center">
                 <Users2 className="w-3.5 h-3.5 text-emerald-600 mx-auto mb-0.5" />
@@ -256,6 +289,9 @@ export function GamesClient({ userId, eventId }: Props) {
           </Card>
         </div>
       )}
+
+      {/* Daily ranking progression */}
+      {rankingTimeline.length > 0 && <RankingHistoryChart timeline={rankingTimeline} />}
 
       {/* Leaderboard */}
       {teams.length > 0 && (
