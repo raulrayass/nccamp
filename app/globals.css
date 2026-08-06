@@ -186,6 +186,35 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Dashboard-first surface language: open layout, quiet separators, no forced containers. */
+.dashboard-shell {
+  --dashboard-line: color-mix(in srgb, var(--foreground) 12%, transparent);
+}
+
+.dashboard-section {
+  border-top: 1px solid var(--dashboard-line);
+  padding-top: 1.5rem;
+}
+
+.dashboard-metric {
+  border-left: 1px solid var(--dashboard-line);
+  padding-left: 1rem;
+}
+
+.dashboard-metric:first-child {
+  border-left: 0;
+  padding-left: 0;
+}
+
+.dashboard-list > * + * {
+  border-top: 1px solid var(--dashboard-line);
+}
+
+.dashboard-icon {
+  background: color-mix(in srgb, var(--primary) 12%, var(--background));
+  color: var(--primary);
+}
+
 /* Consistent Card Styling - Enhanced with playful depth */
 [data-slot="card"],
 .rounded-lg.border,
