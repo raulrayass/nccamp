@@ -1,6 +1,7 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { Card } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import { useDashboardStats } from '@/lib/hooks'
 import { Gamepad2, Users2, Trophy, Target, ArrowRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -11,12 +12,12 @@ export function GameStatsCard() {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="border-b border-border/70 py-4">
-            <div className="mb-2 h-3 w-2/3 animate-pulse rounded-full bg-muted" />
-            <div className="h-7 w-1/2 animate-pulse rounded-full bg-muted" />
-          </div>
+          <Card key={i} className="p-4 animate-pulse">
+            <div className="h-4 bg-muted rounded mb-2 w-2/3" />
+            <div className="h-6 bg-muted rounded w-1/2" />
+          </Card>
         ))}
       </div>
     )
@@ -82,36 +83,28 @@ export function GameStatsCard() {
   }
 
   return (
-    <motion.div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
       {stats.map((stat, idx) => {
         const Icon = stat.icon
         const isText = typeof stat.value === 'string'
         const colors = colorClasses[stat.color]
         return (
-          <motion.button
-            key={idx}
-            type="button"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 25, delay: idx * 0.05 }}
-            whileTap={{ scale: 0.97 }}
-            className={`group flex w-full items-start gap-3 border-b border-border/70 py-4 text-left transition-colors hover:bg-secondary/50 sm:py-5 ${idx === stats.length - 1 ? 'border-b-0' : ''}`}
+          <Card 
+            key={idx} 
+            className={`bg-gradient-to-br ${colors.gradient} border ${colors.border} shadow-none p-3 sm:p-4 cursor-pointer hover:shadow-md transition-all group`}
             onClick={() => router.push(stat.href)}
           >
-            <span className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-muted ${colors.icon}`}>
-              <Icon className="h-4 w-4" />
-            </span>
-            <span className="min-w-0 flex-1">
-              <span className="block truncate text-xs font-medium text-muted-foreground/60">{stat.label}</span>
-              <span className={`mt-1 block font-bold tracking-tight text-foreground ${isText ? 'text-sm sm:text-base' : 'text-xl sm:text-2xl'}`}>
-                {stat.value}
-              </span>
-              {stat.subvalue && <span className="mt-1 block text-xs font-medium text-muted-foreground/60">{stat.subvalue}</span>}
-            </span>
-            <ArrowRight className="mt-2 h-4 w-4 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-1" />
-          </motion.button>
+            <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center mb-2 sm:mb-3 group-hover:scale-110 transition-transform`}>
+              <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${colors.icon}`} />
+            </div>
+            <p className="text-[10px] sm:text-xs text-muted-foreground font-medium line-clamp-1">{stat.label}</p>
+            <p className={`text-base sm:text-lg font-bold mt-0.5 sm:mt-1 ${isText ? 'text-xs sm:text-sm' : ''}`}>
+              {isText ? stat.value : stat.value}
+            </p>
+            {stat.subvalue && <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">{stat.subvalue}</p>}
+          </Card>
         )
       })}
-    </motion.div>
+    </div>
   )
 }
