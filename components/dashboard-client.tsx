@@ -135,14 +135,16 @@ const containerVariants = {
   },
 }
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 12 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] },
-  },
-}
+  const itemVariants = {
+    hidden: { opacity: 0, y: 12 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { type: 'spring', stiffness: 400, damping: 25 },
+    },
+  }
+
+  const tapTransition = { type: 'spring' as const, stiffness: 400, damping: 25 }
 
   const pulseVariants = {
     hidden: { scale: 0.95, opacity: 0 },
@@ -151,21 +153,21 @@ const itemVariants = {
 
   return (
     <motion.div
-      className="px-3 sm:px-4 lg:px-6 py-3 flex flex-col gap-3 max-w-7xl mx-auto w-full overflow-x-hidden"
+      className="px-4 sm:px-6 flex flex-col gap-3 sm:gap-4 max-w-7xl mx-auto w-full overflow-x-hidden"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
 
       {/* ===== 1. Balance Total (héroe) ===== */}
-      <motion.div variants={itemVariants} whileTap={{ scale: 0.95 }} className="cursor-pointer">
-        <Card className="p-5 sm:p-6 rounded-2xl">
+      <motion.div variants={itemVariants} whileTap={{ scale: 0.97 }} transition={tapTransition} className="cursor-pointer">
+        <Card className="rounded-2xl p-4 sm:p-5 shadow-sm">
           <div className="flex justify-between items-start">
             <div className="flex-1">
-              <motion.p className="text-xs sm:text-sm text-muted-foreground font-medium mb-1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
+              <motion.p className="text-xs font-medium text-muted-foreground/60 mb-1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
                 Saldo Total
               </motion.p>
-              <motion.p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mt-1 tabular-nums" key={balance} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
+              <motion.p className="text-[28px] sm:text-[34px] md:text-[40px] font-bold tracking-tight text-foreground mt-1 tabular-nums" key={balance} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
                 {formatCurrency(balance)}
               </motion.p>
             </div>
@@ -178,15 +180,15 @@ const itemVariants = {
 
       {/* ===== 2. Ingresos + Egresos — animated stat cards ===== */}
       <motion.div className="grid grid-cols-2 gap-3 sm:gap-4" variants={itemVariants}>
-        <motion.div variants={itemVariants} whileTap={{ scale: 0.95 }} className="cursor-pointer">
-          <Card className="stat-card p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-gradient-to-br from-emerald-500/5 to-emerald-600/10 border-emerald-200/30 shadow-lg shadow-black/10 dark:shadow-black/30">
+        <motion.div variants={itemVariants} whileTap={{ scale: 0.97 }} transition={tapTransition} className="cursor-pointer">
+          <Card className="stat-card p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-gradient-to-br from-emerald-500/5 to-emerald-600/10 border-emerald-200/30 shadow-sm">
             <div className="flex items-start justify-between">
               <div className="flex-1">
-                <p className="text-xs sm:text-sm text-muted-foreground font-medium mb-1">Total Ingresos</p>
-                <p className="text-lg sm:text-2xl font-bold text-foreground tabular-nums">
+                <p className="text-xs font-medium text-muted-foreground/60 mb-1">Total Ingresos</p>
+                <p className="text-xl sm:text-2xl font-bold text-foreground tabular-nums">
                   {formatCurrency(totalIncome)}
                 </p>
-                <p className="text-xs text-muted-foreground mt-0.5">Acumulado total</p>
+                <p className="text-xs font-medium text-muted-foreground/60 mt-0.5">Acumulado total</p>
               </div>
               <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-emerald-600/20 flex items-center justify-center shrink-0 ml-2 icon-glow">
                 <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600" />
@@ -194,15 +196,15 @@ const itemVariants = {
             </div>
           </Card>
         </motion.div>
-        <motion.div variants={itemVariants} whileTap={{ scale: 0.95 }} className="cursor-pointer">
-          <Card className="stat-card p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-gradient-to-br from-orange-500/5 to-orange-600/10 border-orange-200/30 shadow-lg shadow-black/10 dark:shadow-black/30">
+        <motion.div variants={itemVariants} whileTap={{ scale: 0.97 }} transition={tapTransition} className="cursor-pointer">
+          <Card className="stat-card p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-gradient-to-br from-orange-500/5 to-orange-600/10 border-orange-200/30 shadow-sm">
             <div className="flex items-start justify-between">
               <div className="flex-1">
-                <p className="text-xs sm:text-sm text-muted-foreground font-medium mb-1">Total Egresos</p>
-                <p className="text-lg sm:text-2xl font-bold text-foreground tabular-nums">
+                <p className="text-xs font-medium text-muted-foreground/60 mb-1">Total Egresos</p>
+                <p className="text-xl sm:text-2xl font-bold text-foreground tabular-nums">
                   {formatCurrency(totalExpense)}
                 </p>
-                <p className="text-xs text-muted-foreground mt-0.5">Acumulado total</p>
+                <p className="text-xs font-medium text-muted-foreground/60 mt-0.5">Acumulado total</p>
               </div>
               <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-orange-600/20 flex items-center justify-center shrink-0 ml-2 icon-glow">
                 <TrendingDown className="w-5 h-5 sm:w-6 sm:h-6 text-orange-600" />
@@ -214,11 +216,11 @@ const itemVariants = {
 
       {/* ===== 3. Disponible por método ===== */}
       {(totalAbsolute > 0) && (
-        <motion.div variants={itemVariants}>
-          <motion.h2 className="font-semibold text-lg text-foreground mb-4 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
+        <motion.div variants={itemVariants} className="mt-6">
+          <motion.h2 className="text-base font-semibold text-foreground mb-4 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
             Disponible por método
           </motion.h2>
-          <Card className="p-5 sm:p-6 rounded-2xl">
+          <Card className="rounded-2xl p-4 sm:p-5 shadow-sm">
             <div className="space-y-4 sm:space-y-5">
               {methodBars.map((m, idx) => {
                 const Icon = m.icon
@@ -268,11 +270,11 @@ const itemVariants = {
       )}
 
       {/* ===== 3B. Últimas actividades ===== */}
-      <motion.div variants={itemVariants}>
-        <motion.h2 className="font-semibold text-lg text-foreground mb-4 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
+      <motion.div variants={itemVariants} className="mt-6">
+        <motion.h2 className="text-base font-semibold text-foreground mb-4 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
           Últimas actividades
         </motion.h2>
-        <Card className="p-5 sm:p-6 rounded-2xl">
+        <Card className="rounded-2xl p-4 sm:p-5 shadow-sm">
           {recentTransactions.length === 0 ? (
             <motion.p className="text-muted-foreground text-sm text-center py-8" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}>
               No hay transacciones aun. Ve a Finanzas para agregar.
@@ -285,7 +287,7 @@ const itemVariants = {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.7 + idx * 0.05, type: 'spring', stiffness: 100, damping: 15 }}
-                  whileTap={{ scale: 0.98, backgroundColor: 'rgba(0,0,0,0.02)' }}
+                  whileTap={{ scale: 0.97 }} transition={tapTransition}
                   className="flex items-center justify-between gap-2 py-3 sm:py-4 min-w-0 cursor-pointer px-2 -mx-2 rounded"
                 >
                   <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -320,8 +322,8 @@ const itemVariants = {
       </motion.div>
 
       {/* ===== 4. Game Stats Cards ===== */}
-      <motion.div variants={itemVariants}>
-        <motion.h2 className="font-semibold text-lg text-foreground mb-4 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
+      <motion.div variants={itemVariants} className="mt-6">
+        <motion.h2 className="text-base font-semibold text-foreground mb-4 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
           Actividad en Juegos
         </motion.h2>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.65, type: 'spring', stiffness: 100, damping: 15 }}>
@@ -330,12 +332,12 @@ const itemVariants = {
       </motion.div>
 
       {/* ===== 5. Donuts: Ingresos y Egresos por categoría ===== */}
-      <motion.div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5" variants={itemVariants}>
-        <motion.div variants={itemVariants}>
-          <motion.h2 className="font-semibold text-lg text-foreground mb-3 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}>
+      <motion.div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4" variants={itemVariants}>
+        <motion.div variants={itemVariants} className="mt-6">
+          <motion.h2 className="text-base font-semibold text-foreground mb-3 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}>
             Ingresos
           </motion.h2>
-          <Card className="p-5 sm:p-6 rounded-2xl shadow-lg shadow-black/10 dark:shadow-black/30">
+          <Card className="p-4 sm:p-5 rounded-2xl shadow-sm">
             {incomeByCategory.length > 0 ? (
               <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.75, type: 'spring', stiffness: 100, damping: 15 }}>
                 <DonutChart
@@ -350,11 +352,11 @@ const itemVariants = {
           </Card>
         </motion.div>
 
-        <motion.div variants={itemVariants}>
-          <motion.h2 className="font-semibold text-lg text-foreground mb-3 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}>
+        <motion.div variants={itemVariants} className="mt-6">
+          <motion.h2 className="text-base font-semibold text-foreground mb-3 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}>
             Egresos
           </motion.h2>
-          <Card className="p-5 sm:p-6 rounded-2xl shadow-lg shadow-black/10 dark:shadow-black/30">
+          <Card className="p-4 sm:p-5 rounded-2xl shadow-sm">
             {expenseByCategory.length > 0 ? (
               <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.85, type: 'spring', stiffness: 100, damping: 15 }}>
                 <DonutChart
@@ -371,11 +373,11 @@ const itemVariants = {
       </motion.div>
 
       {/* ===== 6. Ingresos vs Egresos por mes ===== */}
-      <motion.div variants={itemVariants}>
-        <motion.h2 className="font-semibold text-lg text-foreground mb-4 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9 }}>
+      <motion.div variants={itemVariants} className="mt-6">
+        <motion.h2 className="text-base font-semibold text-foreground mb-4 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9 }}>
           Ingresos vs Egresos por mes
         </motion.h2>
-        <Card className="clay-card p-5 sm:p-6 rounded-2xl overflow-hidden w-full">
+        <Card className="rounded-2xl bg-card p-4 sm:p-5 shadow-sm overflow-hidden w-full">
           {monthlyData.some(m => m.income > 0 || m.expense > 0) ? (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.95 }} className="w-full">
               <ResponsiveContainer width="100%" height={280}>
@@ -407,11 +409,11 @@ const itemVariants = {
       </motion.div>
 
       {/* ===== 6B. Distribución de tallas ===== */}
-      <motion.div variants={itemVariants}>
-        <motion.h2 className="font-semibold text-lg text-foreground mb-4 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.95 }}>
+      <motion.div variants={itemVariants} className="mt-6">
+        <motion.h2 className="text-base font-semibold text-foreground mb-4 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.95 }}>
           Distribución de tallas
         </motion.h2>
-        <Card className="p-5 sm:p-6 rounded-2xl shadow-lg shadow-black/10 dark:shadow-black/30">
+        <Card className="p-4 sm:p-5 rounded-2xl shadow-sm">
           {shirtSizes && shirtSizes.length > 0 ? (
             <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 1.0, type: 'spring', stiffness: 100, damping: 15 }}>
               <DonutChart
@@ -432,11 +434,11 @@ const itemVariants = {
       </motion.div>
 
       {/* ===== 7. Comparativo por categoría ===== */}
-      <motion.div variants={itemVariants}>
-        <motion.h2 className="font-semibold text-lg text-foreground mb-4 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.0 }}>
+      <motion.div variants={itemVariants} className="mt-6">
+        <motion.h2 className="text-base font-semibold text-foreground mb-4 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.0 }}>
           Ingresos vs Egresos por categoría
         </motion.h2>
-        <Card className="p-5 sm:p-6 rounded-2xl overflow-hidden w-full">
+        <Card className="p-4 sm:p-5 rounded-2xl overflow-hidden w-full">
           {hasAnyData && categoryComparison.length > 0 ? (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.05 }} className="w-full">
               <ResponsiveContainer width="100%" height={Math.max(240, categoryComparison.length * 56)}>
@@ -480,9 +482,9 @@ const itemVariants = {
       </motion.div>
 
       {/* ===== 8. Camperos por Iglesia ===== */}
-      <motion.div variants={itemVariants}>
-        <Card className="clay-card p-5 sm:p-6 rounded-xl sm:rounded-2xl">
-          <motion.h2 className="font-semibold text-lg text-foreground mb-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.3 }}>
+      <motion.div variants={itemVariants} className="mt-6">
+        <Card className="rounded-2xl bg-card p-4 sm:p-5 shadow-sm">
+          <motion.h2 className="text-base font-semibold text-foreground mb-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.3 }}>
             Camperos por Iglesia
           </motion.h2>
           {churchData && churchData.length > 0 ? (

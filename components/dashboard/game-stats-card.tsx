@@ -1,7 +1,7 @@
 'use client'
 
+import { motion } from 'framer-motion'
 import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { useDashboardStats } from '@/lib/hooks'
 import { Gamepad2, Users2, Trophy, Target, ArrowRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -12,11 +12,11 @@ export function GameStatsCard() {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
         {[1, 2, 3, 4].map((i) => (
-          <Card key={i} className="p-4 animate-pulse">
-            <div className="h-4 bg-muted rounded mb-2 w-2/3" />
-            <div className="h-6 bg-muted rounded w-1/2" />
+          <Card key={i} className="rounded-2xl p-4 shadow-sm sm:p-5">
+            <div className="mb-2 h-3 w-2/3 animate-pulse rounded-full bg-muted" />
+            <div className="h-7 w-1/2 animate-pulse rounded-full bg-muted" />
           </Card>
         ))}
       </div>
@@ -83,28 +83,34 @@ export function GameStatsCard() {
   }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+    <motion.div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
       {stats.map((stat, idx) => {
         const Icon = stat.icon
         const isText = typeof stat.value === 'string'
         const colors = colorClasses[stat.color]
         return (
-          <Card 
-            key={idx} 
-            className={`bg-gradient-to-br ${colors.gradient} border ${colors.border} shadow-none p-3 sm:p-4 cursor-pointer hover:shadow-md transition-all group`}
+          <motion.div
+            key={idx}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 25, delay: idx * 0.05 }}
+            whileTap={{ scale: 0.97 }}
+            className="cursor-pointer"
             onClick={() => router.push(stat.href)}
           >
-            <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center mb-2 sm:mb-3 group-hover:scale-110 transition-transform`}>
-              <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${colors.icon}`} />
-            </div>
-            <p className="text-[10px] sm:text-xs text-muted-foreground font-medium line-clamp-1">{stat.label}</p>
-            <p className={`text-base sm:text-lg font-bold mt-0.5 sm:mt-1 ${isText ? 'text-xs sm:text-sm' : ''}`}>
-              {isText ? stat.value : stat.value}
-            </p>
-            {stat.subvalue && <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">{stat.subvalue}</p>}
-          </Card>
+            <Card className={`group rounded-2xl border p-4 shadow-sm transition-colors sm:p-5 ${colors.border} bg-card hover:bg-secondary`}>
+              <div className={`mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-muted ${colors.icon}`}>
+                <Icon className="h-5 w-5" />
+              </div>
+              <p className="text-xs font-medium text-muted-foreground/60 line-clamp-1">{stat.label}</p>
+              <p className={`mt-1 font-bold tracking-tight text-foreground ${isText ? 'text-sm sm:text-base' : 'text-xl sm:text-2xl'}`}>
+                {stat.value}
+              </p>
+              {stat.subvalue && <p className="mt-1 text-xs font-medium text-muted-foreground/60">{stat.subvalue}</p>}
+            </Card>
+          </motion.div>
         )
       })}
-    </div>
+    </motion.div>
   )
 }
