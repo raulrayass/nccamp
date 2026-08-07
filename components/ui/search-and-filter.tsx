@@ -42,7 +42,7 @@ export function SearchAndFilter({
           placeholder="Buscar..."
           value={searchValue}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="pl-10 pr-8"
+          className="h-12 rounded-full border-border/70 bg-card pl-11 pr-10 shadow-sm placeholder:text-muted-foreground/70 focus-visible:ring-2"
         />
         {searchValue && (
           <button
