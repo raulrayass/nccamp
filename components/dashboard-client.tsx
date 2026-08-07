@@ -140,9 +140,11 @@ const itemVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] },
+    transition: { type: 'spring', stiffness: 400, damping: 25 },
   },
 }
+
+const tapTransition = { type: 'spring' as const, stiffness: 400, damping: 25 }
 
   const pulseVariants = {
     hidden: { scale: 0.95, opacity: 0 },
@@ -151,7 +153,7 @@ const itemVariants = {
 
   return (
     <motion.div
-      className="px-3 sm:px-4 lg:px-6 py-3 flex flex-col gap-3 max-w-7xl mx-auto w-full overflow-x-hidden"
+      className="dashboard-ios mx-auto flex w-full max-w-7xl flex-col gap-5 overflow-x-hidden px-4 py-4 sm:gap-6 sm:px-6 sm:py-6"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
@@ -159,7 +161,7 @@ const itemVariants = {
 
       {/* ===== 1. Balance Total (héroe) ===== */}
       <motion.div variants={itemVariants} whileTap={{ scale: 0.95 }} className="cursor-pointer">
-        <Card className="p-5 sm:p-6 rounded-2xl">
+        <Card className="dashboard-ios-card p-5 sm:p-6">
           <div className="flex justify-between items-start">
             <div className="flex-1">
               <motion.p className="text-xs sm:text-sm text-muted-foreground font-medium mb-1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
@@ -179,7 +181,7 @@ const itemVariants = {
       {/* ===== 2. Ingresos + Egresos — animated stat cards ===== */}
       <motion.div className="grid grid-cols-2 gap-3 sm:gap-4" variants={itemVariants}>
         <motion.div variants={itemVariants} whileTap={{ scale: 0.95 }} className="cursor-pointer">
-          <Card className="stat-card p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-gradient-to-br from-emerald-500/5 to-emerald-600/10 border-emerald-200/30 shadow-lg shadow-black/10 dark:shadow-black/30">
+          <Card className="dashboard-ios-card dashboard-ios-card--flat p-4 sm:p-5">
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <p className="text-xs sm:text-sm text-muted-foreground font-medium mb-1">Total Ingresos</p>
@@ -195,7 +197,7 @@ const itemVariants = {
           </Card>
         </motion.div>
         <motion.div variants={itemVariants} whileTap={{ scale: 0.95 }} className="cursor-pointer">
-          <Card className="stat-card p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-gradient-to-br from-orange-500/5 to-orange-600/10 border-orange-200/30 shadow-lg shadow-black/10 dark:shadow-black/30">
+          <Card className="dashboard-ios-card dashboard-ios-card--flat p-4 sm:p-5">
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <p className="text-xs sm:text-sm text-muted-foreground font-medium mb-1">Total Egresos</p>
@@ -215,10 +217,10 @@ const itemVariants = {
       {/* ===== 3. Disponible por método ===== */}
       {(totalAbsolute > 0) && (
         <motion.div variants={itemVariants}>
-          <motion.h2 className="font-semibold text-lg text-foreground mb-4 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
+          <motion.h2 className="text-base font-semibold tracking-tight text-foreground mb-3 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
             Disponible por método
           </motion.h2>
-          <Card className="p-5 sm:p-6 rounded-2xl">
+          <Card className="dashboard-ios-card p-5 sm:p-6">
             <div className="space-y-4 sm:space-y-5">
               {methodBars.map((m, idx) => {
                 const Icon = m.icon
@@ -269,10 +271,10 @@ const itemVariants = {
 
       {/* ===== 3B. Últimas actividades ===== */}
       <motion.div variants={itemVariants}>
-        <motion.h2 className="font-semibold text-lg text-foreground mb-4 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
+        <motion.h2 className="text-base font-semibold tracking-tight text-foreground mb-3 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
           Últimas actividades
         </motion.h2>
-        <Card className="p-5 sm:p-6 rounded-2xl">
+        <Card className="dashboard-ios-card p-5 sm:p-6">
           {recentTransactions.length === 0 ? (
             <motion.p className="text-muted-foreground text-sm text-center py-8" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}>
               No hay transacciones aun. Ve a Finanzas para agregar.
@@ -321,7 +323,7 @@ const itemVariants = {
 
       {/* ===== 4. Game Stats Cards ===== */}
       <motion.div variants={itemVariants}>
-        <motion.h2 className="font-semibold text-lg text-foreground mb-4 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
+        <motion.h2 className="text-base font-semibold tracking-tight text-foreground mb-3 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
           Actividad en Juegos
         </motion.h2>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.65, type: 'spring', stiffness: 100, damping: 15 }}>
@@ -335,7 +337,7 @@ const itemVariants = {
           <motion.h2 className="font-semibold text-lg text-foreground mb-3 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}>
             Ingresos
           </motion.h2>
-          <Card className="p-5 sm:p-6 rounded-2xl shadow-lg shadow-black/10 dark:shadow-black/30">
+          <Card className="dashboard-ios-card p-4 sm:p-5">
             {incomeByCategory.length > 0 ? (
               <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.75, type: 'spring', stiffness: 100, damping: 15 }}>
                 <DonutChart
@@ -354,7 +356,7 @@ const itemVariants = {
           <motion.h2 className="font-semibold text-lg text-foreground mb-3 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}>
             Egresos
           </motion.h2>
-          <Card className="p-5 sm:p-6 rounded-2xl shadow-lg shadow-black/10 dark:shadow-black/30">
+          <Card className="dashboard-ios-card p-4 sm:p-5">
             {expenseByCategory.length > 0 ? (
               <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.85, type: 'spring', stiffness: 100, damping: 15 }}>
                 <DonutChart
@@ -372,10 +374,10 @@ const itemVariants = {
 
       {/* ===== 6. Ingresos vs Egresos por mes ===== */}
       <motion.div variants={itemVariants}>
-        <motion.h2 className="font-semibold text-lg text-foreground mb-4 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9 }}>
+        <motion.h2 className="text-base font-semibold tracking-tight text-foreground mb-3 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9 }}>
           Ingresos vs Egresos por mes
         </motion.h2>
-        <Card className="clay-card p-5 sm:p-6 rounded-2xl overflow-hidden w-full">
+        <Card className="dashboard-ios-card dashboard-ios-chart overflow-hidden p-3 sm:p-4">
           {monthlyData.some(m => m.income > 0 || m.expense > 0) ? (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.95 }} className="w-full">
               <ResponsiveContainer width="100%" height={280}>
@@ -408,10 +410,10 @@ const itemVariants = {
 
       {/* ===== 6B. Distribución de tallas ===== */}
       <motion.div variants={itemVariants}>
-        <motion.h2 className="font-semibold text-lg text-foreground mb-4 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.95 }}>
+        <motion.h2 className="text-base font-semibold tracking-tight text-foreground mb-3 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.95 }}>
           Distribución de tallas
         </motion.h2>
-        <Card className="p-5 sm:p-6 rounded-2xl shadow-lg shadow-black/10 dark:shadow-black/30">
+        <Card className="dashboard-ios-card p-4 sm:p-5">
           {shirtSizes && shirtSizes.length > 0 ? (
             <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 1.0, type: 'spring', stiffness: 100, damping: 15 }}>
               <DonutChart
@@ -433,10 +435,10 @@ const itemVariants = {
 
       {/* ===== 7. Comparativo por categoría ===== */}
       <motion.div variants={itemVariants}>
-        <motion.h2 className="font-semibold text-lg text-foreground mb-4 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.0 }}>
+        <motion.h2 className="text-base font-semibold tracking-tight text-foreground mb-3 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.0 }}>
           Ingresos vs Egresos por categoría
         </motion.h2>
-        <Card className="p-5 sm:p-6 rounded-2xl overflow-hidden w-full">
+        <Card className="dashboard-ios-card dashboard-ios-chart overflow-hidden p-3 sm:p-4">
           {hasAnyData && categoryComparison.length > 0 ? (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.05 }} className="w-full">
               <ResponsiveContainer width="100%" height={Math.max(240, categoryComparison.length * 56)}>

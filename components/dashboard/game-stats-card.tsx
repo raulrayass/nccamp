@@ -1,7 +1,6 @@
 'use client'
 
-import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import { motion } from 'framer-motion'
 import { useDashboardStats } from '@/lib/hooks'
 import { Gamepad2, Users2, Trophy, Target, ArrowRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -83,26 +82,34 @@ export function GameStatsCard() {
   }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+    <div className="dashboard-ios-divider grid grid-cols-2 gap-x-4 sm:grid-cols-4">
       {stats.map((stat, idx) => {
         const Icon = stat.icon
         const isText = typeof stat.value === 'string'
         const colors = colorClasses[stat.color]
         return (
-          <Card 
-            key={idx} 
-            className={`bg-gradient-to-br ${colors.gradient} border ${colors.border} shadow-none p-3 sm:p-4 cursor-pointer hover:shadow-md transition-all group`}
+          <motion.button
+            key={idx}
+            type="button"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 25, delay: idx * 0.05 }}
+            whileTap={{ scale: 0.97 }}
             onClick={() => router.push(stat.href)}
+            className="group flex min-w-0 items-center gap-2 py-4 text-left sm:gap-3 sm:py-5"
           >
-            <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center mb-2 sm:mb-3 group-hover:scale-110 transition-transform`}>
-              <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${colors.icon}`} />
-            </div>
-            <p className="text-[10px] sm:text-xs text-muted-foreground font-medium line-clamp-1">{stat.label}</p>
-            <p className={`text-base sm:text-lg font-bold mt-0.5 sm:mt-1 ${isText ? 'text-xs sm:text-sm' : ''}`}>
-              {isText ? stat.value : stat.value}
-            </p>
-            {stat.subvalue && <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">{stat.subvalue}</p>}
-          </Card>
+            <span className={`dashboard-ios-icon-button flex h-9 w-9 shrink-0 items-center justify-center ${colors.icon}`}>
+              <Icon className="h-4 w-4" />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-[11px] font-medium text-muted-foreground/70">{stat.label}</span>
+              <span className={`mt-0.5 block font-bold tracking-tight text-foreground ${isText ? 'text-xs sm:text-sm' : 'text-lg sm:text-xl'}`}>
+                {stat.value}
+              </span>
+              {stat.subvalue && <span className="mt-0.5 block text-[11px] text-muted-foreground/70">{stat.subvalue}</span>}
+            </span>
+            <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-1" />
+          </motion.button>
         )
       })}
     </div>
