@@ -13,10 +13,10 @@ export function GameStatsCard() {
     return (
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
         {[1, 2, 3, 4].map((i) => (
-          <Card key={i} className="p-4 animate-pulse">
+          <div key={i} className="dashboard-ios-card dashboard-ios-card--flat p-4 animate-pulse">
             <div className="h-4 bg-muted rounded mb-2 w-2/3" />
             <div className="h-6 bg-muted rounded w-1/2" />
-          </Card>
+          </div>
         ))}
       </div>
     )
