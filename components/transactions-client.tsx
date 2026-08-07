@@ -463,7 +463,7 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
 
       {/* Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-        <Card className="p-3 sm:p-4">
+        <Card className="finance-surface p-4 sm:p-5">
           <div className="flex justify-between items-start">
             <div>
               <p className="text-xs text-muted-foreground font-medium">Total Ingresos</p>
@@ -474,7 +474,7 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
             </div>
           </div>
         </Card>
-        <Card className="p-3 sm:p-4">
+        <Card className="finance-surface p-4 sm:p-5">
           <div className="flex justify-between items-start">
             <div>
               <p className="text-xs text-muted-foreground font-medium">Total Egresos</p>
@@ -485,7 +485,7 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
             </div>
           </div>
         </Card>
-        <Card className="p-3 sm:p-4">
+        <Card className="finance-surface p-4 sm:p-5">
           <div className="flex justify-between items-start">
             <div>
               <p className="text-xs text-muted-foreground font-medium">Balance General</p>

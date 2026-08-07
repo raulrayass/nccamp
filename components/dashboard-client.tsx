@@ -181,7 +181,7 @@ const tapTransition = { type: 'spring' as const, stiffness: 400, damping: 25 }
       {/* ===== 2. Ingresos + Egresos — animated stat cards ===== */}
       <motion.div className="grid grid-cols-2 gap-3 sm:gap-4" variants={itemVariants}>
         <motion.div variants={itemVariants} whileTap={{ scale: 0.95 }} className="cursor-pointer">
-          <Card className="dashboard-ios-card dashboard-ios-card--flat p-4 sm:p-5">
+          <Card className="dashboard-ios-card finance-surface p-4 sm:p-5">
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <p className="text-xs sm:text-sm text-muted-foreground font-medium mb-1">Total Ingresos</p>
@@ -197,7 +197,7 @@ const tapTransition = { type: 'spring' as const, stiffness: 400, damping: 25 }
           </Card>
         </motion.div>
         <motion.div variants={itemVariants} whileTap={{ scale: 0.95 }} className="cursor-pointer">
-          <Card className="dashboard-ios-card dashboard-ios-card--flat p-4 sm:p-5">
+          <Card className="dashboard-ios-card finance-surface p-4 sm:p-5">
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <p className="text-xs sm:text-sm text-muted-foreground font-medium mb-1">Total Egresos</p>
@@ -220,7 +220,7 @@ const tapTransition = { type: 'spring' as const, stiffness: 400, damping: 25 }
           <motion.h2 className="text-base font-semibold tracking-tight text-foreground mb-3 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
             Disponible por método
           </motion.h2>
-          <Card className="dashboard-ios-card p-5 sm:p-6">
+<Card className="dashboard-ios-card finance-surface-strong p-5 sm:p-6">
             <div className="space-y-4 sm:space-y-5">
               {methodBars.map((m, idx) => {
                 const Icon = m.icon
