@@ -186,6 +186,54 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Native iOS-inspired dashboard surfaces and controls. Scoped to the dashboard only. */
+.dashboard-ios {
+  --dashboard-highlight: color-mix(in srgb, var(--primary) 12%, var(--card));
+  --dashboard-line: color-mix(in srgb, var(--foreground) 10%, transparent);
+}
+
+.dashboard-ios [data-slot="card"].dashboard-ios-card {
+  border: 1px solid color-mix(in srgb, var(--foreground) 8%, transparent);
+  border-radius: 1.5rem;
+  background: color-mix(in srgb, var(--card) 94%, var(--background));
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--foreground) 5%, transparent), 0 8px 24px color-mix(in srgb, var(--foreground) 5%, transparent);
+}
+
+.dashboard-ios .dashboard-ios-card--flat {
+  border-color: var(--dashboard-line);
+  box-shadow: none;
+  background: transparent;
+}
+
+.dashboard-ios .dashboard-ios-button {
+  border: 1px solid color-mix(in srgb, var(--primary) 28%, transparent);
+  border-radius: 9999px;
+  background: var(--dashboard-highlight);
+  color: var(--primary);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, white 35%, transparent);
+}
+
+.dashboard-ios .dashboard-ios-button:hover {
+  background: color-mix(in srgb, var(--primary) 18%, var(--card));
+}
+
+.dashboard-ios .dashboard-ios-icon-button {
+  border-radius: 9999px;
+  background: var(--dashboard-highlight);
+  color: var(--primary);
+}
+
+.dashboard-ios .dashboard-ios-divider > * + * {
+  border-top: 1px solid var(--dashboard-line);
+}
+
+.dashboard-ios .dashboard-ios-chart {
+  border-radius: 1.5rem;
+  border: 1px solid var(--dashboard-line);
+  background: color-mix(in srgb, var(--card) 72%, transparent);
+  padding: 1rem;
+}
+
 /* Consistent Card Styling - Enhanced with playful depth */
 [data-slot="card"],
 .rounded-lg.border,
@@ -239,6 +287,24 @@ button:hover:not(:disabled), [role="button"]:hover, a[role="button"]:hover {
 
 button:active:not(:disabled) {
   transform: translateY(0px);
+}
+
+/* Dashboard overrides come after the legacy global card rules. */
+.dashboard-ios [data-slot="card"] {
+  border-radius: 1.5rem;
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--foreground) 5%, transparent), 0 8px 24px color-mix(in srgb, var(--foreground) 5%, transparent);
+  transform: none;
+}
+
+.dashboard-ios [data-slot="card"]:hover {
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--foreground) 5%, transparent), 0 8px 24px color-mix(in srgb, var(--foreground) 5%, transparent);
+  transform: none;
+}
+
+.dashboard-ios .dashboard-ios-card--flat {
+  border-color: color-mix(in srgb, var(--foreground) 10%, transparent);
+  background: transparent;
+  box-shadow: none;
 }
 
 /* Input focus animation */
