@@ -161,7 +161,7 @@ const tapTransition = { type: 'spring' as const, stiffness: 400, damping: 25 }
 
       {/* ===== 1. Balance Total (héroe) ===== */}
       <motion.div variants={itemVariants} whileTap={{ scale: 0.95 }} className="cursor-pointer">
-        <Card className="dashboard-ios-card p-5 sm:p-6">
+        <Card className="dashboard-ios-card finance-surface-strong p-5 sm:p-6">
           <div className="flex justify-between items-start">
             <div className="flex-1">
               <motion.p className="text-xs sm:text-sm text-muted-foreground font-medium mb-1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
@@ -181,7 +181,7 @@ const tapTransition = { type: 'spring' as const, stiffness: 400, damping: 25 }
       {/* ===== 2. Ingresos + Egresos — animated stat cards ===== */}
       <motion.div className="grid grid-cols-2 gap-3 sm:gap-4" variants={itemVariants}>
         <motion.div variants={itemVariants} whileTap={{ scale: 0.95 }} className="cursor-pointer">
-          <Card className="dashboard-ios-card dashboard-ios-card--flat p-4 sm:p-5">
+          <Card className="dashboard-ios-card finance-surface p-4 sm:p-5">
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <p className="text-xs sm:text-sm text-muted-foreground font-medium mb-1">Total Ingresos</p>
@@ -197,7 +197,7 @@ const tapTransition = { type: 'spring' as const, stiffness: 400, damping: 25 }
           </Card>
         </motion.div>
         <motion.div variants={itemVariants} whileTap={{ scale: 0.95 }} className="cursor-pointer">
-          <Card className="dashboard-ios-card dashboard-ios-card--flat p-4 sm:p-5">
+          <Card className="dashboard-ios-card finance-surface p-4 sm:p-5">
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <p className="text-xs sm:text-sm text-muted-foreground font-medium mb-1">Total Egresos</p>
@@ -220,7 +220,7 @@ const tapTransition = { type: 'spring' as const, stiffness: 400, damping: 25 }
           <motion.h2 className="text-base font-semibold tracking-tight text-foreground mb-3 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
             Disponible por método
           </motion.h2>
-          <Card className="dashboard-ios-card p-5 sm:p-6">
+<Card className="dashboard-ios-card finance-surface-strong p-5 sm:p-6">
             <div className="space-y-4 sm:space-y-5">
               {methodBars.map((m, idx) => {
                 const Icon = m.icon
@@ -274,7 +274,7 @@ const tapTransition = { type: 'spring' as const, stiffness: 400, damping: 25 }
         <motion.h2 className="text-base font-semibold tracking-tight text-foreground mb-3 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
           Últimas actividades
         </motion.h2>
-        <Card className="dashboard-ios-card p-5 sm:p-6">
+        <Card className="dashboard-ios-card finance-surface p-5 sm:p-6">
           {recentTransactions.length === 0 ? (
             <motion.p className="text-muted-foreground text-sm text-center py-8" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}>
               No hay transacciones aun. Ve a Finanzas para agregar.
@@ -337,7 +337,7 @@ const tapTransition = { type: 'spring' as const, stiffness: 400, damping: 25 }
           <motion.h2 className="font-semibold text-lg text-foreground mb-3 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}>
             Ingresos
           </motion.h2>
-          <Card className="dashboard-ios-card p-4 sm:p-5">
+          <Card className="dashboard-ios-card finance-surface p-4 sm:p-5">
             {incomeByCategory.length > 0 ? (
               <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.75, type: 'spring', stiffness: 100, damping: 15 }}>
                 <DonutChart
@@ -356,7 +356,7 @@ const tapTransition = { type: 'spring' as const, stiffness: 400, damping: 25 }
           <motion.h2 className="font-semibold text-lg text-foreground mb-3 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}>
             Egresos
           </motion.h2>
-          <Card className="dashboard-ios-card p-4 sm:p-5">
+          <Card className="dashboard-ios-card finance-surface p-4 sm:p-5">
             {expenseByCategory.length > 0 ? (
               <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.85, type: 'spring', stiffness: 100, damping: 15 }}>
                 <DonutChart
@@ -377,7 +377,7 @@ const tapTransition = { type: 'spring' as const, stiffness: 400, damping: 25 }
         <motion.h2 className="text-base font-semibold tracking-tight text-foreground mb-3 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9 }}>
           Ingresos vs Egresos por mes
         </motion.h2>
-        <Card className="dashboard-ios-card dashboard-ios-chart overflow-hidden p-3 sm:p-4">
+        <Card className="dashboard-ios-card dashboard-ios-chart finance-surface overflow-hidden p-3 sm:p-4">
           {monthlyData.some(m => m.income > 0 || m.expense > 0) ? (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.95 }} className="w-full">
               <ResponsiveContainer width="100%" height={280}>
@@ -413,7 +413,7 @@ const tapTransition = { type: 'spring' as const, stiffness: 400, damping: 25 }
         <motion.h2 className="text-base font-semibold tracking-tight text-foreground mb-3 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.95 }}>
           Distribución de tallas
         </motion.h2>
-        <Card className="dashboard-ios-card p-4 sm:p-5">
+        <Card className="dashboard-ios-card finance-surface p-4 sm:p-5">
           {shirtSizes && shirtSizes.length > 0 ? (
             <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 1.0, type: 'spring', stiffness: 100, damping: 15 }}>
               <DonutChart
@@ -438,7 +438,7 @@ const tapTransition = { type: 'spring' as const, stiffness: 400, damping: 25 }
         <motion.h2 className="text-base font-semibold tracking-tight text-foreground mb-3 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.0 }}>
           Ingresos vs Egresos por categoría
         </motion.h2>
-        <Card className="dashboard-ios-card dashboard-ios-chart overflow-hidden p-3 sm:p-4">
+        <Card className="dashboard-ios-card dashboard-ios-chart finance-surface overflow-hidden p-3 sm:p-4">
           {hasAnyData && categoryComparison.length > 0 ? (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.05 }} className="w-full">
               <ResponsiveContainer width="100%" height={Math.max(240, categoryComparison.length * 56)}>
@@ -483,7 +483,7 @@ const tapTransition = { type: 'spring' as const, stiffness: 400, damping: 25 }
 
       {/* ===== 8. Camperos por Iglesia ===== */}
       <motion.div variants={itemVariants}>
-        <Card className="clay-card p-5 sm:p-6 rounded-xl sm:rounded-2xl">
+        <Card className="finance-surface-strong p-5 sm:p-6">
           <motion.h2 className="font-semibold text-lg text-foreground mb-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.3 }}>
             Camperos por Iglesia
           </motion.h2>
