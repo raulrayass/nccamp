@@ -307,26 +307,35 @@ button:active:not(:disabled) {
   transform: translateY(-1px);
 }
 
-.finance-accent-income {
-  border: 1px solid color-mix(in srgb, #16a34a 28%, transparent);
-  background: color-mix(in srgb, #16a34a 10%, var(--card));
+.finance-method-cash {
+  border: 1px solid color-mix(in srgb, #16a34a 34%, transparent);
+  background: color-mix(in srgb, #16a34a 11%, var(--card));
 }
 
-.finance-accent-expense {
-  border: 1px solid color-mix(in srgb, #f97316 28%, transparent);
-  background: color-mix(in srgb, #f97316 10%, var(--card));
+.finance-method-transfer {
+  border: 1px solid color-mix(in srgb, #2563eb 34%, transparent);
+  background: color-mix(in srgb, #2563eb 11%, var(--card));
+}
+
+.finance-method-deposit {
+  border: 1px solid color-mix(in srgb, #9333ea 34%, transparent);
+  background: color-mix(in srgb, #9333ea 11%, var(--card));
 }
 
 .dark .finance-transaction-row {
   box-shadow: 0 2px 5px color-mix(in srgb, black 30%, transparent), 0 14px 30px color-mix(in srgb, black 42%, transparent);
 }
 
-.dark .finance-accent-income {
-  background: color-mix(in srgb, #16a34a 16%, var(--card));
+.dark .finance-method-cash {
+  background: color-mix(in srgb, #16a34a 18%, var(--card));
 }
 
-.dark .finance-accent-expense {
-  background: color-mix(in srgb, #f97316 16%, var(--card));
+.dark .finance-method-transfer {
+  background: color-mix(in srgb, #2563eb 18%, var(--card));
+}
+
+.dark .finance-method-deposit {
+  background: color-mix(in srgb, #9333ea 18%, var(--card));
 }
 
 .dark .finance-transaction-row:hover {
