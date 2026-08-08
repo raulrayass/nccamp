@@ -298,27 +298,35 @@ button:active:not(:disabled) {
 }
 
 .finance-transaction-row {
-  border-color: color-mix(in srgb, var(--foreground) 10%, transparent);
-  border-radius: 1.5rem;
-  box-shadow: 0 2px 4px color-mix(in srgb, black 12%, transparent), 0 12px 26px color-mix(in srgb, black 18%, transparent);
+  border-radius: 1.75rem;
+  box-shadow: 0 3px 5px color-mix(in srgb, black 14%, transparent), 0 14px 30px color-mix(in srgb, black 22%, transparent);
 }
 
 .finance-transaction-row:hover {
-  border-color: color-mix(in srgb, var(--foreground) 16%, transparent);
-  box-shadow: 0 4px 8px color-mix(in srgb, black 16%, transparent), 0 18px 34px color-mix(in srgb, black 24%, transparent);
+  box-shadow: 0 5px 10px color-mix(in srgb, black 18%, transparent), 0 20px 38px color-mix(in srgb, black 28%, transparent);
   transform: translateY(-1px);
 }
 
 .finance-accent-income {
-  border-left: 4px solid #16a34a;
+  border: 1px solid color-mix(in srgb, #16a34a 28%, transparent);
+  background: color-mix(in srgb, #16a34a 10%, var(--card));
 }
 
 .finance-accent-expense {
-  border-left: 4px solid #f97316;
+  border: 1px solid color-mix(in srgb, #f97316 28%, transparent);
+  background: color-mix(in srgb, #f97316 10%, var(--card));
 }
 
 .dark .finance-transaction-row {
   box-shadow: 0 2px 5px color-mix(in srgb, black 30%, transparent), 0 14px 30px color-mix(in srgb, black 42%, transparent);
+}
+
+.dark .finance-accent-income {
+  background: color-mix(in srgb, #16a34a 16%, var(--card));
+}
+
+.dark .finance-accent-expense {
+  background: color-mix(in srgb, #f97316 16%, var(--card));
 }
 
 .dark .finance-transaction-row:hover {
