@@ -509,7 +509,7 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
           placeholder="Buscar transacción..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="pl-10 pr-10 h-10 rounded-lg border border-border bg-white/5"
+          className="finance-pill h-12 rounded-full border-border/70 bg-card pl-11 pr-10 shadow-sm placeholder:text-muted-foreground/70"
         />
         {search && (
           <button
@@ -528,9 +528,9 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
         <button
           onClick={() => setFilterType('all')}
           className={cn(
-            'px-3 py-1.5 rounded-full text-sm font-medium transition-colors border',
+            'finance-pill px-4 py-2 text-sm font-semibold transition-colors',
             filterType === 'all'
-              ? 'bg-green-600 text-white border-green-600'
+              ? 'bg-green-600 text-white border-green-600 shadow-[0_6px_14px_color-mix(in_srgb,var(--primary)_24%,transparent)]'
               : 'bg-white/5 text-foreground border-border hover:bg-white/10'
           )}
         >
@@ -539,9 +539,9 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
         <button
           onClick={() => setFilterType('income')}
           className={cn(
-            'px-3 py-1.5 rounded-full text-sm font-medium transition-colors border',
+            'finance-pill px-4 py-2 text-sm font-semibold transition-colors',
             filterType === 'income'
-              ? 'bg-green-600 text-white border-green-600'
+              ? 'bg-green-600 text-white border-green-600 shadow-[0_6px_14px_color-mix(in_srgb,var(--primary)_24%,transparent)]'
               : 'bg-white/5 text-foreground border-border hover:bg-white/10'
           )}
         >
@@ -550,9 +550,9 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
         <button
           onClick={() => setFilterType('expense')}
           className={cn(
-            'px-3 py-1.5 rounded-full text-sm font-medium transition-colors border',
+            'finance-pill px-4 py-2 text-sm font-semibold transition-colors',
             filterType === 'expense'
-              ? 'bg-green-600 text-white border-green-600'
+              ? 'bg-green-600 text-white border-green-600 shadow-[0_6px_14px_color-mix(in_srgb,var(--primary)_24%,transparent)]'
               : 'bg-white/5 text-foreground border-border hover:bg-white/10'
           )}
         >
@@ -589,7 +589,7 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
 
       {/* Advanced Filters */}
       {showAdvancedFilters && (
-        <Card className="bg-white/5 border border-border">
+        <Card className="finance-surface p-1">
           <div className="p-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
@@ -693,7 +693,7 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
                     else if (t.paymentMethod === 'deposit') borderColor = 'border-l-purple-600'
 
                     return (
-                      <div key={t.id} className={`p-1.5 sm:p-2.5 border border-l-4 border-border ${borderColor} rounded-lg flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 hover:bg-muted/50 transition-colors`}>
+                      <div key={t.id} className={`finance-surface p-3 sm:p-4 border-l-4 ${borderColor} flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 hover:bg-muted/50 transition-colors`}>
                         <div className="flex items-center gap-1.5 flex-1 min-w-0">
                           <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-muted flex items-center justify-center flex-shrink-0">
                             {t.type === 'income' ? (

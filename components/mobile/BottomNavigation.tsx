@@ -44,7 +44,7 @@ export function BottomNavigation({ className }: BottomNavigationProps) {
 
   return (
     <nav className={cn('mobile-dock fixed bottom-0 left-0 right-0 z-40 px-4 pb-3 safe-bottom', className)} aria-label="Navegación principal">
-      <div className="mx-auto flex h-[68px] max-w-md items-center gap-2 rounded-[2rem] border border-border/70 bg-card/95 p-2 shadow-[0_10px_35px_color-mix(in_srgb,var(--foreground)_12%,transparent)] backdrop-blur-xl">
+      <div className="mx-auto flex h-[68px] max-w-md items-center gap-2 finance-dock rounded-[2rem] border border-border/70 bg-card/95 p-2 backdrop-blur-xl backdrop-blur-xl">
         <div className="flex min-w-0 flex-1 items-center justify-around">
           {DEFAULT_ITEMS.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
