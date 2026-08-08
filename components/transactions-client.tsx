@@ -687,8 +687,9 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
                 {/* Transactions for this day */}
                 <div className="space-y-1">
                   {group.transactions.map((t) => {
+                    const accentClass = t.type === 'income' ? 'finance-accent-income' : 'finance-accent-expense'
                     return (
-                      <div key={t.id} className="finance-surface finance-transaction-row group flex flex-col gap-3 p-3.5 transition-all hover:-translate-y-0.5 hover:bg-muted/35 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:p-4">
+                      <div key={t.id} className={`finance-surface finance-transaction-row ${accentClass} group flex flex-col gap-3 p-3.5 transition-all hover:-translate-y-0.5 hover:bg-muted/35 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:p-4`}>
                         <div className="flex items-center gap-1.5 flex-1 min-w-0">
                           <div className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full ${t.type === 'income' ? 'bg-green-500/12' : 'bg-orange-500/12'}`}>
                             {t.type === 'income' ? (
