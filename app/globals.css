@@ -89,18 +89,18 @@
 .dark {
   color-scheme: dark;
   --background: #000000;
-  --foreground: #e6edf3;
-  --card: #111111;
-  --card-foreground: #e6edf3;
-  --popover: #111111;
-  --popover-foreground: #e6edf3;
-  --primary: #2ea043;
+  --foreground: #f5f7fa;
+  --card: #0d0f10;
+  --card-foreground: #f5f7fa;
+  --popover: #0d0f10;
+  --popover-foreground: #f5f7fa;
+  --primary: #00c853;
   --primary-foreground: #ffffff;
   --secondary: #1a1a1a;
   --secondary-foreground: #e6edf3;
-  --muted: #242424;
-  --muted-foreground: #b5bec8;
-  --accent: #35b853;
+  --muted: #17191b;
+  --muted-foreground: #c4cbd3;
+  --accent: #00e676;
   --accent-foreground: #ffffff;
   --destructive: #f85149;
   --border: #262626;
@@ -127,12 +127,12 @@
   :root:not(.light) {
     color-scheme: dark;
     --background: #000000;
-    --foreground: #e6edf3;
-    --card: #111111;
-    --card-foreground: #e6edf3;
+    --foreground: #f5f7fa;
+    --card: #0d0f10;
+    --card-foreground: #f5f7fa;
     --popover: #0a0a0a;
-    --popover-foreground: #e6edf3;
-    --primary: #2ea043;
+    --popover-foreground: #f5f7fa;
+    --primary: #00c853;
     --primary-foreground: #ffffff;
     --secondary: #121212;
     --secondary-foreground: #e6edf3;
@@ -173,8 +173,8 @@
     box-shadow: 0 2px 5px color-mix(in srgb, var(--foreground) 5%, transparent), 0 14px 30px color-mix(in srgb, var(--foreground) 7%, transparent);
   }
   .dark [data-slot="card"] {
-    border-color: transparent;
-    box-shadow: 0 3px 8px color-mix(in srgb, black 28%, transparent), 0 18px 38px color-mix(in srgb, black 32%, transparent);
+    border: 1px solid color-mix(in srgb, var(--primary) 18%, transparent);
+    box-shadow: 0 4px 10px color-mix(in srgb, #001f12 72%, transparent), 0 16px 36px color-mix(in srgb, var(--primary) 13%, transparent);
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-inter);
@@ -258,9 +258,8 @@ html {
 .dark [data-slot="card"],
 .dark .rounded-lg.border,
 .dark .rounded-xl.border {
-  box-shadow: 
-    0 2px 4px rgba(0, 0, 0, 0.3),
-    0 8px 20px rgba(0, 0, 0, 0.4);
+  border-color: color-mix(in srgb, var(--primary) 18%, transparent);
+  box-shadow: 0 4px 10px color-mix(in srgb, #001f12 72%, transparent), 0 16px 36px color-mix(in srgb, var(--primary) 13%, transparent);
 }
 
 [data-slot="card"]:hover,
@@ -346,6 +345,23 @@ button:active:not(:disabled) {
 .dark .finance-method-deposit {
   background: color-mix(in srgb, #9333ea 18%, var(--card));
 }
+
+.dark .finance-surface,
+.dark .finance-surface-strong {
+  border: 1px solid color-mix(in srgb, var(--primary) 18%, transparent);
+  background: #0d0f10;
+  box-shadow: 0 4px 10px color-mix(in srgb, #001f12 72%, transparent), 0 18px 38px color-mix(in srgb, var(--primary) 14%, transparent);
+}
+
+.dark .finance-pill {
+  border-color: color-mix(in srgb, var(--foreground) 18%, transparent);
+  background: #0d0f10;
+  color: var(--foreground);
+}
+
+.dark .games-stat--indigo { border-color: color-mix(in srgb, #2563eb 62%, transparent); background: color-mix(in srgb, #071936 78%, var(--card)); }
+.dark .games-stat--emerald { border-color: color-mix(in srgb, #00c853 62%, transparent); background: color-mix(in srgb, #032817 78%, var(--card)); }
+.dark .games-ranking-panel { border-color: color-mix(in srgb, #00c853 44%, transparent); background: color-mix(in srgb, #00c853 8%, var(--card)); }
 
 .dark .finance-transaction-row:hover {
   box-shadow: 0 4px 8px color-mix(in srgb, black 38%, transparent), 0 18px 36px color-mix(in srgb, black 50%, transparent);
@@ -613,6 +629,10 @@ button:not(:disabled):active,
 }
 
 @media (max-width: 380px) {
+  .finance-page {
+    overflow-x: hidden;
+  }
+
   .finance-page {
     padding-left: 0.75rem;
     padding-right: 0.75rem;
