@@ -218,7 +218,14 @@ export function SettingsClient() {
       {/* Header Section */}
       <div className="settings-header px-4 sm:px-6 lg:px-8 pt-5 pb-5">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Configuración</h1>
+          <div className="settings-brandline">
+            <div>
+              <p className="settings-eyebrow">NCCAMP</p>
+              <h1 className="settings-title">Configuración</h1>
+              <p className="settings-subtitle">Administra tu cuenta y tus eventos</p>
+            </div>
+            <div className="settings-avatar">{(user.name || user.email || 'N').charAt(0).toUpperCase()}</div>
+          </div>
         </div>
       </div>
 
@@ -228,11 +235,11 @@ export function SettingsClient() {
           
           {/* User Profile Section */}
           <div>
-            <h2 className="text-base font-semibold text-foreground mb-3 flex items-center gap-2">
-              <div className="w-1 h-5 bg-primary rounded-full"></div>
-              Tu Perfil
-            </h2>
-            <Card className="settings-card p-4 sm:p-5">
+            <div className="settings-section-heading">
+              <div><p className="settings-section-kicker">CUENTA</p><h2>Tu perfil</h2></div>
+              <span className="settings-section-count">01</span>
+            </div>
+            <Card className="settings-card settings-profile-card p-4 sm:p-5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Email</label>
@@ -248,14 +255,14 @@ export function SettingsClient() {
 
           {/* Events Management Section */}
           <div>
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-base font-semibold text-foreground flex items-center gap-2">
-                <div className="w-1 h-5 bg-primary rounded-full"></div>
-                Mis Eventos
-              </h2>
+            <div className="settings-section-heading">
+              <div><p className="settings-section-kicker">ESPACIOS DE TRABAJO</p><h2>Mis eventos</h2></div>
+              <span className="settings-section-count">02</span>
+            </div>
+            <div className="flex items-center justify-end mb-3">
               <Dialog open={showCreateForm} onOpenChange={setShowCreateForm}>
                 <DialogTrigger asChild>
-                  <Button className="gap-2 h-9 text-sm">
+                  <Button className="settings-add-button gap-2 h-9 text-sm">
                     <Plus className="w-4 h-4" />
                     Crear
                   </Button>
@@ -350,7 +357,7 @@ export function SettingsClient() {
                             router.push('/')
                           }}
                         >
-                          {eventId === event.id ? 'Activo' : 'Usar'}
+                          {eventId === event.id ? 'Actual' : 'Abrir'}
                         </Button>
                         <button
                           onClick={() => handleSetDefault(event.id)}
@@ -380,7 +387,7 @@ export function SettingsClient() {
                               setEditingEventId(event.id)
                               setFormData({
                                 name: event.name,
-                                country: 'México',
+                                country: 'M��xico',
                                 startDate: new Date().toISOString().split('T')[0],
                                 endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
                               })
