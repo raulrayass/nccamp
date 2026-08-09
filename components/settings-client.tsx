@@ -216,16 +216,9 @@ export function SettingsClient() {
   return (
     <div className="settings-page w-full min-h-screen flex flex-col bg-background">
       {/* Header Section */}
-      <div className="settings-header px-4 sm:px-6 lg:px-8 pt-5 pb-5">
+      <div className="settings-header px-4 sm:px-6 lg:px-8 pt-8 pb-6">
         <div className="max-w-4xl mx-auto">
-          <div className="settings-brandline">
-            <div>
-              <p className="settings-eyebrow">NCCAMP</p>
-              <h1 className="settings-title">Configuración</h1>
-              <p className="settings-subtitle">Administra tu cuenta y tus eventos</p>
-            </div>
-            <div className="settings-avatar">{(user.name || user.email || 'N').charAt(0).toUpperCase()}</div>
-          </div>
+          <h1 className="settings-title">Configuración</h1>
         </div>
       </div>
 
