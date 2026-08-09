@@ -218,14 +218,10 @@ export function GamesClient({ userId, eventId }: Props) {
                 <Trophy className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
                 <span>Proyectar ganador</span>
               </Button>
-              <Button onClick={() => setFullscreenMode(true)} variant="outline" size="sm" className="gap-1.5 text-xs sm:text-sm h-9 sm:h-10 px-2 sm:px-3">
-                <Maximize2 className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
-                <span>Proyectar ranking</span>
-              </Button>
             </>
           )}
-          <Button onClick={() => setDialogOpen(true)} size="sm" className="gap-1.5 text-xs sm:text-sm h-9 sm:h-10 px-2 sm:px-3 bg-green-600 hover:bg-green-700 text-white">
-            <Plus className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
+          <Button onClick={() => setDialogOpen(true)} size="sm" className="hidden gap-1.5 bg-green-600 px-2 text-xs text-white hover:bg-green-700 sm:flex sm:h-10 sm:px-3 sm:text-sm">
+            <Plus className="h-4 w-4 shrink-0" />
             <span>Nuevo juego</span>
           </Button>
         </div>
@@ -255,25 +251,45 @@ export function GamesClient({ userId, eventId }: Props) {
         </div>
       )}
 
-      {/* Ranking projection entry point */}
-      {teams.length > 0 && (
-        <Card className="games-ranking-panel">
-          <CardContent className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
-            <div className="flex min-w-0 items-center gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <Trophy className="h-5 w-5" />
+      {/* Ranking preview: total and points accumulated per game */}
+      {teams.length > 0 && gameList.length > 0 && (
+        <Card className="games-ranking-panel overflow-hidden">
+          <CardContent className="p-3 sm:p-5">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <div className="flex min-w-0 items-center gap-2.5">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/12 text-primary">
+                  <Trophy className="h-4 w-4" />
+                </div>
+                <div className="min-w-0">
+                  <h2 className="truncate text-sm font-bold text-foreground sm:text-base">Previa del ranking</h2>
+                  <p className="text-[11px] text-muted-foreground sm:text-xs">Puntos acumulados por juego</p>
+                </div>
               </div>
-              <div className="min-w-0">
-                <p className="text-sm font-bold text-foreground">Ranking listo para proyectar</p>
-                <p className="mt-0.5 text-xs text-muted-foreground">
-                  {leaderboard[0]?.team.name ? `Lidera ${leaderboard[0].team.name} con ${leaderboard[0].totalPoints} pts` : 'Registra puntos para ver la evolución'}
-                </p>
-              </div>
+              <Button onClick={() => setFullscreenMode(true)} variant="outline" size="sm" className="h-8 shrink-0 gap-1.5 rounded-full px-3 text-xs">
+                <Maximize2 className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Proyectar</span>
+              </Button>
             </div>
-            <Button onClick={() => setFullscreenMode(true)} size="sm" className="w-full gap-2 sm:w-auto">
-              <Maximize2 className="h-4 w-4" />
-              Proyectar ranking
-            </Button>
+            <div className="games-ranking-table overflow-x-auto rounded-2xl">
+              <table className="w-full min-w-[520px] text-left text-xs">
+                <thead className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                  <tr>
+                    <th className="px-3 py-2 font-semibold"># Equipo</th>
+                    {gameList.map((game) => <th key={game.id} className="px-2 py-2 text-center font-semibold">{game.name}</th>)}
+                    <th className="px-3 py-2 text-right font-semibold">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {leaderboard.map(({ team, totalPoints, pointsPerGame }, index) => (
+                    <tr key={team.id} className="border-t border-border/60">
+                      <td className="px-3 py-2.5 font-semibold text-foreground"><span className="mr-2 text-muted-foreground">{index + 1}</span>{team.name}</td>
+                      {gameList.map((game) => <td key={game.id} className="px-2 py-2.5 text-center text-muted-foreground">{pointsPerGame[game.id] || 0}</td>)}
+                      <td className="px-3 py-2.5 text-right font-bold text-primary">{totalPoints}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </CardContent>
         </Card>
       )}
@@ -293,7 +309,7 @@ export function GamesClient({ userId, eventId }: Props) {
           <div className="flex flex-col items-center gap-3">
             <Gamepad2 className="w-10 h-10 text-muted-foreground/40" />
             <p className="text-sm text-muted-foreground">No hay juegos registrados</p>
-            <Button onClick={() => setDialogOpen(true)} className="mt-2 gap-2">
+            <Button onClick={() => setDialogOpen(true)} className="mt-2 hidden gap-2 sm:flex">
               <Plus className="w-4 h-4" />
               Crear primer juego
             </Button>
@@ -323,6 +339,14 @@ export function GamesClient({ userId, eventId }: Props) {
                             })}
                           </p>
                         )}
+                        {(() => {
+                          const gameLeaders = teams
+                            .map((team) => ({ team, points: allGameScores.filter((score) => score.gameId === game.id && score.teamId === team.id).reduce((sum, score) => sum + score.points, 0) }))
+                            .filter(({ points }) => points > 0)
+                            .sort((a, b) => b.points - a.points)
+                          const leader = gameLeaders[0]
+                          return leader ? <p className="mt-1 truncate text-[11px] font-semibold text-primary">Más puntos: {leader.team.name} · {leader.points} pts</p> : <p className="mt-1 text-[11px] text-muted-foreground">Sin puntos registrados</p>
+                        })()}
                       </div>
                     </div>
                   </div>
