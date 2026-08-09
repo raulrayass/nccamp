@@ -363,8 +363,9 @@ button:active:not(:disabled) {
 }
 
 .finance-dock-liquid {
-  background: color-mix(in srgb, var(--primary) 13%, var(--card));
-  box-shadow: inset 0 1px 0 color-mix(in srgb, white 55%, transparent), 0 5px 16px color-mix(in srgb, var(--primary) 18%, transparent);
+  background: color-mix(in srgb, var(--primary) 24%, var(--card));
+  border: 1px solid color-mix(in srgb, var(--primary) 34%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, white 68%, transparent), 0 5px 18px color-mix(in srgb, var(--primary) 26%, transparent);
   transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
   z-index: 0;
 }
@@ -384,8 +385,9 @@ button:active:not(:disabled) {
 .finance-dock-liquid::after { right: 18%; }
 
 .dark .finance-dock-liquid {
-  background: color-mix(in srgb, var(--primary) 22%, var(--card));
-  box-shadow: inset 0 1px 0 color-mix(in srgb, white 24%, transparent), 0 6px 18px color-mix(in srgb, var(--primary) 24%, transparent);
+  background: color-mix(in srgb, var(--primary) 34%, var(--card));
+  border-color: color-mix(in srgb, var(--primary) 48%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, white 34%, transparent), 0 6px 20px color-mix(in srgb, var(--primary) 34%, transparent);
 }
 
 .dark .finance-surface,
