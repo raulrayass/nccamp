@@ -407,8 +407,36 @@ button:active:not(:disabled) {
   box-shadow: 0 1px 3px color-mix(in srgb, black 8%, transparent);
 }
 
+.games-ranking-row:first-child {
+  border-color: color-mix(in srgb, var(--primary) 32%, transparent);
+  background: color-mix(in srgb, var(--primary) 8%, var(--card));
+}
+
 .games-score-chip {
   background: color-mix(in srgb, var(--muted) 76%, var(--card));
+  min-width: 1.45rem;
+  text-align: center;
+}
+
+.games-card-actions button svg {
+  height: 0.85rem;
+  width: 0.85rem;
+}
+
+@media (max-width: 380px) {
+  .games-card-actions {
+    gap: 0;
+  }
+
+  .games-card-actions button {
+    height: 1.75rem;
+    width: 1.75rem;
+  }
+
+  .games-card-actions button:first-child {
+    height: 2rem;
+    width: 2rem;
+  }
 }
 
 .games-rank-badge {

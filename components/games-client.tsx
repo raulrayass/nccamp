@@ -234,7 +234,7 @@ export function GamesClient({ userId, eventId }: Props) {
                   <Trophy className="h-4 w-4" />
                 </div>
                 <div className="min-w-0">
-                  <h2 className="truncate text-sm font-bold text-foreground sm:text-base">Previa del ranking</h2>
+                  <h2 className="truncate text-sm font-bold text-foreground sm:text-base">Ranking</h2>
                 </div>
               </div>
               <Button onClick={() => setFullscreenMode(true)} variant="outline" size="sm" className="h-8 shrink-0 gap-1.5 rounded-full px-3 text-xs">
@@ -251,8 +251,8 @@ export function GamesClient({ userId, eventId }: Props) {
                       <span className="truncate text-xs font-bold text-foreground sm:text-sm">{team.name}</span>
                       <span className="shrink-0 text-sm font-black text-primary">{totalPoints} pts</span>
                     </div>
-                    <div className="mt-1 flex gap-1 overflow-hidden">
-                      {gameList.map((game) => <span key={game.id} className="games-score-chip shrink-0 rounded-full px-1.5 py-0.5 text-[10px] text-muted-foreground">{game.name}: {pointsPerGame[game.id] || 0}</span>)}
+                    <div className="mt-1 flex gap-1 overflow-x-auto pb-0.5">
+                      {gameList.map((game) => <span key={game.id} title={`${game.name}: ${pointsPerGame[game.id] || 0} pts`} className="games-score-chip shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">{pointsPerGame[game.id] || 0}</span>)}
                     </div>
                   </div>
                 </div>
@@ -319,11 +319,11 @@ export function GamesClient({ userId, eventId }: Props) {
                       </div>
                     </div>
                   </div>
-                  <div className="flex gap-1 md:gap-2 shrink-0">
+                  <div className="games-card-actions flex shrink-0 items-center gap-0.5 sm:gap-1">
                     <Button
                       onClick={() => openScoring(game.id)}
                       size="sm"
-                      className="h-8 md:h-9 px-2 md:px-3 gap-1 md:gap-1.5 text-xs md:text-sm font-medium bg-primary hover:bg-primary/90"
+                      className="h-8 w-8 rounded-full p-0 text-xs font-medium sm:h-9 sm:w-auto sm:gap-1.5 sm:px-3 sm:rounded-full"
                       title="Registrar puntos"
                     >
                       <Trophy className="w-3.5 h-3.5 md:w-4 md:h-4" />
@@ -341,7 +341,7 @@ export function GamesClient({ userId, eventId }: Props) {
                       }}
                       size="sm"
                       variant="ghost"
-                      className="h-9 w-9 rounded-full p-0 hover:bg-blue-500/12"
+                      className="h-7 w-7 rounded-full p-0 hover:bg-blue-500/12 sm:h-8 sm:w-8"
                       title="Editar"
                     >
                       <Edit2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-600" />
@@ -353,7 +353,7 @@ export function GamesClient({ userId, eventId }: Props) {
                       }}
                       size="sm"
                       variant="ghost"
-                      className="h-9 w-9 rounded-full p-0 hover:bg-red-500/12"
+                      className="h-7 w-7 rounded-full p-0 hover:bg-red-500/12 sm:h-8 sm:w-8"
                       title="Eliminar"
                     >
                       <Trash2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-red-600" />
