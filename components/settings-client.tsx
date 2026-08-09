@@ -230,16 +230,16 @@ export function SettingsClient() {
           {/* User Profile Section */}
           <div>
             <div className="settings-section-heading">
-              <div><p className="settings-section-kicker">CUENTA</p><h2>Tu perfil</h2></div>
+              <div><p className="settings-section-kicker">Tu espacio</p><h2>Tu perfil</h2></div>
             </div>
             <Card className="settings-card settings-profile-card p-4 sm:p-5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Email</label>
+                  <label className="text-xs font-semibold text-muted-foreground">Email</label>
                   <p className="text-foreground mt-2 break-all">{user.email}</p>
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Nombre</label>
+                  <label className="text-xs font-semibold text-muted-foreground">Nombre</label>
                   <p className="text-foreground mt-2">{user.name || 'Sin nombre registrado'}</p>
                 </div>
               </div>
@@ -249,7 +249,7 @@ export function SettingsClient() {
           {/* Events Management Section */}
           <div>
             <div className="settings-section-heading">
-              <div><p className="settings-section-kicker">ESPACIOS DE TRABAJO</p><h2>Mis eventos</h2></div>
+              <div><p className="settings-section-kicker">Tu agenda</p><h2>Mis eventos</h2></div>
             </div>
             <div className="flex items-center justify-end mb-3">
               <Dialog open={showCreateForm} onOpenChange={setShowCreateForm}>
@@ -261,11 +261,11 @@ export function SettingsClient() {
                 </DialogTrigger>
                 <DialogContent className="max-w-md rounded-2xl">
                   <DialogHeader>
-                    <DialogTitle className="text-xl">Crear Evento</DialogTitle>
+                    <DialogTitle className="text-xl">Nuevo evento</DialogTitle>
                   </DialogHeader>
                   <form onSubmit={handleCreateEvent} className="space-y-4">
                     <div>
-                      <label className="text-xs font-semibold text-muted-foreground uppercase">Nombre</label>
+                      <label className="text-xs font-semibold text-muted-foreground">Nombre</label>
                       <input
                         type="text"
                         required
@@ -276,7 +276,7 @@ export function SettingsClient() {
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-semibold text-muted-foreground uppercase">País</label>
+                      <label className="text-xs font-semibold text-muted-foreground">País</label>
                       <input
                         type="text"
                         value={formData.country}
@@ -286,7 +286,7 @@ export function SettingsClient() {
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="text-xs font-semibold text-muted-foreground uppercase">Inicio</label>
+                        <label className="text-xs font-semibold text-muted-foreground">Inicio</label>
                         <input
                           type="date"
                           required
@@ -296,7 +296,7 @@ export function SettingsClient() {
                         />
                       </div>
                       <div>
-                        <label className="text-xs font-semibold text-muted-foreground uppercase">Fin</label>
+                        <label className="text-xs font-semibold text-muted-foreground">Fin</label>
                         <input
                           type="date"
                           required
@@ -307,7 +307,7 @@ export function SettingsClient() {
                       </div>
                     </div>
                     <Button type="submit" disabled={isCreating} className="w-full mt-5">
-                      {isCreating ? 'Creando...' : 'Crear Evento'}
+                      {isCreating ? 'Creando...' : 'Guardar evento'}
                     </Button>
                   </form>
                 </DialogContent>
@@ -393,11 +393,11 @@ export function SettingsClient() {
                           </button>
                           <DialogContent className="max-w-md rounded-2xl">
                             <DialogHeader>
-                              <DialogTitle className="text-xl">Editar Evento</DialogTitle>
+                              <DialogTitle className="text-xl">Editar evento</DialogTitle>
                             </DialogHeader>
                             <form onSubmit={(e) => handleUpdateEvent(e, event)} className="space-y-4">
                               <div>
-                                <label className="text-xs font-semibold text-muted-foreground uppercase">Nombre</label>
+                                <label className="text-xs font-semibold text-muted-foreground">Nombre</label>
                                 <input
                                   type="text"
                                   required
@@ -407,7 +407,7 @@ export function SettingsClient() {
                                 />
                               </div>
                               <div>
-                                <label className="text-xs font-semibold text-muted-foreground uppercase">País</label>
+                                <label className="text-xs font-semibold text-muted-foreground">País</label>
                                 <input
                                   type="text"
                                   value={formData.country}
@@ -417,7 +417,7 @@ export function SettingsClient() {
                               </div>
                               <div className="grid grid-cols-2 gap-3">
                                 <div>
-                                  <label className="text-xs font-semibold text-muted-foreground uppercase">Inicio</label>
+                                  <label className="text-xs font-semibold text-muted-foreground">Inicio</label>
                                   <input
                                     type="date"
                                     required
@@ -427,7 +427,7 @@ export function SettingsClient() {
                                   />
                                 </div>
                                 <div>
-                                  <label className="text-xs font-semibold text-muted-foreground uppercase">Fin</label>
+                                  <label className="text-xs font-semibold text-muted-foreground">Fin</label>
                                   <input
                                     type="date"
                                     required
@@ -438,7 +438,7 @@ export function SettingsClient() {
                                 </div>
                               </div>
                               <Button type="submit" disabled={isUpdating} className="w-full mt-5">
-                                {isUpdating ? 'Actualizando...' : 'Actualizar Evento'}
+                                {isUpdating ? 'Guardando...' : 'Guardar cambios'}
                               </Button>
                             </form>
                           </DialogContent>
