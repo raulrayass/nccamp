@@ -214,9 +214,9 @@ export function SettingsClient() {
   }
 
   return (
-    <div className="w-full min-h-screen flex flex-col">
+    <div className="settings-page w-full min-h-screen flex flex-col bg-background">
       {/* Header Section */}
-      <div className="px-4 sm:px-6 lg:px-8 pt-4 pb-4 border-b border-border">
+      <div className="settings-header px-4 sm:px-6 lg:px-8 pt-5 pb-5">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Configuración</h1>
         </div>
@@ -232,7 +232,7 @@ export function SettingsClient() {
               <div className="w-1 h-5 bg-primary rounded-full"></div>
               Tu Perfil
             </h2>
-            <Card className="p-5 sm:p-6 shadow-sm">
+            <Card className="settings-card p-4 sm:p-5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Email</label>
@@ -315,7 +315,7 @@ export function SettingsClient() {
               </Dialog>
             </div>
 
-            <Card className="p-5 sm:p-6 shadow-sm">
+            <Card className="settings-card p-4 sm:p-5">
               {loading ? (
                 <div className="text-center py-8 text-muted-foreground text-sm">Cargando eventos...</div>
               ) : events.length === 0 ? (
@@ -331,13 +331,13 @@ export function SettingsClient() {
                   {events.map((event) => (
                     <div
                       key={event.id}
-                      className="flex items-center justify-between p-4 bg-muted/40 rounded-xl hover:bg-muted/60 transition-colors group"
+                      className="settings-event-row flex items-center justify-between gap-3 p-4 rounded-2xl transition-colors group"
                     >
                       <div className="flex-1 min-w-0">
                         <h3 className="font-semibold text-foreground text-sm truncate">{event.name}</h3>
                         <p className="text-xs text-muted-foreground mt-1">ID: {event.id}</p>
                       </div>
-                      <div className="flex items-center gap-2 ml-4 flex-shrink-0">
+                      <div className="settings-event-actions flex items-center gap-1 ml-2 flex-shrink-0">
                         <Button
                           size="sm"
                           variant={eventId === event.id ? 'default' : 'outline'}
@@ -485,7 +485,7 @@ export function SettingsClient() {
               <div className="w-1 h-5 bg-red-500 rounded-full"></div>
               Cerrar Sesión
             </h2>
-            <Card className="p-5 sm:p-6 shadow-sm border-red-500/20 bg-red-500/5">
+            <Card className="settings-logout-card p-4 sm:p-5">
               <AlertDialog open={logoutOpen} onOpenChange={setLogoutOpen}>
                 <Button
                   onClick={() => setLogoutOpen(true)}
