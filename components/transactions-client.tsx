@@ -462,25 +462,25 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
       <GroupTabs tabs={FINANZAS_TABS} />
 
       {/* Summary */}
-      <div className="finance-summary grid gap-3 sm:grid-cols-2">
-        <Card className="finance-surface finance-balance-card p-5 sm:col-span-2 sm:p-6">
+      <div className="finance-summary grid grid-cols-2 gap-2.5 sm:gap-3">
+        <Card className="finance-surface finance-balance-card col-span-2 p-3.5 sm:p-5">
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">Balance General</p>
-              <p className={`mt-2 text-3xl font-bold tracking-tight ${totals.income - totals.expense >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              <p className={`mt-1 text-2xl font-bold tracking-tight sm:text-3xl ${totals.income - totals.expense >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                 {formatCurrency(totals.income - totals.expense)}
               </p>
             </div>
             <div className="finance-summary-icon bg-primary/10 text-primary"><Wallet className="h-5 w-5" /></div>
           </div>
         </Card>
-        <Card className="finance-surface p-4 sm:p-5">
+        <Card className="finance-surface rounded-[1.75rem] p-3 sm:p-4">
           <div className="flex items-center justify-between gap-3">
             <div><p className="text-xs font-semibold text-muted-foreground">Ingresos</p><p className="mt-1 text-xl font-bold text-foreground">{formatCurrency(totals.income)}</p></div>
             <div className="finance-summary-icon bg-emerald-600/10 text-emerald-600"><TrendingUp className="h-5 w-5" /></div>
           </div>
         </Card>
-        <Card className="finance-surface p-4 sm:p-5">
+        <Card className="finance-surface rounded-[1.75rem] p-3 sm:p-4">
           <div className="flex items-center justify-between gap-3">
             <div><p className="text-xs font-semibold text-muted-foreground">Egresos</p><p className="mt-1 text-xl font-bold text-foreground">{formatCurrency(totals.expense)}</p></div>
             <div className="finance-summary-icon bg-orange-600/10 text-orange-600"><TrendingDown className="h-5 w-5" /></div>
@@ -707,7 +707,7 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
                           <p className={`text-xs sm:text-sm font-bold whitespace-nowrap ${t.type === 'income' ? 'text-green-600' : 'text-orange-600'}`}>
                             {t.type === 'income' ? '+' : '-'}{formatCurrency(parseFloat(t.amount as string))}
                           </p>
-                          <div className="flex items-center gap-1 opacity-80 transition-opacity group-hover:opacity-100">
+                          <div className="finance-card-actions opacity-80 transition-opacity group-hover:opacity-100">
                             <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-green-500/10" onClick={() => exportarRecibo(t)} title="Descargar recibo">
                               <Download className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-green-600" />
                             </Button>

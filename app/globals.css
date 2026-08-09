@@ -332,7 +332,7 @@ button:active:not(:disabled) {
 }
 
 .dark .finance-transaction-row {
-  box-shadow: 0 2px 5px color-mix(in srgb, black 30%, transparent), 0 14px 30px color-mix(in srgb, black 42%, transparent);
+  box-shadow: 0 4px 10px color-mix(in srgb, #071b12 72%, transparent), 0 16px 34px color-mix(in srgb, var(--primary) 18%, transparent);
 }
 
 .dark .finance-method-cash {
@@ -453,6 +453,38 @@ button:not(:disabled):active,
 
 .finance-balance-card {
   background: linear-gradient(135deg, color-mix(in srgb, var(--card) 94%, var(--primary)), var(--card));
+}
+
+.finance-summary .finance-surface {
+  border-radius: 1.75rem;
+}
+
+.finance-summary .finance-surface:not(.finance-balance-card) {
+  min-width: 0;
+}
+
+.finance-summary .finance-surface:not(.finance-balance-card) p {
+  overflow-wrap: anywhere;
+}
+
+.finance-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--primary) 8%, var(--card));
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--primary) 22%, transparent);
+}
+
+.dark .finance-card-actions {
+  background: color-mix(in srgb, var(--primary) 18%, var(--card));
+  box-shadow: 0 5px 16px color-mix(in srgb, var(--primary) 34%, transparent);
+}
+
+.finance-card-actions button {
+  border-radius: 9999px;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--primary) 20%, transparent);
 }
 
 .finance-surface,
@@ -578,6 +610,40 @@ button:not(:disabled):active,
 .games-shell input,
 .games-shell select {
   border-radius: 0.9rem;
+}
+
+@media (max-width: 380px) {
+  .finance-page {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  .finance-summary {
+    gap: 0.5rem;
+  }
+
+  .finance-summary .finance-surface {
+    border-radius: 1.5rem;
+    padding: 0.75rem;
+  }
+
+  .finance-summary-icon {
+    height: 2rem;
+    width: 2rem;
+  }
+
+  .finance-summary .text-2xl {
+    font-size: 1.25rem;
+  }
+
+  .finance-card-actions {
+    gap: 0.1rem;
+  }
+
+  .finance-card-actions button {
+    height: 1.75rem;
+    width: 1.75rem;
+  }
 }
 
 @media (max-width: 640px) {
