@@ -438,14 +438,14 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
 
   if (loading) {
     return (
-      <div className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 flex flex-col gap-2 sm:gap-3 max-w-7xl mx-auto w-full">
+      <div className="finance-page px-3 sm:px-4 lg:px-6 py-3 sm:py-4 flex flex-col gap-4 sm:gap-5 max-w-7xl mx-auto w-full">
         <ListSkeleton count={8} variant="row" />
       </div>
     )
   }
 
   return (
-    <div className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 flex flex-col gap-2 sm:gap-3 max-w-7xl mx-auto w-full">
+    <div className="finance-page px-3 sm:px-4 lg:px-6 py-3 sm:py-4 flex flex-col gap-4 sm:gap-5 max-w-7xl mx-auto w-full">
       {/* Header */}
       <PageHeader title="Finanzas">
         <Button onClick={exportToExcel} variant="outline" size="sm" className="gap-1.5 text-xs sm:text-sm h-9 sm:h-10 px-2 sm:px-3">
@@ -462,40 +462,28 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
       <GroupTabs tabs={FINANZAS_TABS} />
 
       {/* Summary */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-        <Card className="finance-surface p-4 sm:p-5">
-          <div className="flex justify-between items-start">
+      <div className="finance-summary grid gap-3 sm:grid-cols-2">
+        <Card className="finance-surface finance-balance-card p-5 sm:col-span-2 sm:p-6">
+          <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-xs text-muted-foreground font-medium">Total Ingresos</p>
-              <p className="text-lg sm:text-2xl font-bold text-foreground mt-1">{formatCurrency(totals.income)}</p>
-            </div>
-            <div className="bg-emerald-600/10 p-1.5 sm:p-2 rounded-lg flex-shrink-0">
-              <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600" />
-            </div>
-          </div>
-        </Card>
-        <Card className="finance-surface p-4 sm:p-5">
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-xs text-muted-foreground font-medium">Total Egresos</p>
-              <p className="text-lg sm:text-2xl font-bold text-foreground mt-1">{formatCurrency(totals.expense)}</p>
-            </div>
-            <div className="bg-orange-600/10 p-1.5 sm:p-2 rounded-lg flex-shrink-0">
-              <TrendingDown className="w-5 h-5 sm:w-6 sm:h-6 text-orange-600" />
-            </div>
-          </div>
-        </Card>
-        <Card className="finance-surface p-4 sm:p-5">
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-xs text-muted-foreground font-medium">Balance General</p>
-              <p className={`text-lg sm:text-2xl font-bold mt-1 ${totals.income - totals.expense >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">Balance General</p>
+              <p className={`mt-2 text-3xl font-bold tracking-tight ${totals.income - totals.expense >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                 {formatCurrency(totals.income - totals.expense)}
               </p>
             </div>
-            <div className="bg-primary/10 p-1.5 sm:p-2 rounded-lg flex-shrink-0">
-              <Wallet className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
-            </div>
+            <div className="finance-summary-icon bg-primary/10 text-primary"><Wallet className="h-5 w-5" /></div>
+          </div>
+        </Card>
+        <Card className="finance-surface p-4 sm:p-5">
+          <div className="flex items-center justify-between gap-3">
+            <div><p className="text-xs font-semibold text-muted-foreground">Ingresos</p><p className="mt-1 text-xl font-bold text-foreground">{formatCurrency(totals.income)}</p></div>
+            <div className="finance-summary-icon bg-emerald-600/10 text-emerald-600"><TrendingUp className="h-5 w-5" /></div>
+          </div>
+        </Card>
+        <Card className="finance-surface p-4 sm:p-5">
+          <div className="flex items-center justify-between gap-3">
+            <div><p className="text-xs font-semibold text-muted-foreground">Egresos</p><p className="mt-1 text-xl font-bold text-foreground">{formatCurrency(totals.expense)}</p></div>
+            <div className="finance-summary-icon bg-orange-600/10 text-orange-600"><TrendingDown className="h-5 w-5" /></div>
           </div>
         </Card>
       </div>
@@ -661,8 +649,8 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
           </p>
         </Card>
       ) : (
-        <div className="space-y-4">
-          {Object.entries(groupTransactionsByDate(filtered))
+  <div className="space-y-6">
+  {Object.entries(groupTransactionsByDate(filtered))
             .sort(([dateA], [dateB]) => new Date(dateB).getTime() - new Date(dateA).getTime())
             .map(([date, group]) => {
             // Parse date string (YYYY-MM-DD) in local timezone to avoid UTC offset issues
@@ -685,12 +673,12 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
                 </div>
 
                 {/* Transactions for this day */}
-                <div className="space-y-1">
-                  {group.transactions.map((t) => {
+<div className="space-y-3">
+  {group.transactions.map((t) => {
                     const paymentMethod = t.paymentMethod ?? 'cash'
                     const methodAccentClass = paymentMethod === 'transfer' ? 'finance-method-transfer' : paymentMethod === 'deposit' ? 'finance-method-deposit' : 'finance-method-cash'
                     return (
-                      <div key={t.id} className={`finance-surface finance-transaction-row ${methodAccentClass} group flex flex-col gap-3 p-3.5 transition-all hover:-translate-y-0.5 hover:bg-muted/35 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:p-4`}>
+                      <div key={t.id} className={`finance-surface finance-transaction-row ${methodAccentClass} group flex flex-col gap-4 p-4 transition-all hover:-translate-y-0.5 hover:bg-muted/35 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:p-4`}>
                         <div className="flex items-center gap-1.5 flex-1 min-w-0">
                           <div className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full ${t.type === 'income' ? 'bg-green-500/12' : 'bg-orange-500/12'}`}>
                             {t.type === 'income' ? (

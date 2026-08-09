@@ -299,15 +299,16 @@ button:active:not(:disabled) {
 
 /* Finance-inspired elevation primitives: visible, soft, and consistent across mobile surfaces. */
 .finance-surface {
-  border: 1px solid color-mix(in srgb, var(--foreground) 7%, transparent);
+  border: 0;
   border-radius: 1.5rem;
   background: var(--card);
   box-shadow: 0 2px 5px color-mix(in srgb, var(--foreground) 5%, transparent), 0 14px 32px color-mix(in srgb, var(--foreground) 11%, transparent);
 }
 
 .finance-transaction-row {
+  border: 0;
   border-radius: 1.75rem;
-  box-shadow: 0 3px 5px color-mix(in srgb, black 14%, transparent), 0 14px 30px color-mix(in srgb, black 22%, transparent);
+  box-shadow: 0 3px 5px color-mix(in srgb, black 10%, transparent), 0 14px 30px color-mix(in srgb, black 16%, transparent);
 }
 
 .finance-transaction-row:hover {
@@ -428,6 +429,30 @@ button:not(:disabled):active,
 .finance-surface-strong,
 .finance-pill {
   border-color: transparent;
+}
+
+.finance-page > header,
+.finance-page > [role="tablist"],
+.finance-page > .relative {
+  filter: drop-shadow(0 8px 18px color-mix(in srgb, var(--foreground) 6%, transparent));
+}
+
+.finance-page .finance-transaction-row + .finance-transaction-row {
+  margin-top: 0.25rem;
+}
+
+.finance-summary-icon {
+  display: flex;
+  height: 2.5rem;
+  width: 2.5rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.9rem;
+}
+
+.finance-balance-card {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--card) 94%, var(--primary)), var(--card));
 }
 
 .finance-surface,
