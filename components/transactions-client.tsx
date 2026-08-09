@@ -530,8 +530,8 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
           className={cn(
             'finance-pill px-4 py-2 text-sm font-semibold transition-colors',
             filterType === 'all'
-              ? 'bg-green-600 text-white border-green-600 shadow-[0_6px_14px_color-mix(in_srgb,var(--primary)_24%,transparent)]'
-              : 'bg-white/5 text-foreground border-border hover:bg-white/10'
+              ? 'bg-primary text-primary-foreground border-primary shadow-[0_6px_14px_color-mix(in_srgb,var(--primary)_30%,transparent)]'
+              : 'bg-muted text-muted-foreground border-border hover:bg-secondary hover:text-foreground'
           )}
         >
           Todas
@@ -541,8 +541,8 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
           className={cn(
             'finance-pill px-4 py-2 text-sm font-semibold transition-colors',
             filterType === 'income'
-              ? 'bg-green-600 text-white border-green-600 shadow-[0_6px_14px_color-mix(in_srgb,var(--primary)_24%,transparent)]'
-              : 'bg-white/5 text-foreground border-border hover:bg-white/10'
+              ? 'bg-primary text-primary-foreground border-primary shadow-[0_6px_14px_color-mix(in_srgb,var(--primary)_30%,transparent)]'
+              : 'bg-muted text-muted-foreground border-border hover:bg-secondary hover:text-foreground'
           )}
         >
           Ingresos
@@ -552,8 +552,8 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
           className={cn(
             'finance-pill px-4 py-2 text-sm font-semibold transition-colors',
             filterType === 'expense'
-              ? 'bg-green-600 text-white border-green-600 shadow-[0_6px_14px_color-mix(in_srgb,var(--primary)_24%,transparent)]'
-              : 'bg-white/5 text-foreground border-border hover:bg-white/10'
+              ? 'bg-primary text-primary-foreground border-primary shadow-[0_6px_14px_color-mix(in_srgb,var(--primary)_30%,transparent)]'
+              : 'bg-muted text-muted-foreground border-border hover:bg-secondary hover:text-foreground'
           )}
         >
           Egresos
