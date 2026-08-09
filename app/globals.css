@@ -398,7 +398,30 @@ button:active:not(:disabled) {
 
 .games-card {
   background: var(--card);
+  border-radius: 1.35rem;
 }
+
+.games-ranking-table {
+  border: 1px solid color-mix(in srgb, var(--foreground) 9%, transparent);
+  background: color-mix(in srgb, var(--card) 88%, var(--muted));
+}
+
+@media (max-width: 640px) {
+  .games-card {
+    border-radius: 1.15rem;
+  }
+
+  .games-card [data-slot="card-content"] {
+    padding: 0.7rem;
+  }
+
+  .games-card-icon {
+    height: 2.25rem;
+    width: 2.25rem;
+    border-radius: 0.85rem;
+  }
+}
+
 
 .games-card:hover,
 .games-ranking-panel:hover,
