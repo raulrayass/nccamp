@@ -50,12 +50,12 @@
 
 :root {
   color-scheme: light;
-  --background: #f8f9fa;
-  --foreground: #0d1117;
+  --background: #f1f2f4;
+  --foreground: #111318;
   --card: #ffffff;
-  --card-foreground: #0d1117;
+  --card-foreground: #111318;
   --popover: #ffffff;
-  --popover-foreground: #0d1117;
+  --popover-foreground: #111318;
   --primary: #1db854;
   --primary-foreground: #ffffff;
   --secondary: #f0f2f5;
@@ -65,8 +65,8 @@
   --accent: #179447;
   --accent-foreground: #ffffff;
   --destructive: #da3633;
-  --border: #e1e4e8;
-  --input: #f0f2f5;
+  --border: transparent;
+  --input: #e7e9ed;
   --ring: #1db854;
   --chart-1: #1db854;
   --chart-2: #2ea043;
@@ -166,6 +166,15 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-geist-sans), sans-serif;
+  }
+  [data-slot="card"] {
+    border-color: transparent;
+    box-shadow: 0 2px 5px color-mix(in srgb, var(--foreground) 5%, transparent), 0 14px 30px color-mix(in srgb, var(--foreground) 7%, transparent);
+  }
+  .dark [data-slot="card"] {
+    border-color: transparent;
+    box-shadow: 0 3px 8px color-mix(in srgb, black 28%, transparent), 0 18px 38px color-mix(in srgb, black 32%, transparent);
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-inter);
@@ -359,7 +368,23 @@ button:active:not(:disabled) {
 .finance-dock {
   position: relative;
   overflow: hidden;
-  box-shadow: 0 10px 35px color-mix(in srgb, var(--foreground) 18%, transparent), 0 2px 8px color-mix(in srgb, var(--foreground) 8%, transparent);
+  border: 0;
+  background: color-mix(in srgb, var(--card) 78%, transparent);
+  box-shadow: 0 14px 34px color-mix(in srgb, var(--foreground) 15%, transparent), inset 0 1px 0 color-mix(in srgb, white 75%, transparent);
+  backdrop-filter: blur(20px);
+}
+
+button,
+input,
+select,
+textarea,
+[role="button"] {
+  transition: box-shadow 180ms ease, transform 180ms ease, background-color 180ms ease;
+}
+
+button:not(:disabled):active,
+[role="button"]:active {
+  transform: scale(0.98);
 }
 
 .finance-dock-liquid {
@@ -396,7 +421,19 @@ button:active:not(:disabled) {
 }
 
 .games-shell [data-slot="card"] {
-  border-color: color-mix(in srgb, var(--foreground) 9%, transparent);
+  border-color: transparent;
+  box-shadow: 0 2px 5px color-mix(in srgb, var(--foreground) 5%, transparent), 0 14px 30px color-mix(in srgb, var(--foreground) 8%, transparent);
+}
+
+.finance-surface,
+.finance-surface-strong,
+.finance-pill {
+  border-color: transparent;
+}
+
+.finance-surface,
+.finance-surface-strong {
+  box-shadow: 0 3px 7px color-mix(in srgb, var(--foreground) 6%, transparent), 0 18px 38px color-mix(in srgb, var(--foreground) 9%, transparent);
 }
 
 .games-stat,
