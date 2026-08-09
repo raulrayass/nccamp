@@ -752,6 +752,27 @@ button:not(:disabled):active,
   color: #ffffff;
 }
 
+.settings-brandline { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.settings-eyebrow, .settings-section-kicker { margin: 0; color: #22c55e; font-size: 0.65rem; font-weight: 800; letter-spacing: 0.16em; }
+.settings-title { margin: 0.25rem 0 0; color: #fff; font-size: clamp(1.75rem, 7vw, 2.5rem); font-weight: 800; letter-spacing: -0.05em; }
+.settings-subtitle { margin: 0.35rem 0 0; color: #8e8e93; font-size: 0.78rem; }
+.settings-avatar { display: flex; height: 2.75rem; width: 2.75rem; align-items: center; justify-content: center; border-radius: 1rem; background: #22c55e; color: #07150b; font-size: 1.1rem; font-weight: 800; box-shadow: 0 0 0 4px rgba(34,197,94,.12); }
+.settings-section-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: 0.75rem; }
+.settings-section-heading h2 { margin: 0.2rem 0 0; color: #fff; font-size: 1.15rem; font-weight: 750; letter-spacing: -0.025em; }
+.settings-section-count { color: #8e8e93; font-family: var(--font-geist-mono), monospace; font-size: 0.7rem; }
+.settings-profile-card, .settings-card { border: 0; border-radius: 1.25rem; background: #1c1c1e; box-shadow: 0 12px 30px rgba(0,0,0,.24); }
+.settings-add-button { border-radius: 9999px; background: #22c55e; color: #07150b; font-weight: 750; box-shadow: 0 8px 18px rgba(34,197,94,.16); }
+.settings-add-button:hover { background: #35d86f; }
+.settings-page .settings-card label { color: #8e8e93; font-size: 0.65rem; letter-spacing: .04em; }
+.settings-page .settings-card p { line-height: 1.45; }
+.settings-event-actions { border-radius: 9999px; background: #0a0a0a; padding: 0.2rem; }
+.settings-event-actions button { border-radius: 9999px; }
+.settings-event-row { border: 0; border-radius: 1rem; background: #242426; }
+.settings-event-row:hover { background: #2a2a2d; }
+.settings-event-row .text-muted-foreground { color: #8e8e93; }
+.settings-logout-card { border: 1px solid rgba(239,68,68,.28); border-radius: 1.25rem; background: rgba(239,68,68,.08); }
+.settings-logout-card button { border-radius: 9999px; background: #ef4444; color: #fff; font-weight: 700; }
+
 .settings-header {
   background: #0a0a0a;
 }
