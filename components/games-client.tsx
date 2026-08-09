@@ -201,14 +201,14 @@ export function GamesClient({ userId, eventId }: Props) {
   // Show skeleton while loading
   if (gamesLoading || teamsLoading || scoresLoading) {
     return (
-      <div className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 flex flex-col gap-2 sm:gap-3 max-w-7xl mx-auto w-full">
+      <div className="games-shell mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 py-3 sm:gap-5 sm:px-4 sm:py-4 lg:px-6">
         <ListSkeleton count={5} variant="card" />
       </div>
     )
   }
 
   return (
-    <div className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 flex flex-col gap-2 sm:gap-3 max-w-7xl mx-auto w-full">
+    <div className="games-shell mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 py-3 sm:gap-5 sm:px-4 sm:py-4 lg:px-6">
       {/* Header */}
       <PageHeader title="Juegos y Puntaje">
         <div className="flex flex-wrap gap-2">
@@ -233,8 +233,8 @@ export function GamesClient({ userId, eventId }: Props) {
 
       {/* Quick Stats - 2 column grid (matches Staff/Attendees style) */}
       {!loading && gameList.length > 0 && (
-        <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
-          <Card className="bg-gradient-to-br from-indigo-500/10 to-indigo-600/5 border border-indigo-500/30 shadow-none dark:from-indigo-500/15 dark:to-indigo-600/5">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
+          <Card className="games-stat games-stat--indigo">
             <CardContent className="p-2 sm:p-2.5">
               <div className="text-center">
                 <Gamepad2 className="w-3.5 h-3.5 text-indigo-600 mx-auto mb-0.5" />
@@ -243,7 +243,7 @@ export function GamesClient({ userId, eventId }: Props) {
               </div>
             </CardContent>
           </Card>
-          <Card className="border-emerald-500/30 bg-emerald-500/10 shadow-none dark:bg-emerald-500/15">
+          <Card className="games-stat games-stat--emerald">
             <CardContent className="p-2 sm:p-2.5">
               <div className="text-center">
                 <Users2 className="w-3.5 h-3.5 text-emerald-600 mx-auto mb-0.5" />
@@ -257,7 +257,7 @@ export function GamesClient({ userId, eventId }: Props) {
 
       {/* Ranking projection entry point */}
       {teams.length > 0 && (
-        <Card className="border-primary/25 bg-card shadow-sm">
+        <Card className="games-ranking-panel">
           <CardContent className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
             <div className="flex min-w-0 items-center gap-3">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
@@ -302,13 +302,13 @@ export function GamesClient({ userId, eventId }: Props) {
       ) : (
         <div className="space-y-2 md:space-y-3">
           {gameList.map((game, index) => (
-            <Card key={game.id} className="overflow-hidden border border-border bg-card shadow-sm transition-colors hover:border-primary/40" style={{ animationDelay: `${index * 0.05}s` }}>
+            <Card key={game.id} className="games-card group overflow-hidden" style={{ animationDelay: `${index * 0.05}s` }}>
               <CardContent className="p-3 md:p-5">
                 <div className="flex items-center justify-between gap-2 md:gap-4">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-start gap-2 md:gap-3">
-                      <div className="text-lg md:text-2xl font-black text-primary shrink-0">
-                        🎮
+                      <div className="games-card-icon flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl text-primary md:h-12 md:w-12">
+                        <Gamepad2 className="h-5 w-5 md:h-6 md:w-6" />
                       </div>
                       <div className="min-w-0 flex-1">
                         <h3 className="font-bold text-sm md:text-lg truncate text-foreground leading-tight">{game.name}</h3>
@@ -348,7 +348,7 @@ export function GamesClient({ userId, eventId }: Props) {
                       }}
                       size="sm"
                       variant="ghost"
-                      className="h-8 md:h-9 w-8 md:w-9 p-0 hover:bg-blue-100 dark:hover:bg-blue-950"
+                      className="h-9 w-9 rounded-full p-0 hover:bg-blue-500/12"
                       title="Editar"
                     >
                       <Edit2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-600" />
@@ -360,7 +360,7 @@ export function GamesClient({ userId, eventId }: Props) {
                       }}
                       size="sm"
                       variant="ghost"
-                      className="h-8 md:h-9 w-8 md:w-9 p-0 hover:bg-red-100 dark:hover:bg-red-950"
+                      className="h-9 w-9 rounded-full p-0 hover:bg-red-500/12"
                       title="Eliminar"
                     >
                       <Trash2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-red-600" />
@@ -449,7 +449,7 @@ export function GamesClient({ userId, eventId }: Props) {
               <Label className="font-semibold">Puntuación actual</Label>
               <div className="space-y-2 mt-2">
                 {teams.map((team) => (
-                  <div key={team.id} className="flex items-center justify-between p-2 rounded bg-muted/50">
+                  <div key={team.id} className="games-score-row flex items-center justify-between rounded-2xl p-3">
                     <div className="flex items-center gap-2">
                       <TeamFlag country={team.country} color={team.color} shape="rect" className="w-6 h-4" />
                       <span className="text-sm font-medium">{team.name}</span>
@@ -468,7 +468,7 @@ export function GamesClient({ userId, eventId }: Props) {
                   id="teamId"
                   value={scoringForm.teamId}
                   onChange={(e) => setScoringForm({ ...scoringForm, teamId: e.target.value })}
-                  className="w-full px-3 py-2 border border-input rounded-md text-sm bg-background h-10"
+                  className="h-11 w-full rounded-2xl border border-input bg-background px-3 text-sm shadow-sm"
                 >
                   <option value="">Selecciona un equipo</option>
                   {teams.map((team) => (
