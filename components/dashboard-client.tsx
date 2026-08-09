@@ -152,12 +152,7 @@ const tapTransition = { type: 'spring' as const, stiffness: 400, damping: 25 }
   }
 
   return (
-    <motion.div
-      className="dashboard-ios mx-auto flex w-full max-w-7xl flex-col gap-5 overflow-x-hidden px-4 py-4 sm:gap-6 sm:px-6 sm:py-6"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
+    <div className="dashboard-ios mx-auto flex w-full max-w-7xl flex-col gap-5 overflow-x-hidden px-4 py-4 sm:gap-6 sm:px-6 sm:py-6">
 
       {/* ===== 1. Balance Total (héroe) ===== */}
       <motion.div variants={itemVariants} whileTap={{ scale: 0.95 }} className="cursor-pointer">
@@ -502,7 +497,7 @@ const tapTransition = { type: 'spring' as const, stiffness: 400, damping: 25 }
           )}
         </Card>
       </motion.div>
-    </motion.div>
+    </div>
   )
 }
 

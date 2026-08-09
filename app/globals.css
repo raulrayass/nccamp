@@ -250,8 +250,9 @@ html {
   box-shadow: 
     0 2px 4px rgba(0, 0, 0, 0.04),
     0 8px 20px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  border-radius: 1rem;
+  transition: box-shadow 180ms ease, background-color 180ms ease;
+  border: 0;
+  border-radius: 1.25rem;
 }
 
 .dark [data-slot="card"],
@@ -268,7 +269,6 @@ html {
   box-shadow: 
     0 4px 8px rgba(0, 0, 0, 0.06),
     0 16px 40px rgba(0, 0, 0, 0.15);
-  transform: translateY(-4px);
 }
 
 .dark [data-slot="card"]:hover,
@@ -277,7 +277,6 @@ html {
   box-shadow: 
     0 4px 8px rgba(0, 0, 0, 0.4),
     0 16px 40px rgba(0, 0, 0, 0.6);
-  transform: translateY(-4px);
 }
 
 /* Card transitions */
