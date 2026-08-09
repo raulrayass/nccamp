@@ -7,6 +7,7 @@ import { useEventSession } from '@/lib/contexts/event-session-context'
 import { getUserEvents, setDefaultEvent, createEvent, updateEvent, deleteEvent } from '@/app/actions/events'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
 import { Star, Plus, LogOut, Edit2, Trash2 } from 'lucide-react'
 import {
@@ -229,17 +230,16 @@ export function SettingsClient() {
           {/* User Profile Section */}
           <div>
             <div className="settings-section-heading">
-              <div><p className="settings-section-kicker">CUENTA</p><h2>Tu perfil</h2></div>
-              <span className="settings-section-count">01</span>
+              <div><p className="settings-section-kicker">Tu espacio</p><h2>Tu perfil</h2></div>
             </div>
             <Card className="settings-card settings-profile-card p-4 sm:p-5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Email</label>
+                  <label className="text-xs font-semibold text-muted-foreground">Email</label>
                   <p className="text-foreground mt-2 break-all">{user.email}</p>
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Nombre</label>
+                  <label className="text-xs font-semibold text-muted-foreground">Nombre</label>
                   <p className="text-foreground mt-2">{user.name || 'Sin nombre registrado'}</p>
                 </div>
               </div>
@@ -249,8 +249,7 @@ export function SettingsClient() {
           {/* Events Management Section */}
           <div>
             <div className="settings-section-heading">
-              <div><p className="settings-section-kicker">ESPACIOS DE TRABAJO</p><h2>Mis eventos</h2></div>
-              <span className="settings-section-count">02</span>
+              <div><p className="settings-section-kicker">Tu agenda</p><h2>Mis eventos</h2></div>
             </div>
             <div className="flex items-center justify-end mb-3">
               <Dialog open={showCreateForm} onOpenChange={setShowCreateForm}>
@@ -262,11 +261,11 @@ export function SettingsClient() {
                 </DialogTrigger>
                 <DialogContent className="max-w-md rounded-2xl">
                   <DialogHeader>
-                    <DialogTitle className="text-xl">Crear Evento</DialogTitle>
+                    <DialogTitle className="text-xl">Nuevo evento</DialogTitle>
                   </DialogHeader>
                   <form onSubmit={handleCreateEvent} className="space-y-4">
                     <div>
-                      <label className="text-xs font-semibold text-muted-foreground uppercase">Nombre</label>
+                      <label className="text-xs font-semibold text-muted-foreground">Nombre</label>
                       <input
                         type="text"
                         required
@@ -277,7 +276,7 @@ export function SettingsClient() {
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-semibold text-muted-foreground uppercase">País</label>
+                      <label className="text-xs font-semibold text-muted-foreground">País</label>
                       <input
                         type="text"
                         value={formData.country}
@@ -287,7 +286,7 @@ export function SettingsClient() {
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="text-xs font-semibold text-muted-foreground uppercase">Inicio</label>
+                        <label className="text-xs font-semibold text-muted-foreground">Inicio</label>
                         <input
                           type="date"
                           required
@@ -297,7 +296,7 @@ export function SettingsClient() {
                         />
                       </div>
                       <div>
-                        <label className="text-xs font-semibold text-muted-foreground uppercase">Fin</label>
+                        <label className="text-xs font-semibold text-muted-foreground">Fin</label>
                         <input
                           type="date"
                           required
@@ -308,7 +307,7 @@ export function SettingsClient() {
                       </div>
                     </div>
                     <Button type="submit" disabled={isCreating} className="w-full mt-5">
-                      {isCreating ? 'Creando...' : 'Crear Evento'}
+                      {isCreating ? 'Creando...' : 'Guardar evento'}
                     </Button>
                   </form>
                 </DialogContent>
@@ -334,8 +333,10 @@ export function SettingsClient() {
                       className="settings-event-row flex items-center justify-between gap-3 p-4 rounded-2xl transition-colors group"
                     >
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-foreground text-sm truncate">{event.name}</h3>
-                        <p className="text-xs text-muted-foreground mt-1">ID: {event.id}</p>
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-semibold text-foreground text-sm truncate">{event.name}</h3>
+                          {eventId === event.id && <Badge variant="secondary" className="shrink-0">Actual</Badge>}
+                        </div>
                       </div>
                       <div className="settings-event-actions flex items-center gap-1 ml-2 flex-shrink-0">
                         <Button
@@ -352,14 +353,16 @@ export function SettingsClient() {
                         >
                           {eventId === event.id ? 'Actual' : 'Abrir'}
                         </Button>
-                        <button
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           onClick={() => handleSetDefault(event.id)}
                           disabled={settingDefault !== null}
-                          className="p-1.5 rounded-lg hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all disabled:opacity-50"
                           title="Establecer como predeterminado"
+                          aria-label="Establecer como predeterminado"
                         >
-                          <Star className={`w-4 h-4 ${settingDefault === event.id ? 'animate-spin text-yellow-500' : ''}`} />
-                        </button>
+                          <Star data-icon="inline-start" className={settingDefault === event.id ? 'animate-spin text-yellow-500' : ''} />
+                        </Button>
                         <Dialog open={editingEventId === event.id} onOpenChange={(open) => {
                           if (open) {
                             setEditingEventId(event.id)
@@ -390,11 +393,11 @@ export function SettingsClient() {
                           </button>
                           <DialogContent className="max-w-md rounded-2xl">
                             <DialogHeader>
-                              <DialogTitle className="text-xl">Editar Evento</DialogTitle>
+                              <DialogTitle className="text-xl">Editar evento</DialogTitle>
                             </DialogHeader>
                             <form onSubmit={(e) => handleUpdateEvent(e, event)} className="space-y-4">
                               <div>
-                                <label className="text-xs font-semibold text-muted-foreground uppercase">Nombre</label>
+                                <label className="text-xs font-semibold text-muted-foreground">Nombre</label>
                                 <input
                                   type="text"
                                   required
@@ -404,7 +407,7 @@ export function SettingsClient() {
                                 />
                               </div>
                               <div>
-                                <label className="text-xs font-semibold text-muted-foreground uppercase">País</label>
+                                <label className="text-xs font-semibold text-muted-foreground">País</label>
                                 <input
                                   type="text"
                                   value={formData.country}
@@ -414,7 +417,7 @@ export function SettingsClient() {
                               </div>
                               <div className="grid grid-cols-2 gap-3">
                                 <div>
-                                  <label className="text-xs font-semibold text-muted-foreground uppercase">Inicio</label>
+                                  <label className="text-xs font-semibold text-muted-foreground">Inicio</label>
                                   <input
                                     type="date"
                                     required
@@ -424,7 +427,7 @@ export function SettingsClient() {
                                   />
                                 </div>
                                 <div>
-                                  <label className="text-xs font-semibold text-muted-foreground uppercase">Fin</label>
+                                  <label className="text-xs font-semibold text-muted-foreground">Fin</label>
                                   <input
                                     type="date"
                                     required
@@ -435,7 +438,7 @@ export function SettingsClient() {
                                 </div>
                               </div>
                               <Button type="submit" disabled={isUpdating} className="w-full mt-5">
-                                {isUpdating ? 'Actualizando...' : 'Actualizar Evento'}
+                                {isUpdating ? 'Guardando...' : 'Guardar cambios'}
                               </Button>
                             </form>
                           </DialogContent>
