@@ -401,10 +401,24 @@ button:active:not(:disabled) {
   border-radius: 1.35rem;
 }
 
-.games-ranking-table {
-  border: 1px solid color-mix(in srgb, var(--foreground) 9%, transparent);
+.games-ranking-row {
+  border: 1px solid color-mix(in srgb, var(--foreground) 8%, transparent);
   background: color-mix(in srgb, var(--card) 88%, var(--muted));
+  box-shadow: 0 1px 3px color-mix(in srgb, black 8%, transparent);
 }
+
+.games-score-chip {
+  background: color-mix(in srgb, var(--muted) 76%, var(--card));
+}
+
+.games-rank-badge {
+  background: color-mix(in srgb, var(--muted) 80%, var(--card));
+  color: var(--muted-foreground);
+}
+
+.games-rank-gold { background: #f3c969; color: #5a4100; }
+.games-rank-silver { background: #cbd5e1; color: #334155; }
+.games-rank-bronze { background: #e9a66f; color: #63320d; }
 
 @media (max-width: 640px) {
   .games-card {
@@ -447,22 +461,10 @@ button:active:not(:disabled) {
   border-radius: 0.9rem;
 }
 
-.games-mobile-chrome {
-  transition: transform 220ms ease, opacity 220ms ease, max-height 220ms ease;
-}
-
 @media (max-width: 640px) {
   .games-shell {
     gap: 0.75rem;
     padding-bottom: 5.5rem;
-  }
-
-  .games-shell.chrome-hidden .games-mobile-chrome {
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    pointer-events: none;
-    transform: translateY(-1.25rem);
   }
 
   .games-ranking-panel {
@@ -473,13 +475,34 @@ button:active:not(:disabled) {
     padding: 0.65rem;
   }
 
-  .games-ranking-table {
+  .games-ranking-row {
     border-radius: 1rem;
+    padding: 0.45rem 0.55rem;
   }
 
-  .games-ranking-table th,
-  .games-ranking-table td {
-    padding: 0.4rem 0.5rem;
+  .games-score-chip {
+    max-width: 5.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .games-card h3 {
+    font-size: 0.875rem;
+  }
+
+  .games-card p {
+    font-size: 0.6875rem;
+    line-height: 1.2;
+  }
+
+  .games-card .games-card-icon {
+    height: 2rem;
+    width: 2rem;
+  }
+
+  .games-card .games-card-icon svg {
+    height: 1rem;
+    width: 1rem;
   }
 }
 

@@ -45,27 +45,12 @@ export function GamesClient({ userId, eventId }: Props) {
   const [isPending, startTransition] = useTransition()
   const [fullscreenMode, setFullscreenMode] = useState(false)
   const [podiumMode, setPodiumMode] = useState(false)
-  const [isChromeHidden, setIsChromeHidden] = useState(false)
-
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
   const emptyForm = { name: '', description: '', gameDate: '' }
   const loading = gamesLoading || teamsLoading || scoresLoading
-
-  useEffect(() => {
-    let previousY = window.scrollY
-    const handleScroll = () => {
-      const currentY = window.scrollY
-      if (currentY < 24) setIsChromeHidden(false)
-      else if (currentY > previousY + 8) setIsChromeHidden(true)
-      else if (currentY < previousY - 8) setIsChromeHidden(false)
-      previousY = currentY
-    }
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
 
   useEffect(() => {
     if (searchParams.get('new') === '1') {
@@ -222,27 +207,24 @@ export function GamesClient({ userId, eventId }: Props) {
   }
 
   return (
-    <div className={cn('games-shell mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 py-3 sm:gap-5 sm:px-4 sm:py-4 lg:px-6', isChromeHidden && 'chrome-hidden')}>
-      <div className="games-mobile-chrome flex flex-col gap-4 sm:gap-5">
-      {/* Header */}
-      <PageHeader title="Juegos y Puntaje">
-        <div className="flex flex-wrap gap-2">
-          {teams.length > 0 && (
-            <>
-              <Button onClick={() => setPodiumMode(true)} variant="outline" size="sm" className="gap-1.5 text-xs sm:text-sm h-9 sm:h-10 px-2 sm:px-3">
-                <Trophy className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
+    <div className="games-shell mx-auto flex w-full max-w-7xl flex-col gap-3 px-2.5 py-2.5 sm:gap-5 sm:px-4 sm:py-4 lg:px-6">
+      <div className="games-mobile-chrome flex flex-col gap-3 sm:gap-5">
+        <PageHeader title="Juegos y Puntaje">
+          <div className="flex flex-wrap gap-2">
+            {teams.length > 0 && (
+              <Button onClick={() => setPodiumMode(true)} variant="outline" size="sm" className="h-9 gap-1.5 px-2 text-xs sm:h-10 sm:px-3 sm:text-sm">
+                <Trophy className="h-4 w-4 shrink-0" />
                 <span>Proyectar ganador</span>
               </Button>
-            </>
-          )}
-          <Button onClick={() => setDialogOpen(true)} size="sm" className="hidden gap-1.5 bg-green-600 px-2 text-xs text-white hover:bg-green-700 sm:flex sm:h-10 sm:px-3 sm:text-sm">
-            <Plus className="h-4 w-4 shrink-0" />
-            <span>Nuevo juego</span>
-          </Button>
-        </div>
-      </PageHeader>
+            )}
+            <Button onClick={() => setDialogOpen(true)} size="sm" className="hidden gap-1.5 bg-green-600 px-2 text-xs text-white hover:bg-green-700 sm:flex sm:h-10 sm:px-3 sm:text-sm">
+              <Plus className="h-4 w-4 shrink-0" />
+              <span>Nuevo juego</span>
+            </Button>
+          </div>
+        </PageHeader>
 
-      {/* Ranking preview: total and points accumulated per game */}
+        {/* Ranking preview */}
       {teams.length > 0 && gameList.length > 0 && (
         <Card className="games-ranking-panel overflow-hidden">
           <CardContent className="p-3 sm:p-5">
@@ -253,7 +235,6 @@ export function GamesClient({ userId, eventId }: Props) {
                 </div>
                 <div className="min-w-0">
                   <h2 className="truncate text-sm font-bold text-foreground sm:text-base">Previa del ranking</h2>
-                  <p className="text-[11px] text-muted-foreground sm:text-xs">Puntos acumulados por juego</p>
                 </div>
               </div>
               <Button onClick={() => setFullscreenMode(true)} variant="outline" size="sm" className="h-8 shrink-0 gap-1.5 rounded-full px-3 text-xs">
@@ -261,25 +242,21 @@ export function GamesClient({ userId, eventId }: Props) {
                 <span className="hidden sm:inline">Proyectar</span>
               </Button>
             </div>
-            <div className="games-ranking-table overflow-x-auto rounded-2xl">
-              <table className="w-full min-w-[520px] text-left text-xs">
-                <thead className="text-[10px] uppercase tracking-wide text-muted-foreground">
-                  <tr>
-                    <th className="px-3 py-2 font-semibold"># Equipo</th>
-                    {gameList.map((game) => <th key={game.id} className="px-2 py-2 text-center font-semibold">{game.name}</th>)}
-                    <th className="px-3 py-2 text-right font-semibold">Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {leaderboard.map(({ team, totalPoints, pointsPerGame }, index) => (
-                    <tr key={team.id} className="border-t border-border/60">
-                      <td className="px-3 py-2.5 font-semibold text-foreground"><span className="mr-2 text-muted-foreground">{index + 1}</span>{team.name}</td>
-                      {gameList.map((game) => <td key={game.id} className="px-2 py-2.5 text-center text-muted-foreground">{pointsPerGame[game.id] || 0}</td>)}
-                      <td className="px-3 py-2.5 text-right font-bold text-primary">{totalPoints}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="games-ranking-board space-y-1.5">
+              {leaderboard.map(({ team, totalPoints, pointsPerGame }, index) => (
+                <div key={team.id} className="games-ranking-row flex items-center gap-2.5 rounded-2xl px-2.5 py-2">
+                  <span className={cn('games-rank-badge flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold', index === 0 && 'games-rank-gold', index === 1 && 'games-rank-silver', index === 2 && 'games-rank-bronze')}>{index + 1}</span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="truncate text-xs font-bold text-foreground sm:text-sm">{team.name}</span>
+                      <span className="shrink-0 text-sm font-black text-primary">{totalPoints} pts</span>
+                    </div>
+                    <div className="mt-1 flex gap-1 overflow-hidden">
+                      {gameList.map((game) => <span key={game.id} className="games-score-chip shrink-0 rounded-full px-1.5 py-0.5 text-[10px] text-muted-foreground">{game.name}: {pointsPerGame[game.id] || 0}</span>)}
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
@@ -311,11 +288,11 @@ export function GamesClient({ userId, eventId }: Props) {
         <div className="space-y-2 md:space-y-3">
           {gameList.map((game, index) => (
             <Card key={game.id} className="games-card group overflow-hidden" style={{ animationDelay: `${index * 0.05}s` }}>
-              <CardContent className="p-3 md:p-5">
+              <CardContent className="p-2.5 sm:p-3 md:p-5">
                 <div className="flex items-center justify-between gap-2 md:gap-4">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-start gap-2 md:gap-3">
-                      <div className="games-card-icon flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl text-primary md:h-12 md:w-12">
+                      <div className="games-card-icon flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-primary sm:h-9 sm:w-9 md:h-12 md:w-12">
                         <Gamepad2 className="h-5 w-5 md:h-6 md:w-6" />
                       </div>
                       <div className="min-w-0 flex-1">
