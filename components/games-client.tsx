@@ -45,6 +45,7 @@ export function GamesClient({ userId, eventId }: Props) {
   const [isPending, startTransition] = useTransition()
   const [fullscreenMode, setFullscreenMode] = useState(false)
   const [podiumMode, setPodiumMode] = useState(false)
+  const [isChromeHidden, setIsChromeHidden] = useState(false)
 
   const router = useRouter()
   const pathname = usePathname()
@@ -52,6 +53,19 @@ export function GamesClient({ userId, eventId }: Props) {
 
   const emptyForm = { name: '', description: '', gameDate: '' }
   const loading = gamesLoading || teamsLoading || scoresLoading
+
+  useEffect(() => {
+    let previousY = window.scrollY
+    const handleScroll = () => {
+      const currentY = window.scrollY
+      if (currentY < 24) setIsChromeHidden(false)
+      else if (currentY > previousY + 8) setIsChromeHidden(true)
+      else if (currentY < previousY - 8) setIsChromeHidden(false)
+      previousY = currentY
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   useEffect(() => {
     if (searchParams.get('new') === '1') {
@@ -208,7 +222,8 @@ export function GamesClient({ userId, eventId }: Props) {
   }
 
   return (
-    <div className="games-shell mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 py-3 sm:gap-5 sm:px-4 sm:py-4 lg:px-6">
+    <div className={cn('games-shell mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 py-3 sm:gap-5 sm:px-4 sm:py-4 lg:px-6', isChromeHidden && 'chrome-hidden')}>
+      <div className="games-mobile-chrome flex flex-col gap-4 sm:gap-5">
       {/* Header */}
       <PageHeader title="Juegos y Puntaje">
         <div className="flex flex-wrap gap-2">
@@ -226,30 +241,6 @@ export function GamesClient({ userId, eventId }: Props) {
           </Button>
         </div>
       </PageHeader>
-
-      {/* Quick Stats - 2 column grid (matches Staff/Attendees style) */}
-      {!loading && gameList.length > 0 && (
-        <div className="grid grid-cols-2 gap-3 sm:gap-4">
-          <Card className="games-stat games-stat--indigo">
-            <CardContent className="p-2 sm:p-2.5">
-              <div className="text-center">
-                <Gamepad2 className="w-3.5 h-3.5 text-indigo-600 mx-auto mb-0.5" />
-                <p className="text-base sm:text-lg font-bold text-foreground">{gameList.length}</p>
-                <p className="text-[10px] sm:text-xs text-muted-foreground">Juegos Creados</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="games-stat games-stat--emerald">
-            <CardContent className="p-2 sm:p-2.5">
-              <div className="text-center">
-                <Users2 className="w-3.5 h-3.5 text-emerald-600 mx-auto mb-0.5" />
-                <p className="text-base sm:text-lg font-bold text-foreground">{teams.length}</p>
-                <p className="text-[10px] sm:text-xs text-muted-foreground">Equipos Participando</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
 
       {/* Ranking preview: total and points accumulated per game */}
       {teams.length > 0 && gameList.length > 0 && (
@@ -293,6 +284,7 @@ export function GamesClient({ userId, eventId }: Props) {
           </CardContent>
         </Card>
       )}
+      </div>
 
       {loading ? (
         <div className="space-y-3">
