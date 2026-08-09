@@ -40,6 +40,12 @@ export function BottomNavigation({ className }: BottomNavigationProps) {
   const router = useRouter()
   const pathname = usePathname()
   const [isHidden, setIsHidden] = useState(false)
+  const [activeIndex, setActiveIndex] = useState(0)
+
+  useEffect(() => {
+    const nextIndex = DEFAULT_ITEMS.findIndex((item) => pathname === item.href || pathname.startsWith(item.href + '/'))
+    setActiveIndex(nextIndex >= 0 ? nextIndex : 0)
+  }, [pathname])
 
   useEffect(() => {
     let previousY = window.scrollY
@@ -59,7 +65,8 @@ export function BottomNavigation({ className }: BottomNavigationProps) {
   return (
     <nav className={cn('mobile-dock fixed bottom-0 left-0 right-0 z-40 px-4 pb-3 safe-bottom transition-transform duration-200', isHidden && 'translate-y-[calc(100%+1rem)]', className)} aria-label="Navegación principal">
       <div className="mx-auto flex h-[68px] max-w-md items-center gap-2 finance-dock rounded-[2rem] border border-border/70 bg-card/95 p-2 backdrop-blur-xl backdrop-blur-xl">
-        <div className="flex min-w-0 flex-1 items-center justify-around">
+        <div className="relative flex min-w-0 flex-1 items-center justify-around">
+          <span aria-hidden="true" className="finance-dock-liquid absolute inset-y-1.5 left-0 w-1/3 rounded-[1.35rem]" style={{ transform: `translateX(${activeIndex * 100}%)` }} />
           {DEFAULT_ITEMS.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
             return (
@@ -69,9 +76,9 @@ export function BottomNavigation({ className }: BottomNavigationProps) {
                 onClick={() => router.push(item.href)}
                 aria-current={isActive ? 'page' : undefined}
                 className={cn(
-                  'relative flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-2xl px-2 transition-all active:scale-95',
+                  'relative z-10 flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-2xl px-2 transition-all active:scale-95',
                   'text-[10px] font-semibold',
-                  isActive ? 'bg-primary/12 text-primary shadow-[inset_0_1px_0_color-mix(in_srgb,white_45%,transparent)]' : 'text-muted-foreground hover:bg-muted/70'
+                  isActive ? 'text-primary' : 'text-muted-foreground hover:bg-muted/70'
                 )}
               >
                 {item.icon}
