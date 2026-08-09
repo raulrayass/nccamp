@@ -13,7 +13,7 @@ import { Plus, Star, Calendar, MapPin, LogIn, Search, SlidersHorizontal } from '
 interface EventOption { id: number; name: string }
 type EventFilter = 'Próximos' | 'En curso' | 'Pasados'
 
-const eventImages = ['/placeholder.svg?height=96&width=96', '/placeholder.svg?height=96&width=96', '/placeholder.svg?height=96&width=96']
+const eventImages = ['/event-camperos.svg', '/event-staff.svg', '/event-juegos.svg', '/event-reunion.svg']
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat('es-MX', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(value + 'T12:00:00'))
@@ -60,7 +60,7 @@ export function SelectEventClient({ userId, initialEvents }: { userId: string; i
         <div className="mb-5 grid grid-cols-3 gap-1.5 rounded-full bg-[#1C1C1E] p-1">{(['Próximos', 'En curso', 'Pasados'] as EventFilter[]).map((item) => <button key={item} onClick={() => setFilter(item)} className={`events-chip ${filter === item ? 'events-chip-active' : ''}`}>{item}</button>)}</div>
 
         {filteredEvents.length > 0 ? <div className="flex flex-col gap-2.5">{filteredEvents.map((event, index) => <article key={event.id} className="events-card" onClick={() => handleSelectEvent(event.id)}>
-          <img src={eventImages[index % eventImages.length]} alt="" className="events-card-image" />
+          <img src={eventImages[index % eventImages.length]} alt={`Ilustración de ${event.name}`} className="events-card-image" />
           <div className="min-w-0 flex-1"><h2 className="truncate text-sm font-semibold text-white">{event.name}</h2><p className="mt-1 text-[11px] font-medium text-[#22C55E]">{formatDate(new Date().toISOString().split('T')[0])}</p><p className="mt-1 flex items-center gap-1 truncate text-[10px] text-[#8E8E93]"><MapPin className="h-3 w-3" />{event.name}</p></div>
           <div className="flex shrink-0 flex-col items-end gap-2"><span className="text-[10px] font-semibold text-[#22C55E]">Próximo</span><button onClick={(e) => { e.stopPropagation(); handleSetDefault(event.id) }} className="events-star" aria-label="Establecer como predeterminado"><Star className={`h-3.5 w-3.5 ${settingDefault === event.id ? 'fill-[#22C55E] text-[#22C55E]' : ''}`} /></button></div>
         </article>)}</div> : <div className="events-empty">No hay eventos que coincidan.</div>}
