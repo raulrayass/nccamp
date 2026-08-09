@@ -754,7 +754,7 @@ button:not(:disabled):active,
 
 .settings-brandline { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 .settings-eyebrow, .settings-section-kicker { margin: 0; color: #22c55e; font-size: 0.65rem; font-weight: 800; letter-spacing: 0.16em; }
-.settings-title { margin: 0.25rem 0 0; color: #fff; font-size: clamp(1.75rem, 7vw, 2.5rem); font-weight: 800; letter-spacing: -0.05em; }
+.settings-title { margin: 0; color: #fff; font-size: clamp(1.75rem, 7vw, 2.25rem); font-weight: 750; letter-spacing: -0.04em; }
 .settings-subtitle { margin: 0.35rem 0 0; color: #8e8e93; font-size: 0.78rem; }
 .settings-avatar { display: flex; height: 2.75rem; width: 2.75rem; align-items: center; justify-content: center; border-radius: 1rem; background: #22c55e; color: #07150b; font-size: 1.1rem; font-weight: 800; box-shadow: 0 0 0 4px rgba(34,197,94,.12); }
 .settings-section-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: 0.75rem; }
