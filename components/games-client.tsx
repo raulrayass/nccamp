@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
-import { Plus, Edit2, Trash2, Gamepad2, Trophy, Minus, Users2, Maximize2 } from 'lucide-react'
+import { Plus, Gamepad2, Trophy, Minus, Maximize2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { createGame, updateGame, deleteGame, addGameScore, deleteGameScore, getGameScores } from '@/app/actions/games'
 import { Game, GameScore, Team } from '@/lib/db/schema'
@@ -234,7 +234,8 @@ export function GamesClient({ userId, eventId }: Props) {
                   <Trophy className="h-4 w-4" />
                 </div>
                 <div className="min-w-0">
-                  <h2 className="truncate text-sm font-bold text-foreground sm:text-base">Ranking</h2>
+                  <h2 className="truncate text-sm font-bold text-foreground sm:text-base">Tabla de puntos</h2>
+                  <p className="mt-1 text-xs text-muted-foreground">Cada registro suma al total del equipo</p>
                 </div>
               </div>
               <Button onClick={() => setFullscreenMode(true)} variant="outline" size="sm" className="h-8 shrink-0 gap-1.5 rounded-full px-3 text-xs">
@@ -249,10 +250,10 @@ export function GamesClient({ userId, eventId }: Props) {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
                       <span className="truncate text-xs font-bold text-foreground sm:text-sm">{team.name}</span>
-                      <span className="shrink-0 text-sm font-black text-primary">{totalPoints} pts</span>
+                      <span className="shrink-0 text-sm font-black text-primary">{totalPoints} puntos</span>
                     </div>
                     <div className="mt-1 flex gap-1 overflow-x-auto pb-0.5">
-                      {gameList.map((game) => <span key={game.id} title={`${game.name}: ${pointsPerGame[game.id] || 0} pts`} className="games-score-chip shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">{pointsPerGame[game.id] || 0}</span>)}
+                      {gameList.map((game) => <span key={game.id} title={`${game.name}: ${pointsPerGame[game.id] || 0} puntos`} className="games-score-chip shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">{game.name}: {pointsPerGame[game.id] || 0}</span>)}
                     </div>
                   </div>
                 </div>
@@ -289,6 +290,13 @@ export function GamesClient({ userId, eventId }: Props) {
           {gameList.map((game, index) => (
             <Card key={game.id} className="games-card group overflow-hidden" style={{ animationDelay: `${index * 0.05}s` }}>
               <CardContent className="p-2.5 sm:p-3 md:p-5">
+                <div className="mb-2 flex items-center justify-between gap-2 border-b border-border/50 pb-2">
+                  <span className="text-[11px] font-medium text-muted-foreground">Resultado del juego</span>
+                  <div className="flex items-center gap-1">
+                    <Button onClick={() => { setEditingId(game.id); setForm({ name: game.name, description: game.description || '', gameDate: game.gameDate || '' }); setDialogOpen(true) }} variant="ghost" size="sm" className="h-7 px-2 text-xs">Editar</Button>
+                    <Button onClick={() => { setDeletingId(game.id); setDeleteDialogOpen(true) }} variant="ghost" size="sm" className="h-7 px-2 text-xs text-destructive">Eliminar</Button>
+                  </div>
+                </div>
                 <div className="flex items-center justify-between gap-2 md:gap-4">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-start gap-2 md:gap-3">
@@ -319,46 +327,10 @@ export function GamesClient({ userId, eventId }: Props) {
                       </div>
                     </div>
                   </div>
-                  <div className="games-card-actions flex shrink-0 items-center gap-0.5 sm:gap-1">
-                    <Button
-                      onClick={() => openScoring(game.id)}
-                      size="sm"
-                      className="h-8 w-8 rounded-full p-0 text-xs font-medium sm:h-9 sm:w-auto sm:gap-1.5 sm:px-3 sm:rounded-full"
-                      title="Registrar puntos"
-                    >
-                      <Trophy className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                      <span className="hidden sm:inline">Puntos</span>
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        setEditingId(game.id)
-                        setForm({
-                          name: game.name,
-                          description: game.description || '',
-                          gameDate: game.gameDate || '',
-                        })
-                        setDialogOpen(true)
-                      }}
-                      size="sm"
-                      variant="ghost"
-                      className="h-7 w-7 rounded-full p-0 hover:bg-blue-500/12 sm:h-8 sm:w-8"
-                      title="Editar"
-                    >
-                      <Edit2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-600" />
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        setDeletingId(game.id)
-                        setDeleteDialogOpen(true)
-                      }}
-                      size="sm"
-                      variant="ghost"
-                      className="h-7 w-7 rounded-full p-0 hover:bg-red-500/12 sm:h-8 sm:w-8"
-                      title="Eliminar"
-                    >
-                      <Trash2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-red-600" />
-                    </Button>
-                  </div>
+                  <Button onClick={() => openScoring(game.id)} size="sm" className="games-score-action shrink-0 gap-1.5 rounded-full px-3 text-xs">
+                    <Trophy data-icon="inline-start" />
+                    <span>Registrar puntos</span>
+                  </Button>
                 </div>
               </CardContent>
             </Card>

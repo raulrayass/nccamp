@@ -535,6 +535,13 @@ button:not(:disabled):active,
   background: color-mix(in srgb, var(--primary) 6%, var(--card));
 }
 
+.games-score-action { background: #22c55e; color: #07150b; font-weight: 700; }
+.games-score-action:hover { background: #35d86f; }
+.games-ranking-panel {
+  border-color: color-mix(in srgb, #22c55e 32%, transparent);
+  background: color-mix(in srgb, #22c55e 7%, var(--card));
+}
+.games-score-chip { background: color-mix(in srgb, var(--muted) 76%, var(--card)); }
 .games-card {
   background: var(--card);
   border-radius: 1.35rem;
