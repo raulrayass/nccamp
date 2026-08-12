@@ -153,15 +153,6 @@ const tapTransition = { type: 'spring' as const, stiffness: 400, damping: 25 }
 
   return (
     <div className="dashboard-ios mx-auto flex w-full max-w-7xl flex-col gap-5 overflow-x-hidden px-4 py-5 sm:gap-6 sm:px-6 sm:py-7">
-      <header className="dashboard-welcome flex items-end justify-between gap-4">
-        <div>
-          <p className="text-sm font-medium text-primary">Tu evento</p>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">Resumen</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Todo lo importante, de un vistazo.</p>
-        </div>
-        <div className="hidden rounded-full bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary sm:block">En vivo</div>
-      </header>
-
       {/* Balance total */}
       <motion.div variants={itemVariants} whileTap={{ scale: 0.95 }} className="cursor-pointer">
         <Card className="dashboard-ios-card finance-surface-strong p-5 sm:p-6">

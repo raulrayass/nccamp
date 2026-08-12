@@ -196,7 +196,6 @@ html {
 }
 
 /* Native iOS-inspired dashboard surfaces and controls. Scoped to the dashboard only. */
-.dashboard-welcome { padding: 0.25rem 0.25rem 0.5rem; }
 .dashboard-ios .dashboard-ios-card { border: 1px solid color-mix(in srgb, var(--border) 68%, transparent); box-shadow: 0 10px 28px color-mix(in srgb, var(--foreground) 10%, transparent); }
 .dashboard-ios .dashboard-ios-card:hover { border-color: color-mix(in srgb, var(--primary) 28%, var(--border)); }
 .dashboard-ios {
@@ -387,11 +386,11 @@ button:active:not(:disabled) {
 .finance-dock {
   position: relative;
   overflow: hidden;
-  border: 0;
-  background: color-mix(in srgb, var(--card) 78%, transparent);
-  box-shadow: 0 14px 34px color-mix(in srgb, var(--foreground) 15%, transparent), inset 0 1px 0 color-mix(in srgb, white 75%, transparent);
-  backdrop-filter: blur(20px);
-}
+  border: 1px solid var(--border);
+  background: var(--card);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--foreground) 12%, transparent);
+  backdrop-filter: blur(12px);
+  }
 
 button,
 input,
@@ -769,21 +768,21 @@ button:not(:disabled):active,
 .settings-avatar { display: flex; height: 2.75rem; width: 2.75rem; align-items: center; justify-content: center; border-radius: 1rem; background: #22c55e; color: #07150b; font-size: 1.1rem; font-weight: 800; box-shadow: 0 0 0 4px rgba(34,197,94,.12); }
 .settings-section-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: 0.75rem; }
 .settings-section-heading h2 { margin: 0.2rem 0 0; color: #fff; font-size: 1.2rem; font-weight: 750; letter-spacing: -0.025em; }
-.settings-section-heading::after { content: '✦'; margin-left: auto; color: #22c55e; font-size: 0.85rem; opacity: .85; }
+.settings-section-heading::after { content: none; }
 .settings-section-count { color: #8e8e93; font-family: var(--font-geist-mono), monospace; font-size: 0.7rem; }
-.settings-profile-card, .settings-card { border: 0; border-radius: 1.25rem; background: #1c1c1e; box-shadow: 0 12px 30px rgba(0,0,0,.24); }
-.settings-add-button { border-radius: 9999px; background: #22c55e; color: #07150b; font-weight: 750; box-shadow: 0 8px 18px rgba(34,197,94,.16); }
-.settings-add-button::after { content: ' →'; font-size: 0.95em; }
-.settings-page .settings-card { box-shadow: 0 12px 30px rgba(0,0,0,.24); }
-.settings-page .settings-card:hover { box-shadow: 0 14px 34px rgba(0,0,0,.3); }
-.settings-event-row { position: relative; overflow: hidden; }
-.settings-event-row::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 0.2rem; background: #22c55e; opacity: .8; }
-.settings-event-row h3 { letter-spacing: -0.015em; }
+.settings-profile-card, .settings-card { border: 1px solid #2a2a2a; border-radius: 0.9rem; background: #1c1c1e; box-shadow: none; }
+.settings-add-button { border-radius: 0.6rem; background: #22c55e; color: #07150b; font-weight: 700; box-shadow: none; }
+.settings-add-button::after { content: none; }
+.settings-page .settings-card { box-shadow: none; }
+.settings-page .settings-card:hover { box-shadow: none; }
+.settings-event-row { position: relative; overflow: hidden; border-bottom: 1px solid #2a2a2a; border-radius: 0; }
+.settings-event-row::before { content: none; }
+.settings-event-row h3 { letter-spacing: 0; }
 .settings-add-button:hover { background: #35d86f; }
 .settings-page .settings-card label { color: #8e8e93; font-size: 0.65rem; letter-spacing: .04em; }
 .settings-page .settings-card p { line-height: 1.45; }
-.settings-event-actions { border-radius: 9999px; background: #0a0a0a; padding: 0.2rem; }
-.settings-event-actions button { border-radius: 9999px; }
+.settings-event-actions { display: flex; align-items: center; gap: 0.25rem; background: transparent; padding: 0; }
+  .settings-event-actions button { border-radius: 0.5rem; }
 .settings-event-row { border: 0; border-radius: 1rem; background: #242426; }
 .settings-event-row:hover { background: #2a2a2d; }
 .settings-event-row .text-muted-foreground { color: #8e8e93; }
@@ -795,16 +794,17 @@ button:not(:disabled):active,
 }
 
 .settings-card {
-  border: 1px solid color-mix(in srgb, #22c55e 28%, transparent);
-  border-radius: 1.75rem;
+  border: 1px solid #2a2a2a;
+  border-radius: 0.9rem;
   background: #1c1c1e;
-  box-shadow: 0 10px 28px color-mix(in srgb, #22c55e 9%, transparent);
-}
+  box-shadow: none;
+  }
 
 .settings-event-row {
-  background: color-mix(in srgb, #1c1c1e 88%, #22c55e);
-  border: 1px solid color-mix(in srgb, #22c55e 14%, transparent);
-}
+  background: #1c1c1e;
+  border: 0;
+  border-bottom: 1px solid #2a2a2a;
+  }
 
 .settings-event-row:hover {
   background: color-mix(in srgb, #1c1c1e 78%, #22c55e);
