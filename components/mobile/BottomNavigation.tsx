@@ -70,7 +70,7 @@ export function BottomNavigation({ className }: BottomNavigationProps) {
                 className={cn(
                   'relative z-10 flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-2xl px-2 transition-all active:scale-95',
                   'text-[10px] font-semibold',
-                  isActive ? 'text-primary' : 'text-muted-foreground hover:bg-muted/70'
+                  isActive ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/70'
                 )}
               >
                 {item.icon}
@@ -88,7 +88,7 @@ export function BottomNavigation({ className }: BottomNavigationProps) {
           type="button"
           onClick={() => router.push('/select-event')}
           aria-label="Cambiar evento"
-          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[0_6px_16px_color-mix(in_srgb,var(--primary)_30%,transparent)] transition-transform active:scale-90"
+          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md border border-border bg-primary text-primary-foreground transition-transform active:scale-90"
         >
           <Plus className="h-5 w-5" />
         </button>
