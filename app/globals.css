@@ -65,7 +65,7 @@
   --accent: #179447;
   --accent-foreground: #ffffff;
   --destructive: #da3633;
-  --border: #dfe3e8;
+  --border: transparent;
   --input: #e7e9ed;
   --ring: #1db854;
   --chart-1: #1db854;
@@ -103,7 +103,7 @@
   --accent: #00e676;
   --accent-foreground: #ffffff;
   --destructive: #f85149;
-  --border: #262626;
+  --border: transparent;
   --input: #1a1a1a;
   --ring: #2ea043;
   --chart-1: #2ea043;
@@ -169,7 +169,7 @@
     font-family: var(--font-geist-sans), sans-serif;
   }
   [data-slot="card"] {
-    border: 1px solid var(--border);
+    border: 0;
     box-shadow: none;
   }
   h1, h2, h3, h4, h5, h6 {
@@ -244,10 +244,10 @@ html {
 [data-slot="card"],
 .rounded-lg.border,
 .rounded-xl.border {
-  border: 1px solid var(--border);
+  border: 0;
   border-radius: var(--radius);
   box-shadow: none;
-  transition: background-color 180ms ease, border-color 180ms ease;
+  transition: background-color 180ms ease;
 }
 [data-slot="card"]:hover,
 .rounded-lg.border:hover,
@@ -719,7 +719,7 @@ button:not(:disabled):active,
 .settings-profile-card,
 .settings-card,
 .settings-logout-card {
-  border: 1px solid var(--border);
+  border: 0;
   border-radius: var(--radius);
   background: var(--card);
   box-shadow: none;
