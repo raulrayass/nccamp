@@ -7,8 +7,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
-import { Plus, Gamepad2, Trophy, Minus, Maximize2 } from 'lucide-react'
+import { Plus, Gamepad2, Trophy, Minus, Maximize2, MoreVertical, Pencil, Trash2 } from 'lucide-react'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { toast } from 'sonner'
 import { createGame, updateGame, deleteGame, addGameScore, deleteGameScore, getGameScores } from '@/app/actions/games'
 import { Game, GameScore, Team } from '@/lib/db/schema'
@@ -217,7 +219,7 @@ export function GamesClient({ userId, eventId }: Props) {
                 <span>Proyectar ganador</span>
               </Button>
             )}
-            <Button onClick={() => setDialogOpen(true)} size="sm" className="hidden gap-1.5 bg-green-600 px-2 text-xs text-white hover:bg-green-700 sm:flex sm:h-10 sm:px-3 sm:text-sm">
+            <Button onClick={() => setDialogOpen(true)} size="sm" className="hidden gap-1.5 px-2 text-xs sm:flex sm:h-10 sm:px-3 sm:text-sm">
               <Plus className="h-4 w-4 shrink-0" />
               <span>Nuevo juego</span>
             </Button>
@@ -289,49 +291,58 @@ export function GamesClient({ userId, eventId }: Props) {
         <div className="space-y-2 md:space-y-3">
           {gameList.map((game, index) => (
             <Card key={game.id} className="games-card group overflow-hidden" style={{ animationDelay: `${index * 0.05}s` }}>
-              <CardContent className="p-2.5 sm:p-3 md:p-5">
-                <div className="mb-2 flex items-center justify-between gap-2 border-b border-border/50 pb-2">
-                  <span className="text-[11px] font-medium text-muted-foreground">Resultado del juego</span>
-                  <div className="flex items-center gap-1">
-                    <Button onClick={() => { setEditingId(game.id); setForm({ name: game.name, description: game.description || '', gameDate: game.gameDate || '' }); setDialogOpen(true) }} variant="ghost" size="sm" className="h-7 px-2 text-xs">Editar</Button>
-                    <Button onClick={() => { setDeletingId(game.id); setDeleteDialogOpen(true) }} variant="ghost" size="sm" className="h-7 px-2 text-xs text-destructive">Eliminar</Button>
+              <CardContent className="flex flex-col gap-3 p-3 sm:p-4">
+                <div className="flex items-start gap-2.5">
+                  <div className="games-card-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-primary sm:h-10 sm:w-10">
+                    <Gamepad2 className="h-5 w-5" />
                   </div>
-                </div>
-                <div className="flex items-center justify-between gap-2 md:gap-4">
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-start gap-2 md:gap-3">
-                      <div className="games-card-icon flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-primary sm:h-9 sm:w-9 md:h-12 md:w-12">
-                        <Gamepad2 className="h-5 w-5 md:h-6 md:w-6" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <h3 className="font-bold text-sm md:text-lg truncate text-foreground leading-tight">{game.name}</h3>
-                        {game.description && (
-                          <p className="text-xs md:text-sm text-muted-foreground truncate mt-0.5">{game.description}</p>
-                        )}
-                        {game.gameDate && (
-                          <p className="text-xs text-muted-foreground mt-1 font-medium">
-                            {new Date(game.gameDate + 'T00:00:00').toLocaleDateString('es-MX', {
-                              day: 'numeric',
-                              month: 'short',
-                            })}
-                          </p>
-                        )}
-                        {(() => {
-                          const gameLeaders = teams
-                            .map((team) => ({ team, points: allGameScores.filter((score) => score.gameId === game.id && score.teamId === team.id).reduce((sum, score) => sum + score.points, 0) }))
-                            .filter(({ points }) => points > 0)
-                            .sort((a, b) => b.points - a.points)
-                          const leader = gameLeaders[0]
-                          return leader ? <p className="mt-1 truncate text-[11px] font-semibold text-primary">Más puntos: {leader.team.name} · {leader.points} pts</p> : <p className="mt-1 text-[11px] text-muted-foreground">Sin puntos registrados</p>
-                        })()}
-                      </div>
+                    <h3 className="truncate font-bold text-sm leading-tight text-foreground sm:text-base">{game.name}</h3>
+                    {game.description && (
+                      <p className="mt-0.5 truncate text-xs text-muted-foreground">{game.description}</p>
+                    )}
+                    <div className="mt-1 flex flex-wrap items-center gap-2">
+                      {game.gameDate && (
+                        <span className="text-xs text-muted-foreground">
+                          {new Date(game.gameDate + 'T00:00:00').toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}
+                        </span>
+                      )}
+                      {(() => {
+                        const gameLeaders = teams
+                          .map((team) => ({ team, points: allGameScores.filter((score) => score.gameId === game.id && score.teamId === team.id).reduce((sum, score) => sum + score.points, 0) }))
+                          .filter(({ points }) => points > 0)
+                          .sort((a, b) => b.points - a.points)
+                        const leader = gameLeaders[0]
+                        return leader ? (
+                          <span className="truncate text-xs font-semibold text-primary">{leader.team.name} · {leader.points} pts</span>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">Sin puntos registrados</span>
+                        )
+                      })()}
                     </div>
                   </div>
-                  <Button onClick={() => openScoring(game.id)} size="sm" className="games-score-action shrink-0 gap-1.5 rounded-full px-3 text-xs">
-                    <Trophy data-icon="inline-start" />
-                    <span>Registrar puntos</span>
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 shrink-0 p-0" aria-label="Opciones del juego">
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => { setEditingId(game.id); setForm({ name: game.name, description: game.description || '', gameDate: game.gameDate || '' }); setDialogOpen(true) }}>
+                        <Pencil className="h-4 w-4" />
+                        Editar
+                      </DropdownMenuItem>
+                      <DropdownMenuItem variant="destructive" onClick={() => { setDeletingId(game.id); setDeleteDialogOpen(true) }}>
+                        <Trash2 className="h-4 w-4" />
+                        Eliminar
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
+                <Button onClick={() => openScoring(game.id)} size="sm" className="games-score-action w-full gap-1.5 rounded-full text-xs sm:w-auto sm:self-end">
+                  <Trophy className="h-3.5 w-3.5" />
+                  <span>Registrar puntos</span>
+                </Button>
               </CardContent>
             </Card>
           ))}
@@ -429,19 +440,18 @@ export function GamesClient({ userId, eventId }: Props) {
             <form onSubmit={handleAddScore} className="space-y-3 border-t pt-4">
               <div>
                 <Label htmlFor="teamId">Equipo</Label>
-                <select
-                  id="teamId"
-                  value={scoringForm.teamId}
-                  onChange={(e) => setScoringForm({ ...scoringForm, teamId: e.target.value })}
-                  className="h-11 w-full rounded-2xl border border-input bg-background px-3 text-sm shadow-sm"
-                >
-                  <option value="">Selecciona un equipo</option>
-                  {teams.map((team) => (
-                    <option key={team.id} value={team.id}>
-                      {team.name}
-                    </option>
-                  ))}
-                </select>
+                <Select value={scoringForm.teamId} onValueChange={(value) => setScoringForm({ ...scoringForm, teamId: value })}>
+                  <SelectTrigger id="teamId" className="w-full">
+                    <SelectValue placeholder="Selecciona un equipo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {teams.map((team) => (
+                      <SelectItem key={team.id} value={String(team.id)}>
+                        {team.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <Label htmlFor="points">Puntos</Label>
@@ -484,9 +494,9 @@ export function GamesClient({ userId, eventId }: Props) {
                           onClick={() => handleDeleteScore(score.id, score.gameId)}
                           size="sm"
                           variant="ghost"
-                          className="h-6 w-6 p-0 hover:bg-red-100"
+                          className="h-6 w-6 p-0 text-destructive hover:bg-destructive/10"
                         >
-                          <Minus className="w-3 h-3 text-red-600" />
+                          <Minus className="w-3 h-3" />
                         </Button>
                       </div>
                     </div>
