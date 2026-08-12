@@ -65,7 +65,7 @@
   --accent: #179447;
   --accent-foreground: #ffffff;
   --destructive: #da3633;
-  --border: transparent;
+  --border: #dfe3e8;
   --input: #e7e9ed;
   --ring: #1db854;
   --chart-1: #1db854;
@@ -73,7 +73,7 @@
   --chart-3: #3fb36f;
   --chart-4: #0e8037;
   --chart-5: #5bd98e;
-  --radius: 1.5rem;
+  --radius: 0.75rem;
   --income: #1db854;
   --expense: #da3633;
   --sidebar: #ffffff;
@@ -169,27 +169,22 @@
     font-family: var(--font-geist-sans), sans-serif;
   }
   [data-slot="card"] {
-    border-color: transparent;
-    box-shadow: 0 2px 5px color-mix(in srgb, var(--foreground) 5%, transparent), 0 14px 30px color-mix(in srgb, var(--foreground) 7%, transparent);
-  }
-  .dark [data-slot="card"] {
-    border: 1px solid color-mix(in srgb, var(--primary) 18%, transparent);
-    box-shadow: 0 4px 10px color-mix(in srgb, #001f12 72%, transparent), 0 16px 36px color-mix(in srgb, var(--primary) 13%, transparent);
+    border: 1px solid var(--border);
+    box-shadow: none;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-inter);
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    line-height: 1.1;
+    font-family: var(--font-geist-sans), sans-serif;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
   }
-  h1 { @apply text-4xl sm:text-5xl font-black; }
-  h2 { @apply text-3xl sm:text-4xl font-extrabold; }
-  h3 { @apply text-2xl sm:text-3xl font-bold; }
-  h4 { @apply text-xl sm:text-2xl font-bold; }
-  h5 { @apply text-lg sm:text-xl font-semibold; }
-  h6 { @apply text-base sm:text-lg font-semibold; }
-  
-  p { @apply text-base sm:text-lg leading-relaxed; }
+  h1 { @apply text-2xl sm:text-3xl font-bold; }
+  h2 { @apply text-xl sm:text-2xl font-bold; }
+  h3 { @apply text-lg sm:text-xl font-semibold; }
+  h4 { @apply text-base sm:text-lg font-semibold; }
+  h5, h6 { @apply text-base font-semibold; }
+
+  p { @apply text-sm leading-6; }
 
 html {
   scroll-behavior: smooth;
@@ -245,37 +240,20 @@ html {
   padding: 1rem;
 }
 
-/* Consistent Card Styling - Enhanced with playful depth */
+/* One card language: quiet surfaces, predictable spacing, no ornamental depth. */
 [data-slot="card"],
 .rounded-lg.border,
 .rounded-xl.border {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
   box-shadow: none;
   transition: background-color 180ms ease, border-color 180ms ease;
-  border: 1px solid var(--border);
-  border-radius: 0.75rem;
 }
-
-.dark [data-slot="card"],
-.dark .rounded-lg.border,
-.dark .rounded-xl.border {
-  border-color: color-mix(in srgb, var(--primary) 18%, transparent);
-  box-shadow: 0 4px 10px color-mix(in srgb, #001f12 72%, transparent), 0 16px 36px color-mix(in srgb, var(--primary) 13%, transparent);
-}
-
 [data-slot="card"]:hover,
 .rounded-lg.border:hover,
 .rounded-xl.border:hover {
-  box-shadow: 
-    0 4px 8px rgba(0, 0, 0, 0.06),
-    0 16px 40px rgba(0, 0, 0, 0.15);
-}
-
-.dark [data-slot="card"]:hover,
-.dark .rounded-lg.border:hover,
-.dark .rounded-xl.border:hover {
-  box-shadow: 
-    0 4px 8px rgba(0, 0, 0, 0.4),
-    0 16px 40px rgba(0, 0, 0, 0.6);
+  border-color: color-mix(in srgb, var(--foreground) 22%, var(--border));
+  box-shadow: none;
 }
 
 /* Card transitions */
@@ -729,115 +707,54 @@ button:not(:disabled):active,
   box-shadow: 0 5px 10px color-mix(in srgb, black 34%, transparent), 0 22px 42px color-mix(in srgb, black 48%, transparent);
 }
 
-/* App shell: quiet, content-first surfaces. */
+/* Shared visual system: one surface language across every primary screen. */
+.dashboard-ios,
+.settings-page {
+  background: var(--background);
+  color: var(--foreground);
+}
 .dashboard-ios [data-slot="card"],
 .dashboard-ios .finance-surface,
-.dashboard-ios .finance-surface-strong {
+.dashboard-ios .finance-surface-strong,
+.settings-profile-card,
+.settings-card,
+.settings-logout-card {
   border: 1px solid var(--border);
-  border-radius: 0.75rem;
+  border-radius: var(--radius);
   background: var(--card);
   box-shadow: none;
 }
 .dashboard-ios [data-slot="card"]:hover,
 .dashboard-ios .finance-surface:hover,
-.dashboard-ios .finance-surface-strong:hover { box-shadow: none; transform: none; }
-.dashboard-ios .icon-glow { box-shadow: none; }
+.dashboard-ios .finance-surface-strong:hover,
+.settings-card:hover { box-shadow: none; transform: none; }
+.dashboard-ios .icon-glow,
 .dashboard-ios .progress-glow { box-shadow: none; }
+.dashboard-ios .dashboard-ios-chart { border: 1px solid var(--border); border-radius: var(--radius); background: var(--card); }
 .dashboard-ios h2 { font-size: 1rem; font-weight: 650; letter-spacing: 0; }
-.dashboard-ios .dashboard-ios-chart { border-radius: 0.75rem; background: var(--card); }
-
-/* Dashboard overrides come after the legacy global card rules. */
-.dashboard-ios [data-slot="card"] {
-  border-radius: 1.5rem;
-  box-shadow: 0 1px 2px color-mix(in srgb, var(--foreground) 5%, transparent), 0 8px 24px color-mix(in srgb, var(--foreground) 5%, transparent);
-  transform: none;
-}
-
-.dashboard-ios [data-slot="card"]:hover {
-  box-shadow: 0 1px 2px color-mix(in srgb, var(--foreground) 5%, transparent), 0 8px 24px color-mix(in srgb, var(--foreground) 5%, transparent);
-  transform: none;
-}
-
-.dashboard-ios .dashboard-ios-card--flat {
-  border-color: color-mix(in srgb, var(--foreground) 10%, transparent);
-  background: transparent;
-  box-shadow: none;
-}
-
-/* Settings palette */
-.settings-page {
-  background: #0a0a0a;
-  color: #ffffff;
-}
-
-.settings-brandline { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-.settings-eyebrow, .settings-section-kicker { margin: 0; color: #22c55e; font-size: 0.78rem; font-weight: 650; letter-spacing: 0; }
-.settings-title { margin: 0; color: #fff; font-size: clamp(1.75rem, 7vw, 2.25rem); font-weight: 750; letter-spacing: -0.04em; }
-.settings-subtitle { margin: 0.35rem 0 0; color: #8e8e93; font-size: 0.78rem; }
-.settings-avatar { display: flex; height: 2.75rem; width: 2.75rem; align-items: center; justify-content: center; border-radius: 1rem; background: #22c55e; color: #07150b; font-size: 1.1rem; font-weight: 800; box-shadow: 0 0 0 4px rgba(34,197,94,.12); }
+.settings-header { background: var(--background); }
+.settings-eyebrow, .settings-section-kicker { margin: 0; color: var(--muted-foreground); font-size: 0.75rem; font-weight: 600; letter-spacing: 0; }
+.settings-title { margin: 0; color: var(--foreground); font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; }
+.settings-subtitle { margin: 0.25rem 0 0; color: var(--muted-foreground); font-size: 0.875rem; }
+.settings-avatar { display: flex; width: 2.75rem; height: 2.75rem; align-items: center; justify-content: center; border-radius: 9999px; background: var(--muted); color: var(--foreground); font-size: 1.1rem; font-weight: 700; box-shadow: none; }
 .settings-section-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: 0.75rem; }
-.settings-section-heading h2 { margin: 0.2rem 0 0; color: #fff; font-size: 1.2rem; font-weight: 750; letter-spacing: -0.025em; }
+.settings-section-heading h2 { margin: 0.2rem 0 0; color: var(--foreground); font-size: 1rem; font-weight: 650; letter-spacing: 0; }
 .settings-section-heading::after { content: none; }
-.settings-section-count { color: #8e8e93; font-family: var(--font-geist-mono), monospace; font-size: 0.7rem; }
-.settings-profile-card, .settings-card { border: 1px solid #2a2a2a; border-radius: 0.9rem; background: #1c1c1e; box-shadow: none; }
-.settings-add-button { border-radius: 0.6rem; background: #22c55e; color: #07150b; font-weight: 700; box-shadow: none; }
+.settings-section-count { color: var(--muted-foreground); font-size: 0.75rem; }
+.settings-add-button { border-radius: var(--radius-sm); background: var(--primary); color: var(--primary-foreground); font-weight: 650; box-shadow: none; }
 .settings-add-button::after { content: none; }
-.settings-page .settings-card { box-shadow: none; }
-.settings-page .settings-card:hover { box-shadow: none; }
-.settings-event-row { position: relative; overflow: hidden; border-bottom: 1px solid #2a2a2a; border-radius: 0; }
+.settings-page .settings-card label { color: var(--muted-foreground); font-size: 0.75rem; letter-spacing: 0; }
+.settings-page .settings-card p { line-height: 1.5; }
+.settings-event-actions { display: flex; align-items: center; gap: 0.25rem; background: transparent; padding: 0; }
+.settings-event-actions button { border-radius: var(--radius-sm); }
+.settings-event-row { position: relative; overflow: hidden; border: 0; border-bottom: 1px solid var(--border); border-radius: 0; background: transparent; }
+.settings-event-row:hover { background: var(--muted); }
 .settings-event-row::before { content: none; }
 .settings-event-row h3 { letter-spacing: 0; }
-.settings-add-button:hover { background: #35d86f; }
-.settings-page .settings-card label { color: #8e8e93; font-size: 0.65rem; letter-spacing: .04em; }
-.settings-page .settings-card p { line-height: 1.45; }
-.settings-event-actions { display: flex; align-items: center; gap: 0.25rem; background: transparent; padding: 0; }
-  .settings-event-actions button { border-radius: 0.5rem; }
-.settings-event-row { border: 0; border-radius: 1rem; background: #242426; }
-.settings-event-row:hover { background: #2a2a2d; }
-.settings-event-row .text-muted-foreground { color: #8e8e93; }
-.settings-logout-card { border: 1px solid rgba(239,68,68,.28); border-radius: 1.25rem; background: rgba(239,68,68,.08); }
-.settings-logout-card button { border-radius: 9999px; background: #ef4444; color: #fff; font-weight: 700; }
-
-.settings-header {
-  background: #0a0a0a;
-}
-
-.settings-card {
-  border: 1px solid #2a2a2a;
-  border-radius: 0.9rem;
-  background: #1c1c1e;
-  box-shadow: none;
-  }
-
-.settings-event-row {
-  background: #1c1c1e;
-  border: 0;
-  border-bottom: 1px solid #2a2a2a;
-  }
-
-.settings-event-row:hover {
-  background: color-mix(in srgb, #1c1c1e 78%, #22c55e);
-}
-
-.settings-event-actions button:not(.bg-primary) {
-  border-radius: 9999px;
-}
-
-.settings-logout-card {
-  border: 1px solid color-mix(in srgb, #ef4444 30%, transparent);
-  border-radius: 1.75rem;
-  background: color-mix(in srgb, #ef4444 10%, #1c1c1e);
-}
-
-.settings-logout-card button {
-  border-radius: 9999px;
-  background: #ef4444;
-  color: #ffffff;
-}
-
-.settings-page .text-muted-foreground {
-  color: #8e8e93;
-}
+.settings-event-row .text-muted-foreground,
+.settings-page .text-muted-foreground { color: var(--muted-foreground); }
+.settings-logout-card { border-color: color-mix(in srgb, var(--destructive) 30%, var(--border)); background: color-mix(in srgb, var(--destructive) 8%, var(--card)); }
+.settings-logout-card button { border-radius: var(--radius-sm); background: var(--destructive); color: var(--primary-foreground); }
 
 @media (max-width: 380px) {
   .settings-page {
