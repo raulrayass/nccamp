@@ -100,7 +100,7 @@ export function Topbar() {
   const eventName = currentEvent?.name || 'Evento'
 
   return (
-    <header className="sticky top-0 z-40 bg-primary rounded-b-3xl">
+    <header className="sticky top-0 z-40 border-b border-border bg-background">
       <div className="w-full px-4 sm:px-6 lg:px-8 py-3 pb-4">
         <div className="flex items-center justify-between gap-4">
           {/* Left: Logo + Greeting */}
@@ -116,11 +116,11 @@ export function Topbar() {
               />
             </Link>
             <div className="flex flex-col gap-0.5 min-w-0">
-              <p className="text-xs sm:text-sm font-bold text-primary-foreground leading-tight">
-                Hola, {user?.name || 'Usuario'}
-              </p>
-              <p className="text-xs text-primary-foreground/80 truncate font-medium">
+              <p className="text-xs sm:text-sm font-semibold text-foreground leading-tight truncate">
                 {eventName}
+              </p>
+              <p className="text-xs text-muted-foreground truncate">
+                {user?.name || 'Usuario'}
               </p>
             </div>
           </div>
@@ -151,13 +151,11 @@ export function Topbar() {
 
           {/* Right: User button */}
           {user ? (
-            <Link href="/settings" className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-primary-foreground/10 transition-all duration-200 shrink-0">
-              <div className="w-8 h-8 rounded-lg bg-primary-foreground flex items-center justify-center shrink-0">
-                <User className="w-4 h-4 text-primary" />
+            <Link href="/settings" className="flex items-center gap-2 rounded-md px-2 py-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground shrink-0">
+              <div className="flex size-8 items-center justify-center rounded-full border border-border bg-muted">
+                <User className="size-4 text-foreground" />
               </div>
-              <span className="hidden sm:block text-xs text-primary-foreground font-medium">
-                Perfil
-              </span>
+              <span className="hidden sm:block text-xs font-medium">Perfil</span>
             </Link>
           ) : null}
         </div>
