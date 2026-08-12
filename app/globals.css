@@ -196,7 +196,6 @@ html {
 }
 
 /* Native iOS-inspired dashboard surfaces and controls. Scoped to the dashboard only. */
-.dashboard-welcome { padding: 0.25rem 0.25rem 0.5rem; }
 .dashboard-ios .dashboard-ios-card { border: 1px solid color-mix(in srgb, var(--border) 68%, transparent); box-shadow: 0 10px 28px color-mix(in srgb, var(--foreground) 10%, transparent); }
 .dashboard-ios .dashboard-ios-card:hover { border-color: color-mix(in srgb, var(--primary) 28%, var(--border)); }
 .dashboard-ios {
