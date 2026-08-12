@@ -25,8 +25,8 @@ function formatCompact(value: number) {
   return `$${value.toFixed(0)}`
 }
 
-const INCOME_COLOR = '#22c55e'
-const EXPENSE_COLOR = '#f97316'
+const INCOME_COLOR = 'var(--income)'
+const EXPENSE_COLOR = 'var(--expense)'
 
 export function DashboardClient({ userId, eventId }: { userId: string; eventId: number | null }) {
   const [data, setData] = useState<DashboardData | null>(null)
@@ -120,7 +120,7 @@ export function DashboardClient({ userId, eventId }: { userId: string; eventId: 
 
   const methodBars = [
     { label: 'Efectivo', value: cashAvailable, color: INCOME_COLOR, icon: Banknote },
-    { label: 'Banca Móvil', value: bancaMovil, color: '#3b82f6', icon: Smartphone },
+    { label: 'Banca Móvil', value: bancaMovil, color: 'var(--chart-2)', icon: Smartphone },
   ]
 
   // Animation variants
@@ -152,15 +152,23 @@ const tapTransition = { type: 'spring' as const, stiffness: 400, damping: 25 }
   }
 
   return (
-    <div className="dashboard-ios mx-auto flex w-full max-w-7xl flex-col gap-5 overflow-x-hidden px-4 py-4 sm:gap-6 sm:px-6 sm:py-6">
+    <div className="dashboard-ios mx-auto flex w-full max-w-7xl flex-col gap-5 overflow-x-hidden px-4 py-5 sm:gap-6 sm:px-6 sm:py-7">
+      <header className="dashboard-welcome flex items-end justify-between gap-4">
+        <div>
+          <p className="text-sm font-medium text-primary">Tu evento</p>
+          <h1 className="mt-1 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">Resumen</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Todo lo importante, de un vistazo.</p>
+        </div>
+        <div className="hidden rounded-full bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary sm:block">En vivo</div>
+      </header>
 
-      {/* ===== 1. Balance Total (héroe) ===== */}
+      {/* Balance total */}
       <motion.div variants={itemVariants} whileTap={{ scale: 0.95 }} className="cursor-pointer">
         <Card className="dashboard-ios-card finance-surface-strong p-5 sm:p-6">
           <div className="flex justify-between items-start">
             <div className="flex-1">
               <motion.p className="text-xs sm:text-sm text-muted-foreground font-medium mb-1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
-                Saldo Total
+                Saldo total
               </motion.p>
               <motion.p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mt-1 tabular-nums" key={balance} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
                 {formatCurrency(balance)}
@@ -179,7 +187,7 @@ const tapTransition = { type: 'spring' as const, stiffness: 400, damping: 25 }
           <Card className="dashboard-ios-card finance-surface p-4 sm:p-5">
             <div className="flex items-start justify-between">
               <div className="flex-1">
-                <p className="text-xs sm:text-sm text-muted-foreground font-medium mb-1">Total Ingresos</p>
+                <p className="text-xs sm:text-sm text-muted-foreground font-medium mb-1">Total de ingresos</p>
                 <p className="text-lg sm:text-2xl font-bold text-foreground tabular-nums">
                   {formatCurrency(totalIncome)}
                 </p>
@@ -195,7 +203,7 @@ const tapTransition = { type: 'spring' as const, stiffness: 400, damping: 25 }
           <Card className="dashboard-ios-card finance-surface p-4 sm:p-5">
             <div className="flex items-start justify-between">
               <div className="flex-1">
-                <p className="text-xs sm:text-sm text-muted-foreground font-medium mb-1">Total Egresos</p>
+                <p className="text-xs sm:text-sm text-muted-foreground font-medium mb-1">Total de egresos</p>
                 <p className="text-lg sm:text-2xl font-bold text-foreground tabular-nums">
                   {formatCurrency(totalExpense)}
                 </p>
@@ -267,7 +275,7 @@ const tapTransition = { type: 'spring' as const, stiffness: 400, damping: 25 }
       {/* ===== 3B. Últimas actividades ===== */}
       <motion.div variants={itemVariants}>
         <motion.h2 className="text-base font-semibold tracking-tight text-foreground mb-3 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
-          Últimas actividades
+Actividad reciente
         </motion.h2>
         <Card className="dashboard-ios-card finance-surface p-5 sm:p-6">
           {recentTransactions.length === 0 ? (
@@ -319,7 +327,7 @@ const tapTransition = { type: 'spring' as const, stiffness: 400, damping: 25 }
       {/* ===== 4. Game Stats Cards ===== */}
       <motion.div variants={itemVariants}>
         <motion.h2 className="text-base font-semibold tracking-tight text-foreground mb-3 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
-          Actividad en Juegos
+          Actividad en juegos
         </motion.h2>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.65, type: 'spring', stiffness: 100, damping: 15 }}>
           <GameStatsCard />
@@ -370,7 +378,7 @@ const tapTransition = { type: 'spring' as const, stiffness: 400, damping: 25 }
       {/* ===== 6. Ingresos vs Egresos por mes ===== */}
       <motion.div variants={itemVariants}>
         <motion.h2 className="text-base font-semibold tracking-tight text-foreground mb-3 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9 }}>
-          Ingresos vs Egresos por mes
+Ingresos y egresos por mes
         </motion.h2>
         <Card className="dashboard-ios-card dashboard-ios-chart finance-surface overflow-hidden p-3 sm:p-4">
           {monthlyData.some(m => m.income > 0 || m.expense > 0) ? (
@@ -406,7 +414,7 @@ const tapTransition = { type: 'spring' as const, stiffness: 400, damping: 25 }
       {/* ===== 6B. Distribución de tallas ===== */}
       <motion.div variants={itemVariants}>
         <motion.h2 className="text-base font-semibold tracking-tight text-foreground mb-3 px-0.5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.95 }}>
-          Distribución de tallas
+Tallas registradas
         </motion.h2>
         <Card className="dashboard-ios-card finance-surface p-4 sm:p-5">
           {shirtSizes && shirtSizes.length > 0 ? (
@@ -415,7 +423,7 @@ const tapTransition = { type: 'spring' as const, stiffness: 400, damping: 25 }
                 data={shirtSizes.map((s, i) => ({
                   name: s.name,
                   value: s.value,
-                  color: ['#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899'][i % 6],
+                  color: ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)', 'var(--primary)'][i % 6],
                 }))}
                 formatValue={(v) => `${v} persona${v > 1 ? 's' : ''}`}
                 centerLabel="Tallas"
