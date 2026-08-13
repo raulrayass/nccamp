@@ -190,55 +190,25 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Native iOS-inspired dashboard surfaces and controls. Scoped to the dashboard only. */
-.dashboard-ios .dashboard-ios-card { border: 1px solid color-mix(in srgb, var(--border) 68%, transparent); box-shadow: 0 10px 28px color-mix(in srgb, var(--foreground) 10%, transparent); }
-.dashboard-ios .dashboard-ios-card:hover { border-color: color-mix(in srgb, var(--primary) 28%, var(--border)); }
+/* Shared app surfaces: content first, no ornamental containers. */
 .dashboard-ios {
-  --dashboard-highlight: color-mix(in srgb, var(--primary) 12%, var(--card));
-  --dashboard-line: color-mix(in srgb, var(--foreground) 10%, transparent);
+  --dashboard-line: color-mix(in srgb, var(--foreground) 12%, transparent);
 }
-
-.dashboard-ios [data-slot="card"].dashboard-ios-card {
-  border: 1px solid color-mix(in srgb, var(--foreground) 8%, transparent);
-  border-radius: 1.5rem;
-  background: color-mix(in srgb, var(--card) 94%, var(--background));
-  box-shadow: 0 1px 2px color-mix(in srgb, var(--foreground) 5%, transparent), 0 8px 24px color-mix(in srgb, var(--foreground) 5%, transparent);
-}
-
-.dashboard-ios .dashboard-ios-card--flat {
-  border-color: var(--dashboard-line);
-  box-shadow: none;
-  background: transparent;
-}
-
-.dashboard-ios .dashboard-ios-button {
-  border: 1px solid color-mix(in srgb, var(--primary) 28%, transparent);
-  border-radius: 9999px;
-  background: var(--dashboard-highlight);
-  color: var(--primary);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, white 35%, transparent);
-}
-
-.dashboard-ios .dashboard-ios-button:hover {
-  background: color-mix(in srgb, var(--primary) 18%, var(--card));
-}
-
-.dashboard-ios .dashboard-ios-icon-button {
-  border-radius: 9999px;
-  background: var(--dashboard-highlight);
-  color: var(--primary);
-}
-
-.dashboard-ios .dashboard-ios-divider > * + * {
-  border-top: 1px solid var(--dashboard-line);
-}
-
+.dashboard-ios .dashboard-ios-card,
+.dashboard-ios [data-slot="card"].dashboard-ios-card,
 .dashboard-ios .dashboard-ios-chart {
-  border-radius: 1.5rem;
-  border: 1px solid var(--dashboard-line);
-  background: color-mix(in srgb, var(--card) 72%, transparent);
-  padding: 1rem;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--card);
+  box-shadow: none;
 }
+.dashboard-ios .dashboard-ios-card--flat { background: transparent; }
+.dashboard-ios .dashboard-ios-button,
+.dashboard-ios .dashboard-ios-icon-button { border: 0; border-radius: var(--radius-sm); background: var(--muted); color: var(--foreground); box-shadow: none; }
+.dashboard-ios .dashboard-ios-button:hover,
+.dashboard-ios .dashboard-ios-icon-button:hover { background: color-mix(in srgb, var(--muted) 80%, var(--foreground)); }
+.dashboard-ios .dashboard-ios-divider > * + * { border-top: 1px solid var(--dashboard-line); }
+.dashboard-ios .dashboard-ios-chart { padding: 0.75rem; }
 
 /* One card language: quiet surfaces, predictable spacing, no ornamental depth. */
 [data-slot="card"],
@@ -256,30 +226,17 @@ html {
   box-shadow: none;
 }
 
-/* Card transitions */
-.bg-card {
-  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
-}
-
-/* Button transitions */
-button, [role="button"], a[role="button"] {
-  transition: all 0.2s ease;
-}
-
-button:hover:not(:disabled), [role="button"]:hover, a[role="button"]:hover {
-  transform: translateY(-0.5px);
-}
-
-button:active:not(:disabled) {
-  transform: translateY(0px);
-}
+/* Keep interaction feedback subtle and stable on touch devices. */
+button, [role="button"], a[role="button"] { transition: background-color 160ms ease, color 160ms ease, opacity 160ms ease; }
+button:active:not(:disabled) { opacity: 0.78; }
 
 /* Finance-inspired elevation primitives: visible, soft, and consistent across mobile surfaces. */
-.finance-surface {
+.finance-surface,
+.finance-surface-strong {
   border: 0;
-  border-radius: 1.5rem;
+  border-radius: var(--radius);
   background: var(--card);
-  box-shadow: 0 2px 5px color-mix(in srgb, var(--foreground) 5%, transparent), 0 14px 32px color-mix(in srgb, var(--foreground) 11%, transparent);
+  box-shadow: none;
 }
 
 .finance-transaction-row {
@@ -326,9 +283,9 @@ button:active:not(:disabled) {
 
 .dark .finance-surface,
 .dark .finance-surface-strong {
-  border: 1px solid color-mix(in srgb, var(--primary) 18%, transparent);
-  background: #0d0f10;
-  box-shadow: 0 4px 10px color-mix(in srgb, #001f12 72%, transparent), 0 18px 38px color-mix(in srgb, var(--primary) 14%, transparent);
+  border: 0;
+  background: var(--card);
+  box-shadow: none;
 }
 
 .dark .finance-pill {
