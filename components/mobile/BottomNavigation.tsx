@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode } from 'react'
+import { ReactNode, useTransition } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { useMediaQuery } from '@/lib/hooks/useMediaQuery'
 import { cn } from '@/lib/utils'
@@ -39,6 +39,7 @@ export function BottomNavigation({ className }: BottomNavigationProps) {
   const isMobile = !useMediaQuery('(min-width: 768px)')
   const router = useRouter()
   const pathname = usePathname()
+  const [isPending, startTransition] = useTransition()
 
   if (!isMobile) return null
 
@@ -50,11 +51,13 @@ export function BottomNavigation({ className }: BottomNavigationProps) {
           return (
             <button
               key={item.href}
-              onClick={() => router.push(item.href)}
+              onClick={() => startTransition(() => router.push(item.href))}
+              aria-current={isActive ? 'page' : undefined}
+              aria-busy={isPending && isActive}
               className={cn(
-                'flex flex-col items-center justify-center gap-1 p-2 rounded-lg transition-colors relative',
-                'text-xs font-medium h-full flex-1',
-                isActive ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:bg-muted'
+                'flex flex-col items-center justify-center gap-1 rounded-lg p-2 text-xs font-medium transition-colors relative h-full flex-1 active:scale-[0.98]',
+                isActive ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted',
+                isPending && isActive && 'opacity-60'
               )}
             >
               <div>{item.icon}</div>
