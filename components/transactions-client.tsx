@@ -438,14 +438,14 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
 
   if (loading) {
     return (
-      <div className="finance-page px-3 sm:px-4 lg:px-6 py-3 sm:py-4 flex flex-col gap-4 sm:gap-5 max-w-7xl mx-auto w-full">
+      <div className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 flex flex-col gap-2 sm:gap-3 max-w-7xl mx-auto w-full">
         <ListSkeleton count={8} variant="row" />
       </div>
     )
   }
 
   return (
-    <div className="finance-page px-3 sm:px-4 lg:px-6 py-3 sm:py-4 flex flex-col gap-4 sm:gap-5 max-w-7xl mx-auto w-full">
+    <div className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 flex flex-col gap-2 sm:gap-3 max-w-7xl mx-auto w-full">
       {/* Header */}
       <PageHeader title="Finanzas">
         <Button onClick={exportToExcel} variant="outline" size="sm" className="gap-1.5 text-xs sm:text-sm h-9 sm:h-10 px-2 sm:px-3">
@@ -462,28 +462,40 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
       <GroupTabs tabs={FINANZAS_TABS} />
 
       {/* Summary */}
-      <div className="finance-summary grid grid-cols-2 gap-2.5 sm:gap-3">
-        <Card className="finance-surface finance-balance-card col-span-2 p-3.5 sm:p-5">
-          <div className="flex items-start justify-between gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+        <Card className="p-3 sm:p-4">
+          <div className="flex justify-between items-start">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">Balance General</p>
-              <p className={`mt-1 text-2xl font-bold tracking-tight sm:text-3xl ${totals.income - totals.expense >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              <p className="text-xs text-muted-foreground font-medium">Total Ingresos</p>
+              <p className="text-lg sm:text-2xl font-bold text-foreground mt-1">{formatCurrency(totals.income)}</p>
+            </div>
+            <div className="bg-emerald-600/10 p-1.5 sm:p-2 rounded-lg flex-shrink-0">
+              <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600" />
+            </div>
+          </div>
+        </Card>
+        <Card className="p-3 sm:p-4">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-xs text-muted-foreground font-medium">Total Egresos</p>
+              <p className="text-lg sm:text-2xl font-bold text-foreground mt-1">{formatCurrency(totals.expense)}</p>
+            </div>
+            <div className="bg-orange-600/10 p-1.5 sm:p-2 rounded-lg flex-shrink-0">
+              <TrendingDown className="w-5 h-5 sm:w-6 sm:h-6 text-orange-600" />
+            </div>
+          </div>
+        </Card>
+        <Card className="p-3 sm:p-4">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-xs text-muted-foreground font-medium">Balance General</p>
+              <p className={`text-lg sm:text-2xl font-bold mt-1 ${totals.income - totals.expense >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                 {formatCurrency(totals.income - totals.expense)}
               </p>
             </div>
-            <div className="finance-summary-icon bg-primary/10 text-primary"><Wallet className="h-5 w-5" /></div>
-          </div>
-        </Card>
-        <Card className="finance-surface rounded-[1.75rem] p-3 sm:p-4">
-          <div className="flex items-center justify-between gap-3">
-            <div><p className="text-xs font-semibold text-muted-foreground">Ingresos</p><p className="mt-1 text-xl font-bold text-foreground">{formatCurrency(totals.income)}</p></div>
-            <div className="finance-summary-icon bg-emerald-600/10 text-emerald-600"><TrendingUp className="h-5 w-5" /></div>
-          </div>
-        </Card>
-        <Card className="finance-surface rounded-[1.75rem] p-3 sm:p-4">
-          <div className="flex items-center justify-between gap-3">
-            <div><p className="text-xs font-semibold text-muted-foreground">Egresos</p><p className="mt-1 text-xl font-bold text-foreground">{formatCurrency(totals.expense)}</p></div>
-            <div className="finance-summary-icon bg-orange-600/10 text-orange-600"><TrendingDown className="h-5 w-5" /></div>
+            <div className="bg-primary/10 p-1.5 sm:p-2 rounded-lg flex-shrink-0">
+              <Wallet className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+            </div>
           </div>
         </Card>
       </div>
@@ -497,7 +509,7 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
           placeholder="Buscar transacción..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="finance-pill h-12 rounded-full border-border/70 bg-card pl-11 pr-10 shadow-sm placeholder:text-muted-foreground/70"
+          className="pl-10 pr-10 h-10 rounded-lg border border-border bg-white/5"
         />
         {search && (
           <button
@@ -516,10 +528,10 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
         <button
           onClick={() => setFilterType('all')}
           className={cn(
-            'finance-pill px-4 py-2 text-sm font-semibold transition-colors',
+            'px-3 py-1.5 rounded-full text-sm font-medium transition-colors border',
             filterType === 'all'
-              ? 'bg-primary text-primary-foreground border-primary shadow-[0_6px_14px_color-mix(in_srgb,var(--primary)_30%,transparent)]'
-              : 'bg-muted text-muted-foreground border-border hover:bg-secondary hover:text-foreground'
+              ? 'bg-green-600 text-white border-green-600'
+              : 'bg-white/5 text-foreground border-border hover:bg-white/10'
           )}
         >
           Todas
@@ -527,10 +539,10 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
         <button
           onClick={() => setFilterType('income')}
           className={cn(
-            'finance-pill px-4 py-2 text-sm font-semibold transition-colors',
+            'px-3 py-1.5 rounded-full text-sm font-medium transition-colors border',
             filterType === 'income'
-              ? 'bg-primary text-primary-foreground border-primary shadow-[0_6px_14px_color-mix(in_srgb,var(--primary)_30%,transparent)]'
-              : 'bg-muted text-muted-foreground border-border hover:bg-secondary hover:text-foreground'
+              ? 'bg-green-600 text-white border-green-600'
+              : 'bg-white/5 text-foreground border-border hover:bg-white/10'
           )}
         >
           Ingresos
@@ -538,10 +550,10 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
         <button
           onClick={() => setFilterType('expense')}
           className={cn(
-            'finance-pill px-4 py-2 text-sm font-semibold transition-colors',
+            'px-3 py-1.5 rounded-full text-sm font-medium transition-colors border',
             filterType === 'expense'
-              ? 'bg-primary text-primary-foreground border-primary shadow-[0_6px_14px_color-mix(in_srgb,var(--primary)_30%,transparent)]'
-              : 'bg-muted text-muted-foreground border-border hover:bg-secondary hover:text-foreground'
+              ? 'bg-green-600 text-white border-green-600'
+              : 'bg-white/5 text-foreground border-border hover:bg-white/10'
           )}
         >
           Egresos
@@ -577,7 +589,7 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
 
       {/* Advanced Filters */}
       {showAdvancedFilters && (
-        <Card className="finance-surface p-1">
+        <Card className="bg-white/5 border border-border">
           <div className="p-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
@@ -649,8 +661,8 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
           </p>
         </Card>
       ) : (
-  <div className="space-y-6">
-  {Object.entries(groupTransactionsByDate(filtered))
+        <div className="space-y-4">
+          {Object.entries(groupTransactionsByDate(filtered))
             .sort(([dateA], [dateB]) => new Date(dateB).getTime() - new Date(dateA).getTime())
             .map(([date, group]) => {
             // Parse date string (YYYY-MM-DD) in local timezone to avoid UTC offset issues
@@ -673,14 +685,17 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
                 </div>
 
                 {/* Transactions for this day */}
-<div className="space-y-3">
-  {group.transactions.map((t) => {
-                    const paymentMethod = t.paymentMethod ?? 'cash'
-                    const methodAccentClass = paymentMethod === 'transfer' ? 'finance-method-transfer' : paymentMethod === 'deposit' ? 'finance-method-deposit' : 'finance-method-cash'
+                <div className="space-y-1">
+                  {group.transactions.map((t) => {
+                    let borderColor = 'border-l-slate-400'
+                    if (t.paymentMethod === 'cash') borderColor = 'border-l-green-600'
+                    else if (t.paymentMethod === 'transfer') borderColor = 'border-l-blue-600'
+                    else if (t.paymentMethod === 'deposit') borderColor = 'border-l-purple-600'
+
                     return (
-                      <div key={t.id} className={`finance-surface finance-transaction-row ${methodAccentClass} group flex flex-col gap-4 p-4 transition-all hover:-translate-y-0.5 hover:bg-muted/35 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:p-4`}>
+                      <div key={t.id} className={`p-1.5 sm:p-2.5 border border-l-4 border-border ${borderColor} rounded-lg flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 hover:bg-muted/50 transition-colors`}>
                         <div className="flex items-center gap-1.5 flex-1 min-w-0">
-                          <div className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full ${t.type === 'income' ? 'bg-green-500/12' : 'bg-orange-500/12'}`}>
+                          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-muted flex items-center justify-center flex-shrink-0">
                             {t.type === 'income' ? (
                               <ArrowUpRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-green-600" />
                             ) : (
@@ -707,14 +722,14 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
                           <p className={`text-xs sm:text-sm font-bold whitespace-nowrap ${t.type === 'income' ? 'text-green-600' : 'text-orange-600'}`}>
                             {t.type === 'income' ? '+' : '-'}{formatCurrency(parseFloat(t.amount as string))}
                           </p>
-                          <div className="finance-card-actions opacity-80 transition-opacity group-hover:opacity-100">
-                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-green-500/10" onClick={() => exportarRecibo(t)} title="Descargar recibo">
+                          <div className="flex gap-0.5">
+                            <Button variant="ghost" size="icon" className="w-6 h-6 sm:w-7 sm:h-7" onClick={() => exportarRecibo(t)} title="Descargar recibo">
                               <Download className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-green-600" />
                             </Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-blue-500/10" onClick={() => openEdit(t)}>
+                            <Button variant="ghost" size="icon" className="w-6 h-6 sm:w-7 sm:h-7" onClick={() => openEdit(t)}>
                               <Pencil className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-blue-600" />
                             </Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-red-500/10" onClick={() => openDelete(t.id)}>
+                            <Button variant="ghost" size="icon" className="w-6 h-6 sm:w-7 sm:h-7" onClick={() => openDelete(t.id)}>
                               <Trash2 className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-red-600" />
                             </Button>
                           </div>
