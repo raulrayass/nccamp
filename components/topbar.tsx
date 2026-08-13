@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Square, Users, DollarSign, MapPin, Trophy, User, ChevronDown, UserRound, Shield, UsersRound, WalletCards, Tags, DoorOpen, Church, Gamepad2, Settings2, CalendarDays } from 'lucide-react'
+import { Square, Users, DollarSign, MapPin, Trophy, User } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useUser } from '@/components/user-provider'
 import { useEventSession } from '@/lib/contexts/event-session-context'
@@ -20,43 +20,6 @@ import {
 
 // Mismas 5 categorías consolidadas que en FloatingDock (mobile),
 // para que el resaltado activo sea consistente en toda la app.
-const megaGroups = [
-  {
-    label: 'Personas',
-    icon: Users,
-    items: [
-      { href: '/attendees', label: 'Camperos', description: 'Registro y seguimiento de participantes', icon: UserRound },
-      { href: '/staff', label: 'Staff', description: 'Equipo responsable del evento', icon: Shield },
-      { href: '/teams', label: 'Equipos', description: 'Organiza grupos y responsables', icon: UsersRound },
-    ],
-  },
-  {
-    label: 'Operación',
-    icon: MapPin,
-    items: [
-      { href: '/rooms', label: 'Salones', description: 'Espacios y asignaciones', icon: DoorOpen },
-      { href: '/churches', label: 'Iglesias', description: 'Comunidades participantes', icon: Church },
-      { href: '/games', label: 'Juegos', description: 'Actividades y marcadores', icon: Gamepad2 },
-    ],
-  },
-  {
-    label: 'Finanzas',
-    icon: DollarSign,
-    items: [
-      { href: '/transactions', label: 'Movimientos', description: 'Ingresos, egresos y pagos', icon: WalletCards },
-      { href: '/categories', label: 'Categorías', description: 'Clasifica tus movimientos', icon: Tags },
-    ],
-  },
-  {
-    label: 'Configuración',
-    icon: Settings2,
-    items: [
-      { href: '/settings', label: 'Preferencias', description: 'Cuenta, eventos y apariencia', icon: Settings2 },
-      { href: '/select-event', label: 'Cambiar evento', description: 'Selecciona el espacio de trabajo', icon: CalendarDays },
-    ],
-  },
-]
-
 const navItems = [
   {
     href: '/',
@@ -100,7 +63,7 @@ export function Topbar() {
   const eventName = currentEvent?.name || 'Evento'
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background">
+    <header className="sticky top-0 z-40 bg-primary rounded-b-3xl">
       <div className="w-full px-4 sm:px-6 lg:px-8 py-3 pb-4">
         <div className="flex items-center justify-between gap-4">
           {/* Left: Logo + Greeting */}
@@ -116,46 +79,46 @@ export function Topbar() {
               />
             </Link>
             <div className="flex flex-col gap-0.5 min-w-0">
-              <p className="text-xs sm:text-sm font-semibold text-foreground leading-tight truncate">
-                {eventName}
+              <p className="text-xs sm:text-sm font-bold text-primary-foreground leading-tight">
+                Hola, {user?.name || 'Usuario'}
               </p>
-              <p className="text-xs text-muted-foreground truncate">
-                {user?.name || 'Usuario'}
+              <p className="text-xs text-primary-foreground/80 truncate font-medium">
+                {eventName}
               </p>
             </div>
           </div>
 
-          <nav className="topbar-mega-nav hidden lg:flex items-center justify-center gap-1">
-            <Link href="/" className="topbar-nav-link">Inicio</Link>
-            {megaGroups.map((group) => {
-              const active = group.items.some((item) => pathname.startsWith(item.href))
-              const GroupIcon = group.icon
+          {/* Nav - Hidden on mobile, shown on md+ */}
+          <nav className="hidden lg:flex items-center gap-1">
+            {navItems.map(({ href, label, icon: Icon, match }) => {
+              const active = match(pathname)
               return (
-                <div key={group.label} className="topbar-mega-group">
-                  <button type="button" className={cn('topbar-nav-link inline-flex items-center gap-1.5', active && 'topbar-nav-link-active')} aria-haspopup="true">
-                    <span>{group.label}</span><ChevronDown className="h-3.5 w-3.5" />
-                  </button>
-                  <div className="topbar-mega-panel" role="menu">
-                    <div className="topbar-mega-heading"><GroupIcon className="h-4 w-4" /><span>{group.label}</span></div>
-                    <div className="topbar-mega-grid">
-                      {group.items.map((item) => {
-                        const ItemIcon = item.icon
-                        return <Link key={item.href} href={item.href} role="menuitem" className="topbar-mega-item"><ItemIcon className="topbar-mega-item-icon" /><span><strong>{item.label}</strong><small>{item.description}</small></span></Link>
-                      })}
-                    </div>
-                  </div>
-                </div>
+                <Link
+                  key={href}
+                  href={href}
+                  className={cn(
+                    'flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200',
+                    active
+                      ? 'bg-primary-foreground/15 text-primary-foreground'
+                      : 'text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10'
+                  )}
+                >
+                  <Icon className="w-4 h-4 shrink-0" />
+                  <span className="hidden xl:inline">{label}</span>
+                </Link>
               )
             })}
           </nav>
 
           {/* Right: User button */}
           {user ? (
-            <Link href="/settings" className="flex items-center gap-2 rounded-md px-2 py-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground shrink-0">
-              <div className="flex size-8 items-center justify-center rounded-full border border-border bg-muted">
-                <User className="size-4 text-foreground" />
+            <Link href="/settings" className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-primary-foreground/10 transition-all duration-200 shrink-0">
+              <div className="w-8 h-8 rounded-lg bg-primary-foreground flex items-center justify-center shrink-0">
+                <User className="w-4 h-4 text-primary" />
               </div>
-              <span className="hidden sm:block text-xs font-medium">Perfil</span>
+              <span className="hidden sm:block text-xs text-primary-foreground font-medium">
+                Perfil
+              </span>
             </Link>
           ) : null}
         </div>
