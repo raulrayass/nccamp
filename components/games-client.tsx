@@ -7,8 +7,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
-import { Plus, Edit2, Trash2, Gamepad2, Trophy, Minus, Users2, Maximize2 } from 'lucide-react'
+import { Plus, Gamepad2, Trophy, Minus, Maximize2, MoreVertical, Pencil, Trash2 } from 'lucide-react'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { toast } from 'sonner'
 import { createGame, updateGame, deleteGame, addGameScore, deleteGameScore, getGameScores } from '@/app/actions/games'
 import { Game, GameScore, Team } from '@/lib/db/schema'
@@ -45,7 +47,6 @@ export function GamesClient({ userId, eventId }: Props) {
   const [isPending, startTransition] = useTransition()
   const [fullscreenMode, setFullscreenMode] = useState(false)
   const [podiumMode, setPodiumMode] = useState(false)
-
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -201,82 +202,69 @@ export function GamesClient({ userId, eventId }: Props) {
   // Show skeleton while loading
   if (gamesLoading || teamsLoading || scoresLoading) {
     return (
-      <div className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 flex flex-col gap-2 sm:gap-3 max-w-7xl mx-auto w-full">
+      <div className="games-shell mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 py-3 sm:gap-5 sm:px-4 sm:py-4 lg:px-6">
         <ListSkeleton count={5} variant="card" />
       </div>
     )
   }
 
   return (
-    <div className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 flex flex-col gap-2 sm:gap-3 max-w-7xl mx-auto w-full">
-      {/* Header */}
-      <PageHeader title="Juegos y Puntaje">
-        <div className="flex flex-wrap gap-2">
-          {teams.length > 0 && (
-            <>
-              <Button onClick={() => setPodiumMode(true)} variant="outline" size="sm" className="gap-1.5 text-xs sm:text-sm h-9 sm:h-10 px-2 sm:px-3">
-                <Trophy className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
+    <div className="games-shell mx-auto flex w-full max-w-7xl flex-col gap-3 px-2.5 py-2.5 sm:gap-5 sm:px-4 sm:py-4 lg:px-6">
+      <div className="games-mobile-chrome flex flex-col gap-3 sm:gap-5">
+        <PageHeader title="Juegos y Puntaje">
+          <div className="flex flex-wrap gap-2">
+            {teams.length > 0 && (
+              <Button onClick={() => setPodiumMode(true)} variant="outline" size="sm" className="h-9 gap-1.5 px-2 text-xs sm:h-10 sm:px-3 sm:text-sm">
+                <Trophy className="h-4 w-4 shrink-0" />
                 <span>Proyectar ganador</span>
               </Button>
-              <Button onClick={() => setFullscreenMode(true)} variant="outline" size="sm" className="gap-1.5 text-xs sm:text-sm h-9 sm:h-10 px-2 sm:px-3">
-                <Maximize2 className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
-                <span>Proyectar ranking</span>
-              </Button>
-            </>
-          )}
-          <Button onClick={() => setDialogOpen(true)} size="sm" className="gap-1.5 text-xs sm:text-sm h-9 sm:h-10 px-2 sm:px-3 bg-green-600 hover:bg-green-700 text-white">
-            <Plus className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
-            <span>Nuevo juego</span>
-          </Button>
-        </div>
-      </PageHeader>
-
-      {/* Quick Stats - 2 column grid (matches Staff/Attendees style) */}
-      {!loading && gameList.length > 0 && (
-        <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
-          <Card className="bg-gradient-to-br from-indigo-500/10 to-indigo-600/5 border border-indigo-500/30 shadow-none dark:from-indigo-500/15 dark:to-indigo-600/5">
-            <CardContent className="p-2 sm:p-2.5">
-              <div className="text-center">
-                <Gamepad2 className="w-3.5 h-3.5 text-indigo-600 mx-auto mb-0.5" />
-                <p className="text-base sm:text-lg font-bold text-foreground">{gameList.length}</p>
-                <p className="text-[10px] sm:text-xs text-muted-foreground">Juegos Creados</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="border-emerald-500/30 bg-emerald-500/10 shadow-none dark:bg-emerald-500/15">
-            <CardContent className="p-2 sm:p-2.5">
-              <div className="text-center">
-                <Users2 className="w-3.5 h-3.5 text-emerald-600 mx-auto mb-0.5" />
-                <p className="text-base sm:text-lg font-bold text-foreground">{teams.length}</p>
-                <p className="text-[10px] sm:text-xs text-muted-foreground">Equipos Participando</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
-      {/* Ranking projection entry point */}
-      {teams.length > 0 && (
-        <Card className="border-primary/25 bg-card shadow-sm">
-          <CardContent className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
-            <div className="flex min-w-0 items-center gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <Trophy className="h-5 w-5" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-sm font-bold text-foreground">Ranking listo para proyectar</p>
-                <p className="mt-0.5 text-xs text-muted-foreground">
-                  {leaderboard[0]?.team.name ? `Lidera ${leaderboard[0].team.name} con ${leaderboard[0].totalPoints} pts` : 'Registra puntos para ver la evolución'}
-                </p>
-              </div>
-            </div>
-            <Button onClick={() => setFullscreenMode(true)} size="sm" className="w-full gap-2 sm:w-auto">
-              <Maximize2 className="h-4 w-4" />
-              Proyectar ranking
+            )}
+            <Button onClick={() => setDialogOpen(true)} size="sm" className="hidden gap-1.5 px-2 text-xs sm:flex sm:h-10 sm:px-3 sm:text-sm">
+              <Plus className="h-4 w-4 shrink-0" />
+              <span>Nuevo juego</span>
             </Button>
+          </div>
+        </PageHeader>
+
+        {/* Ranking preview */}
+      {teams.length > 0 && gameList.length > 0 && (
+        <Card className="games-ranking-panel overflow-hidden">
+          <CardContent className="p-3 sm:p-5">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <div className="flex min-w-0 items-center gap-2.5">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/12 text-primary">
+                  <Trophy className="h-4 w-4" />
+                </div>
+                <div className="min-w-0">
+                  <h2 className="truncate text-sm font-bold text-foreground sm:text-base">Tabla de puntos</h2>
+                  <p className="mt-1 text-xs text-muted-foreground">Cada registro suma al total del equipo</p>
+                </div>
+              </div>
+              <Button onClick={() => setFullscreenMode(true)} variant="outline" size="sm" className="h-8 shrink-0 gap-1.5 rounded-full px-3 text-xs">
+                <Maximize2 className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Proyectar</span>
+              </Button>
+            </div>
+            <div className="games-ranking-board space-y-1.5">
+              {leaderboard.map(({ team, totalPoints, pointsPerGame }, index) => (
+                <div key={team.id} className="games-ranking-row flex items-center gap-2.5 rounded-2xl px-2.5 py-2">
+                  <span className={cn('games-rank-badge flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold', index === 0 && 'games-rank-gold', index === 1 && 'games-rank-silver', index === 2 && 'games-rank-bronze')}>{index + 1}</span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="truncate text-xs font-bold text-foreground sm:text-sm">{team.name}</span>
+                      <span className="shrink-0 text-sm font-black text-primary">{totalPoints} puntos</span>
+                    </div>
+                    <div className="mt-1 flex gap-1 overflow-x-auto pb-0.5">
+                      {gameList.map((game) => <span key={game.id} title={`${game.name}: ${pointsPerGame[game.id] || 0} puntos`} className="games-score-chip shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">{game.name}: {pointsPerGame[game.id] || 0}</span>)}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
       )}
+      </div>
 
       {loading ? (
         <div className="space-y-3">
@@ -293,7 +281,7 @@ export function GamesClient({ userId, eventId }: Props) {
           <div className="flex flex-col items-center gap-3">
             <Gamepad2 className="w-10 h-10 text-muted-foreground/40" />
             <p className="text-sm text-muted-foreground">No hay juegos registrados</p>
-            <Button onClick={() => setDialogOpen(true)} className="mt-2 gap-2">
+            <Button onClick={() => setDialogOpen(true)} className="mt-2 hidden gap-2 sm:flex">
               <Plus className="w-4 h-4" />
               Crear primer juego
             </Button>
@@ -302,71 +290,59 @@ export function GamesClient({ userId, eventId }: Props) {
       ) : (
         <div className="space-y-2 md:space-y-3">
           {gameList.map((game, index) => (
-            <Card key={game.id} className="overflow-hidden border border-border bg-card shadow-sm transition-colors hover:border-primary/40" style={{ animationDelay: `${index * 0.05}s` }}>
-              <CardContent className="p-3 md:p-5">
-                <div className="flex items-center justify-between gap-2 md:gap-4">
+            <Card key={game.id} className="games-card group overflow-hidden" style={{ animationDelay: `${index * 0.05}s` }}>
+              <CardContent className="flex flex-col gap-3 p-3 sm:p-4">
+                <div className="flex items-start gap-2.5">
+                  <div className="games-card-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-primary sm:h-10 sm:w-10">
+                    <Gamepad2 className="h-5 w-5" />
+                  </div>
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-start gap-2 md:gap-3">
-                      <div className="text-lg md:text-2xl font-black text-primary shrink-0">
-                        🎮
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <h3 className="font-bold text-sm md:text-lg truncate text-foreground leading-tight">{game.name}</h3>
-                        {game.description && (
-                          <p className="text-xs md:text-sm text-muted-foreground truncate mt-0.5">{game.description}</p>
-                        )}
-                        {game.gameDate && (
-                          <p className="text-xs text-muted-foreground mt-1 font-medium">
-                            {new Date(game.gameDate + 'T00:00:00').toLocaleDateString('es-MX', {
-                              day: 'numeric',
-                              month: 'short',
-                            })}
-                          </p>
-                        )}
-                      </div>
+                    <h3 className="truncate font-bold text-sm leading-tight text-foreground sm:text-base">{game.name}</h3>
+                    {game.description && (
+                      <p className="mt-0.5 truncate text-xs text-muted-foreground">{game.description}</p>
+                    )}
+                    <div className="mt-1 flex flex-wrap items-center gap-2">
+                      {game.gameDate && (
+                        <span className="text-xs text-muted-foreground">
+                          {new Date(game.gameDate + 'T00:00:00').toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}
+                        </span>
+                      )}
+                      {(() => {
+                        const gameLeaders = teams
+                          .map((team) => ({ team, points: allGameScores.filter((score) => score.gameId === game.id && score.teamId === team.id).reduce((sum, score) => sum + score.points, 0) }))
+                          .filter(({ points }) => points > 0)
+                          .sort((a, b) => b.points - a.points)
+                        const leader = gameLeaders[0]
+                        return leader ? (
+                          <span className="truncate text-xs font-semibold text-primary">{leader.team.name} · {leader.points} pts</span>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">Sin puntos registrados</span>
+                        )
+                      })()}
                     </div>
                   </div>
-                  <div className="flex gap-1 md:gap-2 shrink-0">
-                    <Button
-                      onClick={() => openScoring(game.id)}
-                      size="sm"
-                      className="h-8 md:h-9 px-2 md:px-3 gap-1 md:gap-1.5 text-xs md:text-sm font-medium bg-primary hover:bg-primary/90"
-                      title="Registrar puntos"
-                    >
-                      <Trophy className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                      <span className="hidden sm:inline">Puntos</span>
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        setEditingId(game.id)
-                        setForm({
-                          name: game.name,
-                          description: game.description || '',
-                          gameDate: game.gameDate || '',
-                        })
-                        setDialogOpen(true)
-                      }}
-                      size="sm"
-                      variant="ghost"
-                      className="h-8 md:h-9 w-8 md:w-9 p-0 hover:bg-blue-100 dark:hover:bg-blue-950"
-                      title="Editar"
-                    >
-                      <Edit2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-blue-600" />
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        setDeletingId(game.id)
-                        setDeleteDialogOpen(true)
-                      }}
-                      size="sm"
-                      variant="ghost"
-                      className="h-8 md:h-9 w-8 md:w-9 p-0 hover:bg-red-100 dark:hover:bg-red-950"
-                      title="Eliminar"
-                    >
-                      <Trash2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-red-600" />
-                    </Button>
-                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 shrink-0 p-0" aria-label="Opciones del juego">
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => { setEditingId(game.id); setForm({ name: game.name, description: game.description || '', gameDate: game.gameDate || '' }); setDialogOpen(true) }}>
+                        <Pencil className="h-4 w-4" />
+                        Editar
+                      </DropdownMenuItem>
+                      <DropdownMenuItem variant="destructive" onClick={() => { setDeletingId(game.id); setDeleteDialogOpen(true) }}>
+                        <Trash2 className="h-4 w-4" />
+                        Eliminar
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
+                <Button onClick={() => openScoring(game.id)} size="sm" className="games-score-action w-full gap-1.5 rounded-full text-xs sm:w-auto sm:self-end">
+                  <Trophy className="h-3.5 w-3.5" />
+                  <span>Registrar puntos</span>
+                </Button>
               </CardContent>
             </Card>
           ))}
@@ -449,7 +425,7 @@ export function GamesClient({ userId, eventId }: Props) {
               <Label className="font-semibold">Puntuación actual</Label>
               <div className="space-y-2 mt-2">
                 {teams.map((team) => (
-                  <div key={team.id} className="flex items-center justify-between p-2 rounded bg-muted/50">
+                  <div key={team.id} className="games-score-row flex items-center justify-between rounded-2xl p-3">
                     <div className="flex items-center gap-2">
                       <TeamFlag country={team.country} color={team.color} shape="rect" className="w-6 h-4" />
                       <span className="text-sm font-medium">{team.name}</span>
@@ -464,19 +440,18 @@ export function GamesClient({ userId, eventId }: Props) {
             <form onSubmit={handleAddScore} className="space-y-3 border-t pt-4">
               <div>
                 <Label htmlFor="teamId">Equipo</Label>
-                <select
-                  id="teamId"
-                  value={scoringForm.teamId}
-                  onChange={(e) => setScoringForm({ ...scoringForm, teamId: e.target.value })}
-                  className="w-full px-3 py-2 border border-input rounded-md text-sm bg-background h-10"
-                >
-                  <option value="">Selecciona un equipo</option>
-                  {teams.map((team) => (
-                    <option key={team.id} value={team.id}>
-                      {team.name}
-                    </option>
-                  ))}
-                </select>
+                <Select value={scoringForm.teamId} onValueChange={(value) => setScoringForm({ ...scoringForm, teamId: value })}>
+                  <SelectTrigger id="teamId" className="w-full">
+                    <SelectValue placeholder="Selecciona un equipo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {teams.map((team) => (
+                      <SelectItem key={team.id} value={String(team.id)}>
+                        {team.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <Label htmlFor="points">Puntos</Label>
@@ -519,9 +494,9 @@ export function GamesClient({ userId, eventId }: Props) {
                           onClick={() => handleDeleteScore(score.id, score.gameId)}
                           size="sm"
                           variant="ghost"
-                          className="h-6 w-6 p-0 hover:bg-red-100"
+                          className="h-6 w-6 p-0 text-destructive hover:bg-destructive/10"
                         >
-                          <Minus className="w-3 h-3 text-red-600" />
+                          <Minus className="w-3 h-3" />
                         </Button>
                       </div>
                     </div>
