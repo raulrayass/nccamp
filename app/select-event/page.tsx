@@ -7,7 +7,7 @@ export const metadata = {
 
 export default function SelectEventPage() {
   return (
-    <div className="min-h-screen bg-[#0A0A0A] flex items-start justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-background to-muted flex items-center justify-center p-4">
       <SelectEventPageWrapper />
     </div>
   )
