@@ -7,7 +7,6 @@ import { useEventSession } from '@/lib/contexts/event-session-context'
 import { getUserEvents, setDefaultEvent, createEvent, updateEvent, deleteEvent } from '@/app/actions/events'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
 import { Star, Plus, LogOut, Edit2, Trash2 } from 'lucide-react'
 import {
@@ -215,11 +214,11 @@ export function SettingsClient() {
   }
 
   return (
-    <div className="settings-page w-full min-h-screen flex flex-col bg-background">
+    <div className="w-full min-h-screen flex flex-col">
       {/* Header Section */}
-      <div className="settings-header px-4 sm:px-6 lg:px-8 pt-8 pb-6">
+      <div className="px-4 sm:px-6 lg:px-8 pt-4 pb-4 border-b border-border">
         <div className="max-w-4xl mx-auto">
-          <h1 className="settings-title">Configuración</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Configuración</h1>
         </div>
       </div>
 
@@ -229,17 +228,18 @@ export function SettingsClient() {
           
           {/* User Profile Section */}
           <div>
-            <div className="settings-section-heading">
-              <div><p className="settings-section-kicker">Tu espacio</p><h2>Tu perfil</h2></div>
-            </div>
-            <Card className="settings-card settings-profile-card p-4 sm:p-5">
+            <h2 className="text-base font-semibold text-foreground mb-3 flex items-center gap-2">
+              <div className="w-1 h-5 bg-primary rounded-full"></div>
+              Tu Perfil
+            </h2>
+            <Card className="p-5 sm:p-6 shadow-sm">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <label className="text-xs font-semibold text-muted-foreground">Email</label>
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Email</label>
                   <p className="text-foreground mt-2 break-all">{user.email}</p>
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-muted-foreground">Nombre</label>
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Nombre</label>
                   <p className="text-foreground mt-2">{user.name || 'Sin nombre registrado'}</p>
                 </div>
               </div>
@@ -248,24 +248,25 @@ export function SettingsClient() {
 
           {/* Events Management Section */}
           <div>
-            <div className="settings-section-heading">
-              <div><p className="settings-section-kicker">Tu agenda</p><h2>Mis eventos</h2></div>
-            </div>
-            <div className="flex items-center justify-end mb-3">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-base font-semibold text-foreground flex items-center gap-2">
+                <div className="w-1 h-5 bg-primary rounded-full"></div>
+                Mis Eventos
+              </h2>
               <Dialog open={showCreateForm} onOpenChange={setShowCreateForm}>
                 <DialogTrigger asChild>
-                  <Button className="settings-add-button gap-2 h-9 text-sm">
+                  <Button className="gap-2 h-9 text-sm">
                     <Plus className="w-4 h-4" />
                     Crear
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-md rounded-2xl">
                   <DialogHeader>
-                    <DialogTitle className="text-xl">Nuevo evento</DialogTitle>
+                    <DialogTitle className="text-xl">Crear Evento</DialogTitle>
                   </DialogHeader>
                   <form onSubmit={handleCreateEvent} className="space-y-4">
                     <div>
-                      <label className="text-xs font-semibold text-muted-foreground">Nombre</label>
+                      <label className="text-xs font-semibold text-muted-foreground uppercase">Nombre</label>
                       <input
                         type="text"
                         required
@@ -276,7 +277,7 @@ export function SettingsClient() {
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-semibold text-muted-foreground">País</label>
+                      <label className="text-xs font-semibold text-muted-foreground uppercase">País</label>
                       <input
                         type="text"
                         value={formData.country}
@@ -286,7 +287,7 @@ export function SettingsClient() {
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="text-xs font-semibold text-muted-foreground">Inicio</label>
+                        <label className="text-xs font-semibold text-muted-foreground uppercase">Inicio</label>
                         <input
                           type="date"
                           required
@@ -296,7 +297,7 @@ export function SettingsClient() {
                         />
                       </div>
                       <div>
-                        <label className="text-xs font-semibold text-muted-foreground">Fin</label>
+                        <label className="text-xs font-semibold text-muted-foreground uppercase">Fin</label>
                         <input
                           type="date"
                           required
@@ -307,14 +308,14 @@ export function SettingsClient() {
                       </div>
                     </div>
                     <Button type="submit" disabled={isCreating} className="w-full mt-5">
-                      {isCreating ? 'Creando...' : 'Guardar evento'}
+                      {isCreating ? 'Creando...' : 'Crear Evento'}
                     </Button>
                   </form>
                 </DialogContent>
               </Dialog>
             </div>
 
-            <Card className="settings-card p-4 sm:p-5">
+            <Card className="p-5 sm:p-6 shadow-sm">
               {loading ? (
                 <div className="text-center py-8 text-muted-foreground text-sm">Cargando eventos...</div>
               ) : events.length === 0 ? (
@@ -330,15 +331,13 @@ export function SettingsClient() {
                   {events.map((event) => (
                     <div
                       key={event.id}
-                      className="settings-event-row flex items-center justify-between gap-3 p-4 rounded-2xl transition-colors group"
+                      className="flex items-center justify-between p-4 bg-muted/40 rounded-xl hover:bg-muted/60 transition-colors group"
                     >
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <h3 className="font-semibold text-foreground text-sm truncate">{event.name}</h3>
-                          {eventId === event.id && <Badge variant="secondary" className="shrink-0">Actual</Badge>}
-                        </div>
+                        <h3 className="font-semibold text-foreground text-sm truncate">{event.name}</h3>
+                        <p className="text-xs text-muted-foreground mt-1">ID: {event.id}</p>
                       </div>
-                      <div className="settings-event-actions flex items-center gap-1 ml-2 flex-shrink-0">
+                      <div className="flex items-center gap-2 ml-4 flex-shrink-0">
                         <Button
                           size="sm"
                           variant={eventId === event.id ? 'default' : 'outline'}
@@ -351,18 +350,16 @@ export function SettingsClient() {
                             router.push('/')
                           }}
                         >
-                          {eventId === event.id ? 'Actual' : 'Abrir'}
+                          {eventId === event.id ? 'Activo' : 'Usar'}
                         </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
+                        <button
                           onClick={() => handleSetDefault(event.id)}
                           disabled={settingDefault !== null}
+                          className="p-1.5 rounded-lg hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all disabled:opacity-50"
                           title="Establecer como predeterminado"
-                          aria-label="Establecer como predeterminado"
                         >
-                          <Star data-icon="inline-start" className={settingDefault === event.id ? 'animate-spin text-yellow-500' : ''} />
-                        </Button>
+                          <Star className={`w-4 h-4 ${settingDefault === event.id ? 'animate-spin text-yellow-500' : ''}`} />
+                        </button>
                         <Dialog open={editingEventId === event.id} onOpenChange={(open) => {
                           if (open) {
                             setEditingEventId(event.id)
@@ -383,7 +380,7 @@ export function SettingsClient() {
                               setEditingEventId(event.id)
                               setFormData({
                                 name: event.name,
-                                country: 'M��xico',
+                                country: 'México',
                                 startDate: new Date().toISOString().split('T')[0],
                                 endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
                               })
@@ -393,11 +390,11 @@ export function SettingsClient() {
                           </button>
                           <DialogContent className="max-w-md rounded-2xl">
                             <DialogHeader>
-                              <DialogTitle className="text-xl">Editar evento</DialogTitle>
+                              <DialogTitle className="text-xl">Editar Evento</DialogTitle>
                             </DialogHeader>
                             <form onSubmit={(e) => handleUpdateEvent(e, event)} className="space-y-4">
                               <div>
-                                <label className="text-xs font-semibold text-muted-foreground">Nombre</label>
+                                <label className="text-xs font-semibold text-muted-foreground uppercase">Nombre</label>
                                 <input
                                   type="text"
                                   required
@@ -407,7 +404,7 @@ export function SettingsClient() {
                                 />
                               </div>
                               <div>
-                                <label className="text-xs font-semibold text-muted-foreground">País</label>
+                                <label className="text-xs font-semibold text-muted-foreground uppercase">País</label>
                                 <input
                                   type="text"
                                   value={formData.country}
@@ -417,7 +414,7 @@ export function SettingsClient() {
                               </div>
                               <div className="grid grid-cols-2 gap-3">
                                 <div>
-                                  <label className="text-xs font-semibold text-muted-foreground">Inicio</label>
+                                  <label className="text-xs font-semibold text-muted-foreground uppercase">Inicio</label>
                                   <input
                                     type="date"
                                     required
@@ -427,7 +424,7 @@ export function SettingsClient() {
                                   />
                                 </div>
                                 <div>
-                                  <label className="text-xs font-semibold text-muted-foreground">Fin</label>
+                                  <label className="text-xs font-semibold text-muted-foreground uppercase">Fin</label>
                                   <input
                                     type="date"
                                     required
@@ -438,7 +435,7 @@ export function SettingsClient() {
                                 </div>
                               </div>
                               <Button type="submit" disabled={isUpdating} className="w-full mt-5">
-                                {isUpdating ? 'Guardando...' : 'Guardar cambios'}
+                                {isUpdating ? 'Actualizando...' : 'Actualizar Evento'}
                               </Button>
                             </form>
                           </DialogContent>
@@ -488,7 +485,7 @@ export function SettingsClient() {
               <div className="w-1 h-5 bg-red-500 rounded-full"></div>
               Cerrar Sesión
             </h2>
-            <Card className="settings-logout-card p-4 sm:p-5">
+            <Card className="p-5 sm:p-6 shadow-sm border-red-500/20 bg-red-500/5">
               <AlertDialog open={logoutOpen} onOpenChange={setLogoutOpen}>
                 <Button
                   onClick={() => setLogoutOpen(true)}
