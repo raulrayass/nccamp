@@ -190,8 +190,8 @@ const tapTransition = { type: 'spring' as const, stiffness: 400, damping: 25 }
                 </p>
                 <p className="text-xs text-muted-foreground mt-0.5">Acumulado total</p>
               </div>
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-muted flex items-center justify-center shrink-0 ml-2">
-                <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-emerald-600/20 flex items-center justify-center shrink-0 ml-2 icon-glow">
+                <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600" />
               </div>
             </div>
           </Card>
@@ -206,8 +206,8 @@ const tapTransition = { type: 'spring' as const, stiffness: 400, damping: 25 }
                 </p>
                 <p className="text-xs text-muted-foreground mt-0.5">Acumulado total</p>
               </div>
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-muted flex items-center justify-center shrink-0 ml-2">
-                <TrendingDown className="w-5 h-5 sm:w-6 sm:h-6 text-muted-foreground" />
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-orange-600/20 flex items-center justify-center shrink-0 ml-2 icon-glow">
+                <TrendingDown className="w-5 h-5 sm:w-6 sm:h-6 text-orange-600" />
               </div>
             </div>
           </Card>
