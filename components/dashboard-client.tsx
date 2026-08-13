@@ -483,7 +483,7 @@ const tapTransition = { type: 'spring' as const, stiffness: 400, damping: 25 }
 
       {/* ===== 8. Camperos por Iglesia ===== */}
       <motion.div variants={itemVariants}>
-        <Card className="clay-card p-5 sm:p-6 rounded-xl sm:rounded-2xl">
+        <Card className="dashboard-ios-card p-5 sm:p-6">
           <motion.h2 className="font-semibold text-lg text-foreground mb-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.3 }}>
             Camperos por Iglesia
           </motion.h2>

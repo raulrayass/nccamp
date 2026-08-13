@@ -589,7 +589,7 @@ export function TransactionsClient({ userId, eventId }: { userId: string; eventI
 
       {/* Advanced Filters */}
       {showAdvancedFilters && (
-        <Card className="bg-white/5 border border-border">
+        <Card className="bg-muted/40 border border-border">
           <div className="p-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
