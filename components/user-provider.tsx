@@ -4,6 +4,7 @@ import { createContext, useContext, useState } from 'react'
 import { useSession } from '@/lib/auth-client'
 import { authClient } from '@/lib/auth-client'
 import Image from 'next/image'
+import { Skeleton } from '@/components/ui/skeleton'
 
 interface UserCtx {
   user: { id: string; email: string; name: string | null } | null
@@ -63,9 +64,26 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
   if (isPending) {
     return (
-      <div className="min-h-svh bg-background flex items-center justify-center">
-        <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-      </div>
+      <main className="min-h-svh bg-background px-5 py-8 text-foreground sm:px-8" role="status" aria-live="polite" aria-busy="true">
+        <div className="mx-auto flex min-h-[calc(100svh-4rem)] w-full max-w-5xl flex-col justify-between gap-12 lg:grid lg:min-h-0 lg:grid-cols-[1fr_380px] lg:items-center lg:gap-24 lg:py-16">
+          <div className="space-y-5">
+            <div className="flex items-center gap-3">
+              <Skeleton className="size-11 rounded-md" />
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-3 w-40" />
+              </div>
+            </div>
+            <Skeleton className="h-10 w-full max-w-md" />
+            <Skeleton className="h-5 w-72 max-w-full" />
+          </div>
+          <div className="w-full max-w-sm space-y-5 lg:justify-self-end">
+            <Skeleton className="h-7 w-40" />
+            <Skeleton className="h-4 w-64 max-w-full" />
+            <Skeleton className="h-12 w-full rounded-md" />
+          </div>
+        </div>
+      </main>
     )
   }
 

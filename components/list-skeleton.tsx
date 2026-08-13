@@ -10,13 +10,13 @@ export function ListSkeleton({ count = 5, variant = 'card' }: ListSkeletonProps)
     return (
       <div className="space-y-3 sm:space-y-4">
         {Array.from({ length: count }).map((_, i) => (
-          <div key={i} className="clay-card p-3 sm:p-4 rounded-xl sm:rounded-2xl flex gap-3 sm:gap-4">
-            <Skeleton className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex-shrink-0 animate-skeleton-shimmer" />
-            <div className="flex-1 space-y-2 sm:space-y-2.5">
-              <Skeleton className="h-4 w-2/5 sm:w-1/3 animate-skeleton-shimmer" />
-              <Skeleton className="h-3 w-3/5 sm:w-1/2 animate-skeleton-shimmer" />
+          <div key={i} className="flex items-center gap-3 border-b border-border/40 py-3 sm:gap-4 sm:py-4">
+            <Skeleton variant="avatar" className="size-10 shrink-0 sm:size-12" />
+            <div className="min-w-0 flex-1 space-y-2 sm:space-y-2.5">
+              <Skeleton variant="text" className="h-4 w-2/5 sm:w-1/3" />
+              <Skeleton variant="text" className="h-3 w-3/5 sm:w-1/2" />
             </div>
-            <Skeleton className="w-16 sm:w-20 h-5 sm:h-6 flex-shrink-0 animate-skeleton-shimmer" />
+            <Skeleton variant="button" className="h-8 w-16 shrink-0 sm:w-20" />
           </div>
         ))}
       </div>
@@ -27,7 +27,9 @@ export function ListSkeleton({ count = 5, variant = 'card' }: ListSkeletonProps)
     return (
       <div className="space-y-2 sm:space-y-3">
         {Array.from({ length: count }).map((_, i) => (
-          <div key={i} className="clay-card p-3 sm:p-4 rounded-xl sm:rounded-2xl h-12 sm:h-14 animate-skeleton-shimmer" />
+          <div key={i} className="flex h-12 items-center border-b border-border/40 py-3 sm:h-14 sm:py-4">
+            <Skeleton variant="text" className="h-3 w-2/3" />
+          </div>
         ))}
       </div>
     )
