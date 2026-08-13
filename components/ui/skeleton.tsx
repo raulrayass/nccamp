@@ -11,12 +11,12 @@ interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
  */
 export function Skeleton({ className, variant = 'default', ...props }: SkeletonProps) {
   const variants = {
-    default: 'h-12 w-12 rounded-xl',
-    text: 'h-4 w-full rounded-md',
+    default: 'h-12 w-12 rounded-md',
+    text: 'h-4 w-full rounded-sm',
     avatar: 'h-10 w-10 rounded-full',
-    card: 'h-40 w-full rounded-2xl',
-    input: 'h-10 w-full rounded-lg',
-    button: 'h-10 w-32 rounded-lg',
+    card: 'h-40 w-full rounded-md',
+    input: 'h-10 w-full rounded-md',
+    button: 'h-10 w-32 rounded-md',
   }
 
   return (
@@ -64,7 +64,7 @@ export function TableSkeleton({ rows = 5 }: { rows?: number }) {
     <div className="bg-card overflow-hidden">
       <div className="space-y-0">
         {/* Header */}
-        <div className="flex gap-4 p-4 border-b border-border">
+        <div className="flex gap-4 border-b border-border/40 p-4">
           <Skeleton variant="text" className="h-4 w-20" />
           <Skeleton variant="text" className="h-4 w-24" />
           <Skeleton variant="text" className="h-4 w-20" />
@@ -72,7 +72,7 @@ export function TableSkeleton({ rows = 5 }: { rows?: number }) {
         
         {/* Rows */}
         {Array.from({ length: rows }).map((_, i) => (
-          <div key={i} className="flex gap-4 p-4 border-b border-border/50">
+          <div key={i} className="flex gap-4 border-b border-border/40 p-4">
             <Skeleton variant="avatar" className="h-10 w-10 shrink-0" />
             <div className="flex-1 space-y-2">
               <Skeleton variant="text" className="h-4 w-1/2" />
@@ -178,7 +178,7 @@ export function MobileListSkeleton() {
   return (
     <div className="space-y-3">
       {Array.from({ length: 8 }).map((_, i) => (
-        <div key={i} className="clay-card flex gap-3 p-3 sm:p-4 rounded-2xl">
+        <div key={i} className="flex gap-3 border-b border-border/40 py-3 sm:py-4">
           <Skeleton variant="avatar" className="h-10 w-10 shrink-0" />
           <div className="flex-1 space-y-2">
             <Skeleton variant="text" className="h-3 w-3/4" />
