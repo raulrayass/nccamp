@@ -1,0 +1,172 @@
+@import 'tailwindcss';
+
+:root {
+  --background: #f5f6f7;
+  --foreground: #17191c;
+  --card: #ffffff;
+  --card-foreground: #17191c;
+  --popover: #ffffff;
+  --popover-foreground: #17191c;
+  --primary: #1f7a52;
+  --primary-foreground: #ffffff;
+  --secondary: #e9edf0;
+  --secondary-foreground: #17191c;
+  --muted: #edf0f2;
+  --muted-foreground: #626a72;
+  --accent: #e5ebe8;
+  --accent-foreground: #174d36;
+  --destructive: #c43d3d;
+  --border: transparent;
+  --input: #d9dee2;
+  --ring: #1f7a52;
+  --radius: 0.75rem;
+  --radius-sm: 0.5rem;
+}
+
+.dark {
+  --background: #101213;
+  --foreground: #f2f4f5;
+  --card: #191c1e;
+  --card-foreground: #f2f4f5;
+  --popover: #191c1e;
+  --popover-foreground: #f2f4f5;
+  --primary: #55bd85;
+  --primary-foreground: #0d2117;
+  --secondary: #252a2d;
+  --secondary-foreground: #f2f4f5;
+  --muted: #22272a;
+  --muted-foreground: #9aa2a8;
+  --accent: #29352f;
+  --accent-foreground: #a8e3c1;
+  --destructive: #e06a6a;
+  --border: transparent;
+  --input: #343b40;
+  --ring: #55bd85;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 0.25rem);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+* { box-sizing: border-box; }
+html { background: var(--background); }
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), Arial, sans-serif;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+}
+p { margin: 0; }
+button, input, select, textarea { font: inherit; }
+button, [role="button"], a[role="button"] {
+  transition: background-color 160ms ease, color 160ms ease, opacity 160ms ease;
+}
+button:active:not(:disabled) { opacity: 0.78; }
+
+[data-slot="card"] {
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--card-foreground);
+  box-shadow: none;
+}
+
+/* Content-first surfaces used by the primary screens. */
+.dashboard-ios [data-slot="card"],
+.dashboard-ios .dashboard-ios-card,
+.dashboard-ios .dashboard-ios-chart,
+.dashboard-ios .finance-surface,
+.dashboard-ios .finance-surface-strong,
+.settings-profile-card,
+.settings-card,
+.settings-logout-card {
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--card);
+  box-shadow: none;
+}
+.dashboard-ios [data-slot="card"]:hover,
+.dashboard-ios .dashboard-ios-card:hover,
+.settings-card:hover { transform: none; box-shadow: none; }
+.dashboard-ios [class*="icon-glow"],
+.dashboard-ios [class*="progress-glow"] { box-shadow: none; }
+.dashboard-ios .dashboard-ios-button,
+.dashboard-ios .dashboard-ios-icon-button {
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--muted);
+  color: var(--foreground);
+  box-shadow: none;
+}
+.dashboard-ios .dashboard-ios-button:hover,
+.dashboard-ios .dashboard-ios-icon-button:hover { background: var(--accent); }
+.dashboard-ios .dashboard-ios-divider > * + * { border-top: 1px solid color-mix(in srgb, var(--foreground) 10%, transparent); }
+.dashboard-ios h2 { font-size: 1rem; letter-spacing: 0; }
+
+/* Mobile shell: clear controls and no floating decoration. */
+.finance-dock,
+.floating-dock,
+.settings-header { background: var(--card); box-shadow: none; }
+.finance-dock-liquid { display: none; }
+
+.settings-page { background: var(--background); color: var(--foreground); }
+.settings-eyebrow, .settings-section-kicker { color: var(--muted-foreground); font-size: 0.75rem; font-weight: 600; }
+.settings-title { color: var(--foreground); font-size: 1.75rem; font-weight: 700; }
+.settings-subtitle { color: var(--muted-foreground); font-size: 0.875rem; }
+.settings-avatar { display: flex; width: 2.75rem; height: 2.75rem; align-items: center; justify-content: center; border-radius: 9999px; background: var(--muted); color: var(--foreground); box-shadow: none; }
+.settings-section-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: 0.75rem; }
+.settings-section-heading h2 { color: var(--foreground); font-size: 1rem; font-weight: 650; }
+.settings-section-count { color: var(--muted-foreground); font-size: 0.75rem; }
+.settings-add-button { border-radius: var(--radius-sm); background: var(--primary); color: var(--primary-foreground); box-shadow: none; }
+.settings-event-row { border: 0; border-bottom: 1px solid color-mix(in srgb, var(--foreground) 10%, transparent); border-radius: 0; background: transparent; }
+.settings-event-row:hover { background: var(--muted); }
+.settings-event-actions { display: flex; align-items: center; gap: 0.25rem; background: transparent; padding: 0; }
+.settings-event-actions button { border-radius: var(--radius-sm); }
+.settings-logout-card { border: 0; background: color-mix(in srgb, var(--destructive) 8%, var(--card)); }
+
+/* Games: compact rows and full-width mobile action. */
+.games-shell [data-slot="card"], .games-card, .games-stat, .games-ranking-panel { border: 0; border-radius: var(--radius); background: var(--card); box-shadow: none; }
+.games-card-icon, .games-score-chip, .games-ranking-row, .games-score-row { background: var(--muted); }
+.games-score-action { width: 100%; border-radius: var(--radius-sm); background: var(--primary); color: var(--primary-foreground); }
+.games-card-actions button svg { width: 0.85rem; height: 0.85rem; }
+@media (min-width: 640px) { .games-score-action { width: auto; } }
+
+@media (max-width: 640px) {
+  .dashboard-ios, .games-shell, .settings-page { padding-bottom: 5.5rem; }
+  .dashboard-ios, .games-shell { gap: 0.75rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

@@ -63,7 +63,7 @@ export function Topbar() {
   const eventName = currentEvent?.name || 'Evento'
 
   return (
-    <header className="sticky top-0 z-40 bg-primary rounded-b-3xl">
+    <header className="sticky top-0 z-40 border-b border-border/40 bg-background/95 backdrop-blur-sm">
       <div className="w-full px-4 sm:px-6 lg:px-8 py-3 pb-4">
         <div className="flex items-center justify-between gap-4">
           {/* Left: Logo + Greeting */}
@@ -97,10 +97,10 @@ export function Topbar() {
                   key={href}
                   href={href}
                   className={cn(
-                    'flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200',
+                    'flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors',
                     active
-                      ? 'bg-primary-foreground/15 text-primary-foreground'
-                      : 'text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10'
+                      ? 'bg-muted text-foreground'
+                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                   )}
                 >
                   <Icon className="w-4 h-4 shrink-0" />
@@ -112,13 +112,11 @@ export function Topbar() {
 
           {/* Right: User button */}
           {user ? (
-            <Link href="/settings" className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-primary-foreground/10 transition-all duration-200 shrink-0">
-              <div className="w-8 h-8 rounded-lg bg-primary-foreground flex items-center justify-center shrink-0">
-                <User className="w-4 h-4 text-primary" />
+            <Link href="/settings" className="flex shrink-0 items-center gap-2 rounded-md px-2 py-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+              <div className="flex size-8 items-center justify-center rounded-full bg-muted">
+                <User className="size-4 text-foreground" />
               </div>
-              <span className="hidden sm:block text-xs text-primary-foreground font-medium">
-                Perfil
-              </span>
+              <span className="hidden text-xs font-medium sm:block">Perfil</span>
             </Link>
           ) : null}
         </div>
