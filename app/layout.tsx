@@ -3,7 +3,6 @@ import { Geist, Geist_Mono, Poppins, Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
 import { UserProvider } from '@/components/user-provider'
 import { EventSessionProvider } from '@/lib/contexts/event-session-context'
-import { LoadingScreen, LoadingProvider } from '@/components/loading-screen'
 import './globals.css'
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
@@ -23,8 +22,8 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'Permanece Camp',
-  description: 'Control de ingresos y egresos del campamento Permanece Camp de Nueva Creacion. Registra comida, hospedaje, pago de camperos y mas.',
+  title: 'Mantenimiento',
+  description: 'Mantenimiento',
   generator: 'v0.app',
   icons: {
     icon: [
@@ -73,14 +72,11 @@ export default function RootLayout({
         />
       </head>
       <body className="font-sans antialiased">
-        <LoadingProvider>
-          <LoadingScreen />
-          <UserProvider>
-            <EventSessionProvider>
-              {children}
-            </EventSessionProvider>
-          </UserProvider>
-        </LoadingProvider>
+        <UserProvider>
+          <EventSessionProvider>
+            {children}
+          </EventSessionProvider>
+        </UserProvider>
         <Toaster 
           position="top-center" 
           richColors 
