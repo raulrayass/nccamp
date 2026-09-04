@@ -62,6 +62,12 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  return (
+    <main className="flex min-h-svh items-center justify-center bg-background px-6 text-foreground" role="status" aria-live="polite">
+      <h1 className="text-2xl font-semibold tracking-tight">Mantenimiento</h1>
+    </main>
+  )
+
   if (isPending) {
     return (
       <main className="min-h-svh bg-background px-5 py-8 text-foreground sm:px-8" role="status" aria-live="polite" aria-busy="true">
