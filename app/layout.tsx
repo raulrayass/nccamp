@@ -22,8 +22,8 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'Mantenimiento',
-  description: 'Mantenimiento',
+  title: 'Permanece Camp',
+  description: 'Administración general de Permanece Camp.',
   generator: 'v0.app',
   icons: {
     icon: [
